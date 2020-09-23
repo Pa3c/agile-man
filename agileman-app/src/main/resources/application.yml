@@ -1,0 +1,40 @@
+management:
+  security:
+    enabled: false
+
+server:
+  port: 6969
+
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/agileman
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: false
+    generate-ddl: false
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+        temp:
+          use_jdbc_metadata_defaults: false
+  jackson:
+    serialization:
+      INDENT_OUTPUT: true
+    #it makes json properties not return null values
+    default-property-inclusion: NON_NULL
+
+#liquibase:
+#  change-log: classpath:db/changelog/db.changelog-master.yaml
+##use to return pretty format in html
+#
+#hateoas:
+#  #added to avoid using different formatting links
+#  use-hal-as-default-json-media-type: false
