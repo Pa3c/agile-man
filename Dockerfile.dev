@@ -1,0 +1,7 @@
+FROM openjdk
+WORKDIR '/agileman-backend'
+
+COPY agileman-app/target/agileman-app-1.0.0-SNAPSHOT.jar .
+
+EXPOSE 6969
+CMD ["java", "-jar", "agileman-app-1.0.0-SNAPSHOT.jar"]

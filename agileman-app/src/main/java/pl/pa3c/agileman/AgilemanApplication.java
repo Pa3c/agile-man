@@ -33,7 +33,7 @@ public class AgilemanApplication {
 		return propsConfig;
 	}
 
-	@ConditionalOnMissingBean
+	@ConditionalOnMissingBean(value = BuildProperties.class)
 	@Bean
 	public BuildProperties buildProperties() throws Exception {
 		Properties properties = new Properties();
