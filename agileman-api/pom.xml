@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>pl.pa3c.agileman</groupId>
 		<artifactId>agileman</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>agileman-api</artifactId>
 	<version>${parent.version}</version>

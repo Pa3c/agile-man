@@ -7,8 +7,9 @@ import org.springframework.web.bind.annotation.RestController;
 import pl.pa3c.agileman.api.info.InformationEndpoint;
 import pl.pa3c.agileman.api.info.InformationSO;
 
-@RestController
+import java.time.Instant;
 
+@RestController
 public class InformationController implements InformationEndpoint {
 
     @Autowired
@@ -27,10 +28,15 @@ public class InformationController implements InformationEndpoint {
 	public InformationSO get() {
 		InformationSO informationSO = new InformationSO();
 		informationSO.setVersion(buildProperties.getVersion());
-		informationSO.setTime(buildProperties.getTime().toEpochMilli());
-		informationSO.setGitCommitID(commitId);
-		informationSO.setGitCommitBranch(branch);
-		informationSO.setGitCommitMessage(commitMessage);
+		Instant instant = buildProperties.getTime();
+		if(instant != null){
+			informationSO.setTime(buildProperties.getTime().toEpochMilli());
+			informationSO.setGitCommitID(commitId);
+			informationSO.setGitCommitBranch(branch);
+			informationSO.setGitCommitMessage(commitMessage);
+		}else{
+			informationSO.setTime(System.currentTimeMillis());
+		}
 		return informationSO;
 	}
 
