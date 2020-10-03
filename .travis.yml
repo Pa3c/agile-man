@@ -1,4 +1,12 @@
 language: java
 sudo: false
-script: mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
-script: mvn test -B
+cache:
+  directories:
+  - .autoconf
+  - $HOME/.m2
+script: 
+    - if [[ "$TEST_ENABLED" == "true" ]]; then mvn install -Dmaven.javadoc.skip=true -B -V; else mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V; fi
+after_success:
+    - echo "Application build was successful"
+    - docker build -f Dockerfile.dev -t $REPO-$COMMIT .
+    - if [[ "$PUSH_ENABLED" == "true" ]]; then mvn install -Dmaven.javadoc.skip=true -B -V; fi
