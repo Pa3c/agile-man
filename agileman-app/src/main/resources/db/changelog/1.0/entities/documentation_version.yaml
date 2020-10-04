@@ -1,0 +1,29 @@
+databaseChangeLog:
+- changeSet:
+    id: documentation_version_entity_creation
+    author: patryk.klos
+    changes:
+    - createTable:
+        tableName: documentation_version
+        columns:
+        - column:
+            name: id
+            type: bigint
+            constraints:
+              primaryKey: true
+              nullable: false
+        - column:
+            name: version
+            type: int
+            constraints:
+              nullable: false              
+        - column:
+            name: documentation_id
+            type: bigint
+            constraints:
+              nullable: false
+        - column:
+            name: project_id
+            type: bigint
+            constraints:
+              nullable: false

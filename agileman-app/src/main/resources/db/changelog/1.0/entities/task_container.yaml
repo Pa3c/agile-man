@@ -1,0 +1,43 @@
+databaseChangeLog:
+- changeSet:
+    id: task_container_entity_creation
+    author: patryk.klos
+    changes:
+    - createTable:
+        tableName: task_container
+        columns:
+        - column:
+            name: id
+            type: bigint
+            constraints:
+              primaryKey: true
+              nullable: false     
+        - column:
+            name: overcontainer_id
+            type: bigint
+            constraints:
+              nullable: false
+        - column:
+            name: type
+            type: varchar(10)
+        - column:
+            name: version
+            type: int
+            constraints:
+              nullable: false
+        - column:
+            name: creation_date
+            type: timestamp
+            defaultValueComputed: CURRENT_TIMESTAMP
+            constraints:
+              nullable: false
+        - column:
+            name: modification_date
+            type: timestamp
+        - column:
+            name: created_by
+            type: varchar(50)
+        - column:
+            name: modified_by
+            type: varchar(50)
+             

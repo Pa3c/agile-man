@@ -1,0 +1,24 @@
+databaseChangeLog:
+- changeSet:
+    id: team_in_project_entity_creation
+    author: patryk.klos
+    changes:
+    - createTable:
+        tableName: team_in_project
+        columns:
+        - column:
+            name: id
+            type: bigint
+            constraints:
+              primaryKey: true
+              nullable: false
+        - column:
+            name: team_id
+            type: bigint
+            constraints:
+              nullable: false
+        - column:
+            name: project_id
+            type: bigint
+            constraints:
+              nullable: false
