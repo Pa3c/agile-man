@@ -12,7 +12,6 @@ import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import pl.pa3c.agileman.model.BaseEntity;
-import pl.pa3c.agileman.model.task.Step;
 
 @Entity
 @Table
@@ -27,5 +26,5 @@ public class TaskContainer extends BaseEntity<Long>{
 	
 	@ManyToOne(cascade={CascadeType.ALL})
 	@JoinColumn(name="overcontainer_id")
-	private Step overcontainer;
+	private TaskContainer overcontainer;
 }

@@ -2,4 +2,6 @@ databaseChangeLog:
   - includeAll:
       path: db/changelog/1.0/entities
   - includeAll:
-      path: db/changelog/1.0/relations  
+      path: db/changelog/1.0/relations
+  - includeAll:
+      path: db/changelog/1.0/constraints

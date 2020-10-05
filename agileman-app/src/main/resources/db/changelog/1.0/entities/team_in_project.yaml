@@ -13,6 +13,11 @@ databaseChangeLog:
               primaryKey: true
               nullable: false
         - column:
+            name: type
+            type: varchar(20)
+            constraints:
+              nullable: false               
+        - column:
             name: team_id
             type: bigint
             constraints:

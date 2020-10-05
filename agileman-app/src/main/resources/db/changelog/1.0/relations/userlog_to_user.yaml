@@ -8,5 +8,5 @@ databaseChangeLog:
         baseTableName: user_log
         constraintName: userlog_to_user
         referencedColumnNames: id
-        referencedTableName: user
+        referencedTableName: app_user
         validate: true

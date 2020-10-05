@@ -9,6 +9,7 @@ import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import pl.pa3c.agileman.model.BaseEntity;
+import pl.pa3c.agileman.model.team.Type;
 
 @Entity
 @Table
@@ -18,9 +19,4 @@ public class Project extends BaseEntity<Long>{
 	
 	private String title;
 	private String description;
-	
-	@NotNull
-	@Enumerated(EnumType.STRING)
-	private Type type;
-	
 }

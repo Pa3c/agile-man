@@ -15,5 +15,5 @@ databaseChangeLog:
         baseTableName: task_of_user
         constraintName: task_of_user_user
         referencedColumnNames: id
-        referencedTableName: user
+        referencedTableName: app_user
         validate: true

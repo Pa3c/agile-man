@@ -14,7 +14,7 @@ databaseChangeLog:
               nullable: false
         - column:
             name: label_id
-            type: bigint
+            type: varchar(20)
             constraints:
               nullable: false
         - column:

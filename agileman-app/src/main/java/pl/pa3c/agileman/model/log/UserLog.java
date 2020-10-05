@@ -8,7 +8,7 @@ import javax.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import pl.pa3c.agileman.model.IdEntity;
-import pl.pa3c.agileman.model.user.User;
+import pl.pa3c.agileman.model.user.AppUser;
 
 @Entity
 @Table
@@ -17,5 +17,5 @@ import pl.pa3c.agileman.model.user.User;
 public class UserLog extends IdEntity<Long>{
 	@ManyToOne
 	@JoinColumn(name = "user_id")
-	private User user;
+	private AppUser user;
 }

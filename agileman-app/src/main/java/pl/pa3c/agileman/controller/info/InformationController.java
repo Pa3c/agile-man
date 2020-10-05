@@ -4,13 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.info.BuildProperties;
 import org.springframework.web.bind.annotation.RestController;
-import pl.pa3c.agileman.api.info.InformationEndpoint;
+import pl.pa3c.agileman.api.info.InformationSI;
 import pl.pa3c.agileman.api.info.InformationSO;
 
 import java.time.Instant;
 
 @RestController
-public class InformationController implements InformationEndpoint {
+public class InformationController implements InformationSI {
 
     @Autowired
     private BuildProperties buildProperties;

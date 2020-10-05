@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import pl.pa3c.agileman.model.IdEntity;
-import pl.pa3c.agileman.model.user.User;
+import pl.pa3c.agileman.model.user.AppUser;
 
 @Entity
 @Table
@@ -25,7 +25,7 @@ public class TaskOfUser extends IdEntity<Long>{
 	
 	@ManyToOne
 	@JoinColumn(name = "user_id")
-	private User user;
+	private AppUser user;
 	
 	@NotNull
 	@Enumerated(EnumType.STRING)

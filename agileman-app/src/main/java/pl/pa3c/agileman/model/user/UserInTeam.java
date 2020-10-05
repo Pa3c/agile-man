@@ -20,7 +20,7 @@ public class UserInTeam extends IdEntity<Long>{
 	
 	@ManyToOne(cascade={CascadeType.ALL})
 	@JoinColumn(name="user_id")
-	private User user;
+	private AppUser user;
 	
 	@ManyToOne(cascade={CascadeType.ALL})
 	@JoinColumn(name="team_id")

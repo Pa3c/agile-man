@@ -5,15 +5,15 @@ databaseChangeLog:
     changes:
     - addForeignKeyConstraint:
         baseColumnNames: team_id
-        baseTableName: step
+        baseTableName: user_in_team
         constraintName: user_in_team_team
         referencedColumnNames: id
         referencedTableName: team
         validate: true
     - addForeignKeyConstraint:
         baseColumnNames: user_id
-        baseTableName: step
+        baseTableName: user_in_team
         constraintName: user_in_team_user
         referencedColumnNames: id
-        referencedTableName: user
+        referencedTableName: app_user
         validate: true

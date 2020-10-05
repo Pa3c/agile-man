@@ -1,6 +1,5 @@
 package pl.pa3c.agileman.api.info;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 
 @Data

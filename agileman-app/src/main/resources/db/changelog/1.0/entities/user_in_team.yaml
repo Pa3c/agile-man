@@ -19,6 +19,6 @@ databaseChangeLog:
               nullable: false
         - column:
             name: user_id
-            type: bigint
+            type: varchar(50)
             constraints:
               nullable: false

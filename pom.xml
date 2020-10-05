@@ -17,7 +17,10 @@
     <packaging>pom</packaging>
 
     <properties>
-        <java.version>11</java.version>
+        <java.version>11</java.version>		
+        <springfox-swagger2.version>2.9.2</springfox-swagger2.version>
+		<swagger-annotations.version>1.6.0</swagger-annotations.version>
+		<modelmapper.version>2.3.5</modelmapper.version>
     </properties>
 
     <modules>

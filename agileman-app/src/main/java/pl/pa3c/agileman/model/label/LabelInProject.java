@@ -9,7 +9,7 @@ import javax.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import pl.pa3c.agileman.model.IdEntity;
-import pl.pa3c.agileman.model.user.User;
+import pl.pa3c.agileman.model.user.AppUser;
 
 @Entity
 @Table
@@ -18,7 +18,7 @@ import pl.pa3c.agileman.model.user.User;
 public class LabelInProject extends IdEntity<Long> {
 	@ManyToOne(cascade={CascadeType.ALL})
 	@JoinColumn(name="project_id")
-	private User project;
+	private AppUser project;
 	
 	@ManyToOne(cascade={CascadeType.ALL})
 	@JoinColumn(name="label_id")

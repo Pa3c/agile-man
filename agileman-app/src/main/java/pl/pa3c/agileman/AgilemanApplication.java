@@ -1,5 +1,6 @@
 package pl.pa3c.agileman;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -39,5 +40,10 @@ public class AgilemanApplication {
 		Properties properties = new Properties();
 		properties.put("version","unavailable");
 		return new BuildProperties(properties);
+	}
+	
+	@Bean
+	public ModelMapper modelMapper() {
+		return new ModelMapper();
 	}
 }
