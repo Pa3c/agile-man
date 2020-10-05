@@ -1,0 +1,12 @@
+databaseChangeLog:
+- changeSet:
+    id: step_to_step
+    author: patryk.klos
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: overstep_id
+        baseTableName: step
+        constraintName: step_to_step
+        referencedColumnNames: id
+        referencedTableName: step
+        validate: true

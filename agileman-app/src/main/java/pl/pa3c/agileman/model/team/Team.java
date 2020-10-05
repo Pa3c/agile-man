@@ -13,4 +13,5 @@ import pl.pa3c.agileman.model.BaseEntity;
 @EqualsAndHashCode(callSuper = false)
 public class Team extends BaseEntity<Long>{
 	private String description; 
+	private String title;
 }

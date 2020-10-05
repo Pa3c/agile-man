@@ -1,0 +1,19 @@
+databaseChangeLog:
+- changeSet:
+    id: team_in_project
+    author: patryk.klos
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: team_id
+        baseTableName: team_in_project
+        constraintName: team_in_project_team
+        referencedColumnNames: id
+        referencedTableName: team
+        validate: true
+    - addForeignKeyConstraint:
+        baseColumnNames: project_id
+        baseTableName: team_in_project
+        constraintName: team_in_project_project
+        referencedColumnNames: id
+        referencedTableName: project
+        validate: true

@@ -1,0 +1,12 @@
+databaseChangeLog:
+- changeSet:
+    id: step_to_task
+    author: patryk.klos
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: task_id
+        baseTableName: step
+        constraintName: step_to_task
+        referencedColumnNames: id
+        referencedTableName: task
+        validate: true

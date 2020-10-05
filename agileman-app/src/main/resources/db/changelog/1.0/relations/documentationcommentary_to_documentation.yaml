@@ -1,0 +1,12 @@
+databaseChangeLog:
+- changeSet:
+    id: documentationcommentary_to_documentation
+    author: patryk.klos
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: documentation_id
+        baseTableName: documentation_commentary
+        constraintName: documentationcommentary_to_documentation
+        referencedColumnNames: id
+        referencedTableName: documentation
+        validate: true

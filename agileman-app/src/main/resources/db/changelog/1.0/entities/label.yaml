@@ -1,10 +1,10 @@
 databaseChangeLog:
 - changeSet:
-    id: task_of_user_entity_creation
+    id: label_entity_creation
     author: patryk.klos
     changes:
     - createTable:
-        tableName: task_of_user
+        tableName: label
         columns:
         - column:
             name: id
@@ -13,17 +13,12 @@ databaseChangeLog:
               primaryKey: true
               nullable: false
         - column:
+            name: name
+            type: varchar(20)
+            constraints:
+              nullable: false
+        - column:
             name: type
-            type: varchar(10)
+            type: varchar(20)
             constraints:
               nullable: false
-        - column:
-            name: task_id
-            type: bigint
-            constraints:
-              nullable: false
-        - column:
-            name: user_id
-            type: varchar(50)
-            constraints:
-              nullable: false              

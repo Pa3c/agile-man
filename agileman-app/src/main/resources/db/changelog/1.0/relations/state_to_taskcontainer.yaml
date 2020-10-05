@@ -1,0 +1,12 @@
+databaseChangeLog:
+- changeSet:
+    id: state_to_taskcontainer
+    author: patryk.klos
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: task_container_id
+        baseTableName: state
+        constraintName: state_to_taskcontainer
+        referencedColumnNames: id
+        referencedTableName: task_container
+        validate: true

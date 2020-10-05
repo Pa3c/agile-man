@@ -1,0 +1,12 @@
+databaseChangeLog:
+- changeSet:
+    id: userlog_to_user
+    author: patryk.klos
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: user_id
+        baseTableName: user_log
+        constraintName: userlog_to_user
+        referencedColumnNames: id
+        referencedTableName: user
+        validate: true

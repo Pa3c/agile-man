@@ -1,0 +1,12 @@
+databaseChangeLog:
+- changeSet:
+    id: taskcommentary_to_task
+    author: patryk.klos
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: task_id
+        baseTableName: task_commentary
+        constraintName: taskcommentary_to_task
+        referencedColumnNames: id
+        referencedTableName: task
+        validate: true

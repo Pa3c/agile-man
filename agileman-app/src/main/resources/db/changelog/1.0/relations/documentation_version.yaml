@@ -1,0 +1,19 @@
+databaseChangeLog:
+- changeSet:
+    id: documentation_version
+    author: patryk.klos
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: documentation_id
+        baseTableName: documentation_version
+        constraintName: documentation_version_documentation
+        referencedColumnNames: id
+        referencedTableName: documentation
+        validate: true
+    - addForeignKeyConstraint:
+        baseColumnNames: project_id
+        baseTableName: documentation_version
+        constraintName: documentation_version_project
+        referencedColumnNames: id
+        referencedTableName: project
+        validate: true
