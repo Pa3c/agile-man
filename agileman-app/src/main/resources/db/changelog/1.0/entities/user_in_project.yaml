@@ -1,10 +1,10 @@
 databaseChangeLog:
 - changeSet:
-    id: user_in_team_entity_creation
+    id: user_in_project_entity_creation
     author: patryk.klos
     changes:
     - createTable:
-        tableName: user_in_team
+        tableName: user_in_project
         columns:
         - column:
             name: id
@@ -13,7 +13,7 @@ databaseChangeLog:
               primaryKey: true
               nullable: false
         - column:
-            name: team_id
+            name: team_in_project_id
             type: bigint
             constraints:
               nullable: false

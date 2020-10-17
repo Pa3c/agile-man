@@ -9,13 +9,13 @@ import javax.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import pl.pa3c.agileman.model.IdEntity;
-import pl.pa3c.agileman.model.team.Team;
+import pl.pa3c.agileman.model.team.TeamInProject;
 
 @Entity
 @Table
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class UserInTeam extends IdEntity<Long>{
+public class UserInProject extends IdEntity<Long>{
 
 	
 	@ManyToOne(cascade={CascadeType.ALL})
@@ -23,6 +23,6 @@ public class UserInTeam extends IdEntity<Long>{
 	private AppUser user;
 	
 	@ManyToOne(cascade={CascadeType.ALL})
-	@JoinColumn(name="team_id")
-	private Team team;
+	@JoinColumn(name="team_in_project_id")
+	private TeamInProject teamInProject;
 }

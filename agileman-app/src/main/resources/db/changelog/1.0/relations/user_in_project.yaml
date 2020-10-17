@@ -1,19 +1,19 @@
 databaseChangeLog:
 - changeSet:
-    id: user_in_team
+    id: user_in_project
     author: patryk.klos
     changes:
     - addForeignKeyConstraint:
-        baseColumnNames: team_id
-        baseTableName: user_in_team
-        constraintName: user_in_team_team
+        baseColumnNames: team_in_project_id
+        baseTableName: user_in_project
+        constraintName: user_in_project_team_in_project
         referencedColumnNames: id
-        referencedTableName: team
+        referencedTableName: team_in_project
         validate: true
     - addForeignKeyConstraint:
         baseColumnNames: user_id
-        baseTableName: user_in_team
-        constraintName: user_in_team_user
+        baseTableName: user_in_project
+        constraintName: user_in_project_user
         referencedColumnNames: id
         referencedTableName: app_user
         validate: true
