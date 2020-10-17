@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata: 
+ name: agileman-backend
+ labels:
+  app: agileman
+  type: backend
+
+#(rq)
+spec: # ustawienia dla obiektu dla kubernetesa. TO jest inne dla kazdego obiektu (poda,namepsacea czy replicaSetu) (tutaj jest dla poda)
+ containers:
+  - name: agileman-backend
+    image: agileman-backend
+    imagePullPolicy: Never

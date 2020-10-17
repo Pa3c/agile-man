@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+ name: agileman-backend-dp
+ labels:
+  app: agileman-backend-dp
+  type: backend-dp
+
+#(rq)
+spec: # ustawienia dla obiektu dla kubernetesa. TO jest inne dla kazdego obiektu (poda,namepsacea czy replicaSetu) (tutaj jest dla replication controllera)
+ template: # tutaj jest pod definition dla ktorego ten rc jest ustawiany
+    metadata: 
+     name: agileman-backend
+     labels:
+      app: agileman
+      type: backend
+    
+    #(rq)
+    spec: # ustawienia dla obiektu dla kubernetesa. TO jest inne dla kazdego obiektu (poda,namepsacea czy replicaSetu) (tutaj jest dla poda)
+     containers:
+      - name: agileman-backend
+        image: agileman-backend
+        imagePullPolicy: Never
+ replicas: 3
+ selector:
+    matchLabels:
+        type: backend
