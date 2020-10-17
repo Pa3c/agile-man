@@ -1,0 +1,14 @@
+databaseChangeLog:
+- changeSet:
+    id: role_entity_creation
+    author: patryk.klos
+    changes:
+    - createTable:
+        tableName: role
+        columns:
+        - column:
+            name: id
+            type: varchar(255)
+            constraints:
+              primaryKey: true
+              nullable: false

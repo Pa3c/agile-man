@@ -1,6 +1,6 @@
 databaseChangeLog:
 - changeSet:
-    id: project_entity_creation
+    id: team_entity_creation
     author: patryk.klos
     changes:
     - createTable:

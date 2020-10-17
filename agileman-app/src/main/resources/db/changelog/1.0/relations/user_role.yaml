@@ -1,0 +1,19 @@
+databaseChangeLog:
+- changeSet:
+    id: user_role
+    author: patryk.klos
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: login
+        baseTableName: user_role
+        constraintName: user_role_login
+        referencedColumnNames: id
+        referencedTableName: app_user
+        validate: true
+    - addForeignKeyConstraint:
+        baseColumnNames: role
+        baseTableName: user_role
+        constraintName: user_role_role
+        referencedColumnNames: id
+        referencedTableName: role
+        validate: true
