@@ -38,7 +38,7 @@ public interface BaseCrudInterface<T, ID> {
 	@PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	T update(@PathVariable(name = "id") ID id, @RequestBody T entitySO);
 	
-	@ApiOperation(value = "Delete a League.")
+	@ApiOperation(value = "Delete an entity.")
 	@DeleteMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(code = HttpStatus.ACCEPTED)
 	void delete(@PathVariable(name = "id") ID id);
