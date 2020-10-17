@@ -11,21 +11,21 @@ import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import pl.pa3c.agileman.model.IdEntity;
-import pl.pa3c.agileman.model.user.AppUser;
+import pl.pa3c.agileman.model.user.UserInProject;
 
 @Entity
 @Table
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class TaskOfUser extends IdEntity<Long>{
+public class UserTaskInProjectTeam extends IdEntity<Long>{
 
 	@ManyToOne
 	@JoinColumn(name = "task_id")
 	private Task task;
 	
 	@ManyToOne
-	@JoinColumn(name = "user_id")
-	private AppUser user;
+	@JoinColumn(name = "user_in_project_id")
+	private UserInProject userInProject;
 	
 	@NotNull
 	@Enumerated(EnumType.STRING)

@@ -1,10 +1,10 @@
 databaseChangeLog:
 - changeSet:
-    id: task_of_user_entity_creation
+    id: user_task_in_project_team_entity_creation
     author: patryk.klos
     changes:
     - createTable:
-        tableName: task_of_user
+        tableName: user_task_in_project_team
         columns:
         - column:
             name: id
@@ -23,7 +23,7 @@ databaseChangeLog:
             constraints:
               nullable: false
         - column:
-            name: user_id
-            type: varchar(50)
+            name: user_in_project_id
+            type: bigint
             constraints:
               nullable: false              
