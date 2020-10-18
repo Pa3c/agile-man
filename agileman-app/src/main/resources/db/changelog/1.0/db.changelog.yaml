@@ -5,3 +5,5 @@ databaseChangeLog:
       path: db/changelog/1.0/relations
   - includeAll:
       path: db/changelog/1.0/constraints
+  - includeAll:
+      path: db/changelog/1.0/defaults

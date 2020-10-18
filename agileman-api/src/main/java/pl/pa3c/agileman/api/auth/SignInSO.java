@@ -1,5 +1,9 @@
 package pl.pa3c.agileman.api.auth;
 
-public class SignInSO {
+import lombok.Data;
 
+@Data
+public class SignInSO {
+	private String login;
+	private String password;
 }

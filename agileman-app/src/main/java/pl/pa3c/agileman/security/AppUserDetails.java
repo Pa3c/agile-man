@@ -1,4 +1,4 @@
-package pl.pa3c.agileman.model.auth;
+package pl.pa3c.agileman.security;
 
 import java.util.Collection;
 import java.util.stream.Collectors;

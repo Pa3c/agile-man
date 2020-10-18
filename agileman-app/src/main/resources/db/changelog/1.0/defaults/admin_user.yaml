@@ -1,0 +1,32 @@
+databaseChangeLog:
+- changeSet:  
+   id:  admin_role_insertion
+   author:  patryk.klos
+   changes:  
+    -  insert:  
+        columns:  
+        -  column:  
+            name:  id  
+            value: ADMIN
+        -  column:  
+            name:  password  
+            value: TO_CHANGE
+        -  column:  
+            name:  name  
+            value: Patryk
+        -  column:  
+            name:  email  
+            value: patryk.klos1997@gmail.com
+        -  column:  
+            name:  surname  
+            value: Klos
+        -  column:  
+            name:  phone_number  
+            value: 725922079
+        -  column:  
+            name:  version  
+            value: 0    
+        -  column:  
+            name:  birthday  
+            value: 1997-04-26'T'06:04:12                                                         
+        tableName:  app_user

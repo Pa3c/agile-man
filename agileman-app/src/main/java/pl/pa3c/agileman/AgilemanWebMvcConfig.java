@@ -21,8 +21,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @Configuration
 @EnableSwagger2
-@ComponentScan
-public class AgilemanWebMvcConfigurer implements WebMvcConfigurer {
+public class AgilemanWebMvcConfig implements WebMvcConfigurer {
 
 	@Bean
 	public Docket api() {
@@ -30,7 +29,7 @@ public class AgilemanWebMvcConfigurer implements WebMvcConfigurer {
 				.apis(RequestHandlerSelectors.basePackage(getClass().getPackageName())).paths(PathSelectors.any())
 				.build();
 	}
-	
+
 	@Bean
 	public LinkDiscoverers discoverers() {
 		List<LinkDiscoverer> plugins = new ArrayList<>();
@@ -43,5 +42,6 @@ public class AgilemanWebMvcConfigurer implements WebMvcConfigurer {
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		registry.addResourceHandler("/swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
 		registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
+		registry.addResourceHandler("/docs/**").addResourceLocations("classpath:/docs/");
 	}
 }
