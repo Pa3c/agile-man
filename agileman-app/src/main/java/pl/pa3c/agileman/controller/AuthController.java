@@ -5,9 +5,8 @@ import static org.springframework.http.HttpStatus.OK;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
-
 
 import pl.pa3c.agileman.api.auth.AuthSI;
 import pl.pa3c.agileman.api.auth.SignInSO;
@@ -20,6 +19,7 @@ import pl.pa3c.agileman.service.TokenService;
 import pl.pa3c.agileman.service.UserService;
 
 @RestController
+@CrossOrigin
 public class AuthController implements AuthSI {
 
 	@Autowired
@@ -31,7 +31,7 @@ public class AuthController implements AuthSI {
 	public ResponseEntity<?> signin(SignInSO signInSO) {
 			tokenService.authenticate(signInSO.getLogin(), signInSO.getPassword());
 	        AppUser loginUser = userService.findById(signInSO.getLogin());
-	        AppUserDetails details = new AppUserDetails(loginUser);
+	        AppUserDetails details = new AppUserDetails(loginUser,userService.findUserRoles(signInSO.getLogin()));
 	        HttpHeaders jwtHeader = getJwtHeader(details);
 	        return new ResponseEntity<>(loginUser, jwtHeader, OK);
 	}

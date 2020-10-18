@@ -18,6 +18,7 @@ import pl.pa3c.agileman.model.team.TeamInProject;
 public class UserInProject extends IdEntity<Long>{
 
 	
+	
 	@ManyToOne(cascade={CascadeType.ALL})
 	@JoinColumn(name="user_id")
 	private AppUser user;

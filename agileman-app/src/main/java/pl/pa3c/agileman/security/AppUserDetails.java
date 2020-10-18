@@ -1,6 +1,7 @@
 package pl.pa3c.agileman.security;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -13,6 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import pl.pa3c.agileman.model.user.AppUser;
+import pl.pa3c.agileman.model.user.UserRole;
 
 @Data
 @AllArgsConstructor
@@ -25,9 +27,9 @@ public class AppUserDetails implements UserDetails {
 	private String password;
 	private Collection<? extends GrantedAuthority> authorities;
 
-	public AppUserDetails(AppUser user) {
-		this.authorities = user.getRoles().stream()
-				.map(role -> new SimpleGrantedAuthority(role.getId())).collect(Collectors.toList());
+	public AppUserDetails(AppUser user, List<UserRole> roles) {
+		this.authorities = roles.stream().map(role -> new SimpleGrantedAuthority(role.getRole().getId()))
+				.collect(Collectors.toList());
 		this.username = user.getLogin();
 		this.email = user.getEmail();
 		this.password = user.getPassword();
