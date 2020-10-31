@@ -19,13 +19,13 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import pl.pa3c.agileman.filter.TokenAuthorizationFIlter;
+import pl.pa3c.agileman.filter.TokenAuthorizationFilter;
 import pl.pa3c.agileman.security.SecurityConstants;
+import pl.pa3c.agileman.service.UserService;
 
 @Configuration
 @EnableWebSecurity
@@ -34,9 +34,9 @@ import pl.pa3c.agileman.security.SecurityConstants;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
-	private UserDetailsService userDetailsService;
+	private UserService userDetailsService;
 	@Autowired
-	private TokenAuthorizationFIlter jwtAuthorizationFilter;
+	private TokenAuthorizationFilter jwtAuthorizationFilter;
 
 	@Bean
 	public BCryptPasswordEncoder passwordEncoder() {

@@ -22,7 +22,7 @@ import pl.pa3c.agileman.security.SecurityConstants;
 import pl.pa3c.agileman.service.TokenService;
 
 @Component
-public class TokenAuthorizationFIlter extends OncePerRequestFilter {
+public class TokenAuthorizationFilter extends OncePerRequestFilter {
 
 	@Autowired
 	private TokenService tokenService;
@@ -39,8 +39,8 @@ public class TokenAuthorizationFIlter extends OncePerRequestFilter {
                 return;
             }
             String token = authorizationHeader.substring(SecurityConstants.BEARER_HEADER.length());
-            String username = tokenService.getSubject(token);
-            if (tokenService.isTokenValid(username, token) && SecurityContextHolder.getContext().getAuthentication() == null) {
+            if (tokenService.validateJwtToken(token) && SecurityContextHolder.getContext().getAuthentication() == null) {
+            	String username = tokenService.getUserNameFromJwtToken(token);
                 List<GrantedAuthority> authorities = tokenService.getAuthorities(token);
                 Authentication authentication = tokenService.getAuthentication(username, authorities, request);
                 SecurityContextHolder.getContext().setAuthentication(authentication);

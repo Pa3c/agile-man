@@ -6,7 +6,7 @@ import static java.util.Arrays.stream;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.Base64;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,9 +22,14 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Service;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.interfaces.JWTVerifier;
-
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.extern.slf4j.Slf4j;
 import pl.pa3c.agileman.security.SecurityConstants;
 import pl.pa3c.agileman.security.UserCreds;
@@ -39,17 +44,18 @@ public class TokenService {
 	public String generateToken(UserCreds userCreds) {
 		final Instant currentTime = ZonedDateTime.now(ZoneId.systemDefault()).toInstant();
 		String[] claims = getUserClaims(userCreds);
-		return JWT.create().withIssuedAt(Date.from(currentTime))
-				.withIssuer("auth0")
-				.withSubject(userCreds.getUsername())
-				.withArrayClaim(SecurityConstants.AUTHORITIES, claims)
-				.withExpiresAt(Date.from(currentTime.plusSeconds(SecurityConstants.EXPIRATION_TIME)))
-				.sign(HMAC512(Base64.getEncoder().encode(SecurityConstants.SECRET.getBytes())));
+		return Jwts.builder()
+				.setSubject((userCreds.getUsername()))
+				.setIssuedAt(Date.from(currentTime))
+				.setExpiration(Date.from(currentTime.plusMillis(SecurityConstants.EXPIRATION_TIME)))
+				.signWith(SignatureAlgorithm.HS512, SecurityConstants.SECRET)
+				.claim(SecurityConstants.AUTHORITIES, claims)
+				.compact();
 	}
 
 	public List<GrantedAuthority> getAuthorities(String token) {
-		String[] claims = getTokenClaims(token);
-		return stream(claims).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+		List<String> claims = getTokenClaims(token);
+		return claims.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
 	}
 
 	public Authentication getAuthentication(String username, List<GrantedAuthority> authorities,
@@ -60,38 +66,40 @@ public class TokenService {
 		return userPasswordAuthToken;
 	}
 
-	public boolean isTokenValid(String username, String token) {
-		return !username.isEmpty() && !isTokenExpired(buildVerifier(), token);
-	}
-
-	private JWTVerifier buildVerifier() {
-		return JWT.require(HMAC512(SecurityConstants.SECRET)).withIssuer("auth0").build();
-	}
-
-	public String getSubject(String token) {
-		return buildVerifier().verify(token).getSubject();
-	}
-
-	private boolean isTokenExpired(JWTVerifier verifier, String token) {
-		Date expiration = verifier.verify(token).getExpiresAt();
-		return expiration.before(new Date());
-	}
-
-	public List<String> getAuthorities(UserCreds appUserDetails) {
-		return appUserDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority)
-				.collect(Collectors.toList());
-	}
-
 	private String[] getUserClaims(UserCreds user) {
 		return user.getAuthorities().stream().map(GrantedAuthority::getAuthority).toArray(size -> new String[size]);
 	}
 
-	private String[] getTokenClaims(String token) {
-		return buildVerifier().verify(token).getClaim(SecurityConstants.AUTHORITIES).asArray(String.class);
+	private List<String> getTokenClaims(String token) {
+		 Jws<Claims> claims = Jwts.parser().setSigningKey(SecurityConstants.SECRET).parseClaimsJws(token);
+		return claims.getBody().get(SecurityConstants.AUTHORITIES, List.class);
 	}
 	
     public void authenticate(String username, String password) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
     }
+    
+	public boolean validateJwtToken(String authToken) {
+		try {
+			Jwts.parser().setSigningKey(SecurityConstants.SECRET).parseClaimsJws(authToken);
+			return true;
+		} catch (SignatureException e) {
+			log.error("Invalid JWT signature: {}", e.getMessage());
+		} catch (MalformedJwtException e) {
+			log.error("Invalid JWT token: {}", e.getMessage());
+		} catch (ExpiredJwtException e) {
+			log.error("JWT token is expired: {}", e.getMessage());
+		} catch (UnsupportedJwtException e) {
+			log.error("JWT token is unsupported: {}", e.getMessage());
+		} catch (IllegalArgumentException e) {
+			log.error("JWT claims string is empty: {}", e.getMessage());
+		}
+
+		return false;
+	}
+
+	public String getUserNameFromJwtToken(String token) {
+		return Jwts.parser().setSigningKey(SecurityConstants.SECRET).parseClaimsJws(token).getBody().getSubject();
+	}
 
 }
