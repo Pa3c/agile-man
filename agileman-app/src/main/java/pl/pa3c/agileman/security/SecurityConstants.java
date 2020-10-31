@@ -3,8 +3,8 @@ package pl.pa3c.agileman.security;
 public final class SecurityConstants {
 	private SecurityConstants() {
 	}
-	public static final String SECRET = "my-default-secret";
-	public static final String TOKEN_HEADER = "Bearer";
+	public static final String SECRET = "[a-zA-Z0-9._]^+$Guidelines89797987forAlphabeticalArraNumeralsandOtherSymbo$";
+	public static final String BEARER_HEADER = "Bearer";
 	public static final String HTTP_OPTIONS = "OPTIONS";
 	public static final String AUTHORITIES = "Authorities";
 	public static final String JWT_TOKEN_HEADER = "Jwt-Token";	

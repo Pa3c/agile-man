@@ -1,7 +1,3 @@
-management:
-  security:
-    enabled: false
-
 server:
   port: 6969
 
@@ -30,11 +26,6 @@ spring:
       INDENT_OUTPUT: true
     #it makes json properties not return null values
     default-property-inclusion: NON_NULL
-
-#liquibase:
-#  change-log: classpath:db/changelog/db.changelog-master.yaml
-##use to return pretty format in html
-#
-#hateoas:
-#  #added to avoid using different formatting links
-#  use-hal-as-default-json-media-type: false
+  profiles: local
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-test.yaml

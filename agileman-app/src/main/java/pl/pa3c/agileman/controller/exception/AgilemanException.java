@@ -3,7 +3,7 @@ package pl.pa3c.agileman.controller.exception;
 import lombok.Getter;
 
 @Getter
-public abstract class AgilemanException extends RuntimeException {
+public class AgilemanException extends RuntimeException {
 
     public AgilemanException(String message) {
         super(message);

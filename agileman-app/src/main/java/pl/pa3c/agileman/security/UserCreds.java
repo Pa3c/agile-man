@@ -19,7 +19,7 @@ import pl.pa3c.agileman.model.user.UserRole;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AppUserDetails implements UserDetails {
+public class UserCreds implements UserDetails {
 
 	private String username;
 	private String email;
@@ -27,7 +27,7 @@ public class AppUserDetails implements UserDetails {
 	private String password;
 	private Collection<? extends GrantedAuthority> authorities;
 
-	public AppUserDetails(AppUser user, List<UserRole> roles) {
+	public UserCreds(AppUser user, List<UserRole> roles) {
 		this.authorities = roles.stream().map(role -> new SimpleGrantedAuthority(role.getRole().getId()))
 				.collect(Collectors.toList());
 		this.username = user.getLogin();

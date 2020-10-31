@@ -40,4 +40,9 @@ databaseChangeLog:
         - column:
             name: modified_by
             type: varchar(50)
+        - column:
+            name: team_in_project_id
+            type: int
+            
+            
              

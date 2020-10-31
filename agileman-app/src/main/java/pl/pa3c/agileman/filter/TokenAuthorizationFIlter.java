@@ -34,13 +34,13 @@ public class TokenAuthorizationFIlter extends OncePerRequestFilter {
             response.setStatus(OK.value());
         } else {
             String authorizationHeader = request.getHeader(AUTHORIZATION);
-            if (authorizationHeader == null || !authorizationHeader.startsWith(SecurityConstants.TOKEN_HEADER)) {
+            if (authorizationHeader == null || !authorizationHeader.startsWith(SecurityConstants.BEARER_HEADER)) {
                 filterChain.doFilter(request, response);
                 return;
             }
-            String token = authorizationHeader.substring(SecurityConstants.TOKEN_HEADER.length());
+            String token = authorizationHeader.substring(SecurityConstants.BEARER_HEADER.length());
             String username = tokenService.getSubject(token);
-            if (tokenService.validateToken(token) && SecurityContextHolder.getContext().getAuthentication() == null) {
+            if (tokenService.isTokenValid(username, token) && SecurityContextHolder.getContext().getAuthentication() == null) {
                 List<GrantedAuthority> authorities = tokenService.getAuthorities(token);
                 Authentication authentication = tokenService.getAuthentication(username, authorities, request);
                 SecurityContextHolder.getContext().setAuthentication(authentication);

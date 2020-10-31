@@ -13,15 +13,20 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import pl.pa3c.agileman.api.team.TeamSO;
 import pl.pa3c.agileman.controller.exception.ResourceAlreadyExistsException;
 import pl.pa3c.agileman.controller.exception.ResourceIsInUseException;
 import pl.pa3c.agileman.controller.exception.ResourceNotFoundException;
+import pl.pa3c.agileman.security.SpringSecurityAuditorAware;
 
 public abstract class CommonService<ID, T, V> {
 
 	@Autowired
 	protected ModelMapper modelMapper;
 	protected JpaRepository<V, ID> commonRepository;
+	
+	@Autowired
+	protected SpringSecurityAuditorAware securityAutditor;
 
 	private Class<T> classSo;
 	private Class<V> classEntity;
