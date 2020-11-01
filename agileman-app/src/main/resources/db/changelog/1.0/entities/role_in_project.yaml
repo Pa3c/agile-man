@@ -1,29 +1,24 @@
 databaseChangeLog:
 - changeSet:
-    id: team_in_project_entity_creation
+    id: role_in_project_entity_creation
     author: patryk.klos
     changes:
     - createTable:
-        tableName: team_in_project
+        tableName: role_in_project
         columns:
         - column:
             name: id
             type: bigint
             constraints:
               primaryKey: true
-              nullable: false
+              nullable: false          
         - column:
-            name: type
-            type: varchar(7)
-            constraints:
-              nullable: false               
-        - column:
-            name: team_id
+            name: user_in_project_id
             type: bigint
             constraints:
               nullable: false
         - column:
-            name: project_id
-            type: bigint
+            name: role
+            type: varchar(50)
             constraints:
-              nullable: false
+              nullable: false              

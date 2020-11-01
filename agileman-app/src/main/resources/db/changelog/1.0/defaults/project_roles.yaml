@@ -1,0 +1,35 @@
+databaseChangeLog:
+ - changeSet: 
+    id:  admin_role_insertion
+    author:  patryk.klos
+    changes: 
+    -  insert:  
+        columns:  
+        -  column:  
+            name:  id
+            value: DEV
+        tableName: project_role
+    -  insert:  
+        columns:  
+        -  column: 
+            name:  id
+            value: SCRUM_MASTER
+        tableName: project_role
+    -  insert:  
+        columns:  
+        -  column: 
+            name:  id
+            value: PRODUCT_OWNER
+        tableName: project_role
+    -  insert:  
+        columns:  
+        -  column: 
+            name:  id
+            value: TEAM_LEAD
+        tableName: project_role
+    -  insert:  
+        columns:  
+        -  column: 
+            name:  id
+            value: CUSTOMER
+        tableName: project_role

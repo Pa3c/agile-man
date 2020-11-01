@@ -1,6 +1,11 @@
 package pl.pa3c.agileman.service;
 
+
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -17,16 +22,20 @@ import pl.pa3c.agileman.api.auth.SignUpSO;
 import pl.pa3c.agileman.api.project.ProjectSO;
 import pl.pa3c.agileman.api.team.TeamSO;
 import pl.pa3c.agileman.api.user.UserSO;
-import pl.pa3c.agileman.controller.exception.AgilemanException;
-import pl.pa3c.agileman.model.team.TeamInProject;
+import pl.pa3c.agileman.api.user.UserTeamProjectSO;
+import pl.pa3c.agileman.api.user.UserTeamSO;
+import pl.pa3c.agileman.model.project.Project;
+import pl.pa3c.agileman.model.project.RoleInProject;
+import pl.pa3c.agileman.model.project.TeamInProject;
+import pl.pa3c.agileman.model.project.UserInProject;
+import pl.pa3c.agileman.model.team.Team;
 import pl.pa3c.agileman.model.user.AppUser;
-import pl.pa3c.agileman.model.user.UserInProject;
 import pl.pa3c.agileman.model.user.UserRole;
 import pl.pa3c.agileman.repository.RoleRepository;
 import pl.pa3c.agileman.repository.UserInProjectRepository;
 import pl.pa3c.agileman.repository.UserRoleRepository;
-import pl.pa3c.agileman.security.UserCreds;
 import pl.pa3c.agileman.security.SpringSecurityAuditorAware;
+import pl.pa3c.agileman.security.UserCreds;
 
 @Service
 @Transactional
@@ -71,18 +80,45 @@ public class UserService extends CommonService<String, UserSO, AppUser> implemen
 		return userRoleRepository.findByUserId(username);
 	}
 
-	public List<TeamSO> getTeamsOfUser(String login) {
+	public Collection<UserTeamSO> getTeamsOfUser(String login) {
+		final List<UserInProject> userInProjects = getUserInProjects(login);
 
-		return getTeamsInProject(login).map(x -> modelMapper.map(x.getTeam(), TeamSO.class))
-				.collect(Collectors.toList());
+		final Map<Long, UserTeamSO> teamsOfUser = new HashMap<>();
+		userInProjects.forEach(x -> {
+
+			final Project project = x.getTeamInProject().getProject();
+			final Team team = x.getTeamInProject().getTeam();
+			if (teamsOfUser.containsKey(team.getId())) {
+				teamsOfUser.get(team.getId()).getProjects().add(createProjectSO(project, x.getProjectRoles()));
+				return;
+			}
+			TeamSO teamSO = modelMapper.map(team, TeamSO.class);
+			UserTeamProjectSO userTeamProjectSO = createProjectSO(project, x.getProjectRoles());
+			UserTeamSO so = new UserTeamSO(teamSO, userTeamProjectSO);
+			teamsOfUser.put(team.getId(), so);
+		});
+
+		return teamsOfUser.values();
+	}
+
+	private UserTeamProjectSO createProjectSO(Project project, Set<RoleInProject> roles) {
+		if (project == null) {
+			return null;
+		}
+		UserTeamProjectSO projectSO = new UserTeamProjectSO();
+		projectSO.setId(project.getId());
+		projectSO.setName(project.getTitle());
+		projectSO.setRoles(roles.stream().map(x -> x.getRole().getId()).collect(Collectors.toSet()));
+		return projectSO;
 	}
 
 	public List<ProjectSO> getProjectsOfUser(String login) {
-		return getTeamsInProject(login).map(x -> modelMapper.map(x.getProject(), ProjectSO.class))
+		final List<UserInProject> userInProjects = getUserInProjects(login);
+		return getTeamsInProject(userInProjects).map(x -> modelMapper.map(x.getProject(), ProjectSO.class))
 				.collect(Collectors.toList());
 	}
 
-	public Stream<TeamInProject> getTeamsInProject(String login) {
+	public Stream<TeamInProject> getTeamsInProject(List<UserInProject> userInProjects) {
 //		String loginInToken = userAuditor.getCurrentAuditor()
 //				.orElseThrow(() -> new AgilemanException("Login in token not found"));
 //		
@@ -90,6 +126,10 @@ public class UserService extends CommonService<String, UserSO, AppUser> implemen
 //			throw new AgilemanException(login + " is not equal to login in token: " + loginInToken);
 //		}
 
-		return userInProjectRepository.findAllByUserId(login).stream().map(UserInProject::getTeamInProject);
+		return userInProjects.stream().map(UserInProject::getTeamInProject);
+	}
+
+	public List<UserInProject> getUserInProjects(String login) {
+		return userInProjectRepository.findByUserId(login);
 	}
 }

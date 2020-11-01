@@ -4,10 +4,10 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import pl.pa3c.agileman.model.user.UserInProject;
+import pl.pa3c.agileman.model.project.UserInProject;
 
 public interface UserInProjectRepository extends JpaRepository<UserInProject, Long>{
 
-	List<UserInProject> findAllByUserId(String login);
+	List<UserInProject> findByUserId(String login);
 
 }

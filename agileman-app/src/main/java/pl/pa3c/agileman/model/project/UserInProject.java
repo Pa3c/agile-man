@@ -1,13 +1,13 @@
-package pl.pa3c.agileman.model.team;
+package pl.pa3c.agileman.model.project;
+
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -18,18 +18,15 @@ import pl.pa3c.agileman.model.user.AppUser;
 @Table
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class TeamInProject extends IdEntity<Long>{
+public class UserInProject extends IdEntity<Long>{
+	@ManyToOne(cascade={CascadeType.ALL})
+	@JoinColumn(name="user_id")
+	private AppUser user;
 	
 	@ManyToOne(cascade={CascadeType.ALL})
-	@JoinColumn(name="project_id")
-	private AppUser project;
+	@JoinColumn(name="team_in_project_id")
+	private TeamInProject teamInProject;
 	
-	@ManyToOne(cascade={CascadeType.ALL})
-	@JoinColumn(name="team_id")
-	private Team team;
-	
-	@NotNull
-	@Enumerated(EnumType.STRING)
-	private Type type;
-	
+	@OneToMany(mappedBy = "userInProject")
+	private Set<RoleInProject> projectRoles;
 }

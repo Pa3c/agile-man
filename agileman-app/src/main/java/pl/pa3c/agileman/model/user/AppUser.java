@@ -30,4 +30,16 @@ public class AppUser extends BaseEntity<String> {
 	public void setLogin(String login){
 		this.id = login;
 	}
+	
+	@Override
+	public void setId(String id) {
+		// TODO Auto-generated method stub
+		super.setId(id);
+	}
+	
+	@Override
+	public String getId() {
+		// TODO Auto-generated method stub
+		return super.getId();
+	}
 }

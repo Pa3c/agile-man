@@ -1,5 +1,6 @@
-package pl.pa3c.agileman.model.task;
+package pl.pa3c.agileman.model.project;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -11,23 +12,24 @@ import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import pl.pa3c.agileman.model.IdEntity;
-import pl.pa3c.agileman.model.project.UserInProject;
+import pl.pa3c.agileman.model.team.Team;
 
 @Entity
 @Table
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class UserTaskInProjectTeam extends IdEntity<Long>{
-
-	@ManyToOne
-	@JoinColumn(name = "task_id")
-	private Task task;
+public class TeamInProject extends IdEntity<Long>{
 	
-	@ManyToOne
-	@JoinColumn(name = "user_in_project_id")
-	private UserInProject userInProject;
+	@ManyToOne(cascade={CascadeType.ALL})
+	@JoinColumn(name="project_id")
+	private Project project;
+	
+	@ManyToOne(cascade={CascadeType.ALL})
+	@JoinColumn(name="team_id")
+	private Team team;
 	
 	@NotNull
 	@Enumerated(EnumType.STRING)
-	private Type type;
+	private ProjectType type;
+	
 }

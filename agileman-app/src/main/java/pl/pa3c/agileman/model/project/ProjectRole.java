@@ -8,14 +8,11 @@ import javax.validation.constraints.NotNull;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import pl.pa3c.agileman.model.BaseEntity;
+import pl.pa3c.agileman.model.IdEntity;
 
 @Entity
 @Table
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class Project extends BaseEntity<Long>{
-	
-	private String title;
-	private String description;
+public class ProjectRole extends IdEntity<String>{
 }
