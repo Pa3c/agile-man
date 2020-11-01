@@ -62,13 +62,13 @@ public class UserService extends CommonService<String, UserSO, AppUser> implemen
 	}
 
 	public UserSO register(SignUpSO signUpSO) {
-		AppUser user = modelMapper.map(signUpSO, AppUser.class);
+		AppUser user = mapper.map(signUpSO, AppUser.class);
 		user.setPassword(passwordEncoder.encode(signUpSO.getPassword()));
 		user = commonRepository.save(user);
 		UserRole role = new UserRole(user, roleRepository.getOne("COMMON"));
 		role.setId(userRoleRepository.count() + 1);
 		userRoleRepository.save(role);
-		return modelMapper.map(commonRepository.getOne(user.getLogin()), UserSO.class);
+		return mapper.map(commonRepository.getOne(user.getLogin()), UserSO.class);
 	}
 
 	@Override
@@ -92,16 +92,15 @@ public class UserService extends CommonService<String, UserSO, AppUser> implemen
 				teamsOfUser.get(team.getId()).getProjects().add(createProjectSO(project, x.getProjectRoles()));
 				return;
 			}
-			TeamSO teamSO = modelMapper.map(team, TeamSO.class);
+			TeamSO teamSO = mapper.map(team, TeamSO.class);
 			UserTeamProjectSO userTeamProjectSO = createProjectSO(project, x.getProjectRoles());
-			UserTeamSO so = new UserTeamSO(teamSO, userTeamProjectSO);
-			teamsOfUser.put(team.getId(), so);
+			teamsOfUser.put(team.getId(), new UserTeamSO(teamSO, userTeamProjectSO));
 		});
 
 		return teamsOfUser.values();
 	}
 
-	private UserTeamProjectSO createProjectSO(Project project, Set<RoleInProject> roles) {
+	private UserTeamProjectSO createProjectSO(Project project, Collection<RoleInProject> roles) {
 		if (project == null) {
 			return null;
 		}
@@ -112,10 +111,10 @@ public class UserService extends CommonService<String, UserSO, AppUser> implemen
 		return projectSO;
 	}
 
-	public List<ProjectSO> getProjectsOfUser(String login) {
+	public Set<ProjectSO> getProjectsOfUser(String login) {
 		final List<UserInProject> userInProjects = getUserInProjects(login);
-		return getTeamsInProject(userInProjects).map(x -> modelMapper.map(x.getProject(), ProjectSO.class))
-				.collect(Collectors.toList());
+		return getTeamsInProject(userInProjects).map(x -> mapper.map(x.getProject(), ProjectSO.class))
+				.collect(Collectors.toSet());
 	}
 
 	public Stream<TeamInProject> getTeamsInProject(List<UserInProject> userInProjects) {

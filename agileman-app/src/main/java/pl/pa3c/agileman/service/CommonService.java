@@ -22,7 +22,7 @@ import pl.pa3c.agileman.security.SpringSecurityAuditorAware;
 public abstract class CommonService<ID, T, V> {
 
 	@Autowired
-	protected ModelMapper modelMapper;
+	protected ModelMapper mapper;
 	protected JpaRepository<V, ID> commonRepository;
 	
 	@Autowired
@@ -45,19 +45,19 @@ public abstract class CommonService<ID, T, V> {
 
 		return commonRepository //
 				.findAll().stream() //
-				.map(c -> modelMapper.map(c, classSo)) //
+				.map(c -> mapper.map(c, classSo)) //
 				.collect(Collectors.toList());
 	}
 
 	public T get(ID id) {
 		V byId = findById(id);
-		return modelMapper.map(byId, classSo);
+		return mapper.map(byId, classSo);
 	}
 
 	public T create(T entitySO) {
 		try {
-			final V entity = commonRepository.save(modelMapper.map(entitySO, classEntity));
-			return modelMapper.map(entity, classSo);
+			final V entity = commonRepository.save(mapper.map(entitySO, classEntity));
+			return mapper.map(entity, classSo);
 		} catch (DataIntegrityViolationException ex) {
 			throw new ResourceAlreadyExistsException();
 		}
@@ -66,8 +66,8 @@ public abstract class CommonService<ID, T, V> {
 	@Transactional
 	public T update(ID id, T entitySO) {
 		V entity = findById(id);
-		modelMapper.map(entitySO, entity);
-		return modelMapper.map(entity, classSo);
+		mapper.map(entitySO, entity);
+		return mapper.map(entity, classSo);
 	}
 
 	public V findById(ID id) {

@@ -1,7 +1,7 @@
 package pl.pa3c.agileman.controller;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -30,7 +30,7 @@ public class UserController extends CommonController<String, UserSO, AppUser> im
 	}
 
 	@Override
-	public List<ProjectSO> projectsOfUser(String login) {
+	public Set<ProjectSO> projectsOfUser(String login) {
 		return ((UserService) commonService).getProjectsOfUser(login);
 	}
 

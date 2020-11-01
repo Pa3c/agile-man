@@ -1,6 +1,6 @@
 package pl.pa3c.agileman.model.project;
 
-import java.util.Set;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -27,6 +27,7 @@ public class UserInProject extends IdEntity<Long>{
 	@JoinColumn(name="team_in_project_id")
 	private TeamInProject teamInProject;
 	
-	@OneToMany(mappedBy = "userInProject")
-	private Set<RoleInProject> projectRoles;
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(name = "user_in_project_id")
+	private List<RoleInProject> projectRoles;
 }

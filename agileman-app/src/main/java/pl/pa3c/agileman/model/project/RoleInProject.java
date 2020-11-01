@@ -18,10 +18,6 @@ import pl.pa3c.agileman.model.IdEntity;
 @NoArgsConstructor
 public class RoleInProject extends IdEntity<Long> {
 	@ManyToOne(cascade = { CascadeType.ALL })
-	@JoinColumn(name = "user_in_project_id")
-	private UserInProject userInProject;
-
-	@ManyToOne(cascade = { CascadeType.ALL })
 	@JoinColumn(name = "role")
 	private ProjectRole role;
 }

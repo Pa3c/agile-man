@@ -3,7 +3,7 @@ package pl.pa3c.agileman.api.user;
 import static pl.pa3c.agileman.api.user.UserSI.Constants.URL;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Set;
 
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,5 +31,5 @@ public interface UserSI {
 
 	@ApiOperation(value = "Return projects of user")
 	@GetMapping(path = "/{login}/project", produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<ProjectSO> projectsOfUser(@PathVariable String login);
+	public Set<ProjectSO> projectsOfUser(@PathVariable String login);
 }
