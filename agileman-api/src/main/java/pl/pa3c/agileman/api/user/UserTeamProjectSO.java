@@ -12,5 +12,5 @@ import pl.pa3c.agileman.api.IdSO;
 @NoArgsConstructor
 public class UserTeamProjectSO extends IdSO<Long> {
 	private Set<String> roles;
-	private String name;
+	private String title;
 }

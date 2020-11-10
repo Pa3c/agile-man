@@ -106,7 +106,7 @@ public class UserService extends CommonService<String, UserSO, AppUser> implemen
 		}
 		UserTeamProjectSO projectSO = new UserTeamProjectSO();
 		projectSO.setId(project.getId());
-		projectSO.setName(project.getTitle());
+		projectSO.setTitle(project.getTitle());
 		projectSO.setRoles(roles.stream().map(x -> x.getRole().getId()).collect(Collectors.toSet()));
 		return projectSO;
 	}
