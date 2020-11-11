@@ -1,6 +1,5 @@
 package pl.pa3c.agileman.service;
 
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -12,26 +11,34 @@ import java.util.stream.Stream;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import pl.pa3c.agileman.api.TitleNameSO;
 import pl.pa3c.agileman.api.auth.SignUpSO;
 import pl.pa3c.agileman.api.project.ProjectSO;
+import pl.pa3c.agileman.api.taskcontainer.TaskContainerSO;
 import pl.pa3c.agileman.api.team.TeamSO;
+import pl.pa3c.agileman.api.user.DetailedUserProjectSO;
 import pl.pa3c.agileman.api.user.UserSO;
 import pl.pa3c.agileman.api.user.UserTeamProjectSO;
 import pl.pa3c.agileman.api.user.UserTeamSO;
+import pl.pa3c.agileman.controller.exception.ResourceNotFoundException;
 import pl.pa3c.agileman.model.project.Project;
+import pl.pa3c.agileman.model.project.ProjectType;
 import pl.pa3c.agileman.model.project.RoleInProject;
 import pl.pa3c.agileman.model.project.TeamInProject;
 import pl.pa3c.agileman.model.project.UserInProject;
+import pl.pa3c.agileman.model.taskcontainer.TaskContainer;
 import pl.pa3c.agileman.model.team.Team;
 import pl.pa3c.agileman.model.user.AppUser;
 import pl.pa3c.agileman.model.user.UserRole;
 import pl.pa3c.agileman.repository.RoleRepository;
+import pl.pa3c.agileman.repository.TeamInProjectRepository;
 import pl.pa3c.agileman.repository.UserInProjectRepository;
 import pl.pa3c.agileman.repository.UserRoleRepository;
 import pl.pa3c.agileman.security.SpringSecurityAuditorAware;
@@ -49,6 +56,9 @@ public class UserService extends CommonService<String, UserSO, AppUser> implemen
 
 	@Autowired
 	private UserRoleRepository userRoleRepository;
+
+	@Autowired
+	private TeamInProjectRepository teamInProjectRepository;
 
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
@@ -100,35 +110,82 @@ public class UserService extends CommonService<String, UserSO, AppUser> implemen
 		return teamsOfUser.values();
 	}
 
-	private UserTeamProjectSO createProjectSO(Project project, Collection<RoleInProject> roles) {
-		if (project == null) {
-			return null;
-		}
-		UserTeamProjectSO projectSO = new UserTeamProjectSO();
-		projectSO.setId(project.getId());
-		projectSO.setTitle(project.getTitle());
-		projectSO.setRoles(roles.stream().map(x -> x.getRole().getId()).collect(Collectors.toSet()));
-		return projectSO;
-	}
-
 	public Set<ProjectSO> getProjectsOfUser(String login) {
 		final List<UserInProject> userInProjects = getUserInProjects(login);
 		return getTeamsInProject(userInProjects).map(x -> mapper.map(x.getProject(), ProjectSO.class))
 				.collect(Collectors.toSet());
 	}
 
-	public Stream<TeamInProject> getTeamsInProject(List<UserInProject> userInProjects) {
-//		String loginInToken = userAuditor.getCurrentAuditor()
-//				.orElseThrow(() -> new AgilemanException("Login in token not found"));
-//		
-//		if (!login.equals(loginInToken)) {
-//			throw new AgilemanException(login + " is not equal to login in token: " + loginInToken);
-//		}
-
+	private Stream<TeamInProject> getTeamsInProject(List<UserInProject> userInProjects) {
 		return userInProjects.stream().map(UserInProject::getTeamInProject);
 	}
 
-	public List<UserInProject> getUserInProjects(String login) {
+	private List<UserInProject> getUserInProjects(String login) {
 		return userInProjectRepository.findByUserId(login);
 	}
+
+	public List<TitleNameSO<Long>> getProjectTeamsOfUser(String login, Long id) {
+		final Set<UserInProject> userInProjects = userInProjectRepository
+				.findAllByUserIdAndTeamInProjectProjectId(login, id);
+
+		List<TitleNameSO<Long>> xx = userInProjects.stream().map(x -> {
+			Team t = x.getTeamInProject().getTeam();
+			TitleNameSO<Long> titleName = new TitleNameSO<>();
+			titleName.setId(id);
+			titleName.setTitle(t.getTitle());
+			return titleName;
+		}).collect(Collectors.toList());
+
+		return xx;
+	}
+
+	public DetailedUserProjectSO getProjectTeamOfUser(String login, Long projectId, Long teamId) {
+		final TeamInProject teamInProject = teamInProjectRepository.findByProjectIdAndTeamId(projectId, teamId)
+				.orElseThrow(() -> {
+					final short EXPECTED_SIZE = 1;
+					final String ERROR_MESSAGE = "project id " + projectId + " and team id " + teamId;
+					throw new ResourceNotFoundException(new EmptyResultDataAccessException(EXPECTED_SIZE),
+							ERROR_MESSAGE);
+				});
+
+		final UserInProject userInProject = userInProjectRepository
+				.findByUserIdAndTeamInProjectId(login, teamInProject.getId()).orElseThrow(() -> {
+					final short EXPECTED_SIZE = 1;
+					final String ERROR_MESSAGE = "login " + login + " and team in project id " + teamInProject.getId();
+					throw new ResourceNotFoundException(new EmptyResultDataAccessException(EXPECTED_SIZE),
+							ERROR_MESSAGE);
+				});
+
+		final Set<String> roles = userInProject.getProjectRoles().stream().map(x -> x.getRole().getId())
+				.collect(Collectors.toSet());
+		final String projectType = teamInProject.getType().name();
+
+		Stream<TaskContainer> streamForContainer = teamInProject.getTaskContainers().stream();
+		if (!projectType.equals(ProjectType.XP.name())) {
+			streamForContainer = streamForContainer.filter(x -> x.getOvercontainer() == null);
+		}
+
+		final Set<TaskContainerSO> taskContainers = streamForContainer.map(x -> mapper.map(x, TaskContainerSO.class))
+				.collect(Collectors.toSet());
+
+		final DetailedUserProjectSO detailedUserProject = mapper.map(teamInProject.getProject(),
+				DetailedUserProjectSO.class);
+		detailedUserProject.setRoles(roles);
+		detailedUserProject.setType(projectType);
+		detailedUserProject.setTaskContainers(taskContainers);
+
+		return detailedUserProject;
+	}
+
+	private UserTeamProjectSO createProjectSO(Project project, Collection<RoleInProject> roles) {
+		if (project == null) {
+			return null;
+		}
+		final UserTeamProjectSO projectSO = new UserTeamProjectSO();
+		projectSO.setId(project.getId());
+		projectSO.setTitle(project.getTitle());
+		projectSO.setRoles(roles.stream().map(x -> x.getRole().getId()).collect(Collectors.toSet()));
+		return projectSO;
+	}
+
 }

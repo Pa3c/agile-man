@@ -1,13 +1,16 @@
 package pl.pa3c.agileman.controller;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 
+import pl.pa3c.agileman.api.TitleNameSO;
 import pl.pa3c.agileman.api.project.ProjectSO;
+import pl.pa3c.agileman.api.user.DetailedUserProjectSO;
 import pl.pa3c.agileman.api.user.UserSI;
 import pl.pa3c.agileman.api.user.UserSO;
 import pl.pa3c.agileman.api.user.UserTeamSO;
@@ -32,6 +35,17 @@ public class UserController extends CommonController<String, UserSO, AppUser> im
 	@Override
 	public Set<ProjectSO> projectsOfUser(String login) {
 		return ((UserService) commonService).getProjectsOfUser(login);
+	}
+
+	@Override
+	public List<TitleNameSO<Long>> projectTeamsOfUser(String login, Long id) {
+		return ((UserService) commonService).getProjectTeamsOfUser(login, id);
+	}
+
+	@Override
+	public DetailedUserProjectSO projectTeamOfUser(String login, Long projectId, Long teamId) {
+		// TODO Auto-generated method stub
+		return ((UserService) commonService).getProjectTeamOfUser(login, projectId,teamId);
 	}
 
 }

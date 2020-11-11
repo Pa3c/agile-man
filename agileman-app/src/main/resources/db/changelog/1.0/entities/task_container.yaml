@@ -21,6 +21,12 @@ databaseChangeLog:
             name: type
             type: varchar(10)
         - column:
+            name: title
+            type: varchar(50)
+        - column:
+            name: closed
+            type: boolean            
+        - column:
             name: version
             type: int
             constraints:

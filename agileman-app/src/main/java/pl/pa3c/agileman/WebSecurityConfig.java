@@ -2,9 +2,9 @@ package pl.pa3c.agileman;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
-import java.util.Collections;
 import java.util.Properties;
 
+import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -22,12 +22,11 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import pl.pa3c.agileman.api.IdSO;
 import pl.pa3c.agileman.filter.TokenAuthorizationFilter;
+import pl.pa3c.agileman.model.IdEntity;
 import pl.pa3c.agileman.security.SecurityConstants;
 import pl.pa3c.agileman.service.UserService;
 
@@ -66,7 +65,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Bean
 	public ModelMapper modelMapper() {
-		return new ModelMapper();
+		ModelMapper mapper = new ModelMapper();
+		mapper.getConfiguration().setPropertyCondition(Conditions.isNotNull());
+		mapper.typeMap(IdEntity.class, IdSO.class).addMapping(IdEntity::getId, IdSO::setId);
+		return mapper;
 	}
 
 	@Override
