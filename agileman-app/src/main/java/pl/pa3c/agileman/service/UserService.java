@@ -38,6 +38,7 @@ import pl.pa3c.agileman.model.team.Team;
 import pl.pa3c.agileman.model.user.AppUser;
 import pl.pa3c.agileman.model.user.UserRole;
 import pl.pa3c.agileman.repository.RoleRepository;
+import pl.pa3c.agileman.repository.TaskContainerRepository;
 import pl.pa3c.agileman.repository.TeamInProjectRepository;
 import pl.pa3c.agileman.repository.UserInProjectRepository;
 import pl.pa3c.agileman.repository.UserRoleRepository;
@@ -60,6 +61,9 @@ public class UserService extends CommonService<String, UserSO, AppUser> implemen
 	@Autowired
 	private TeamInProjectRepository teamInProjectRepository;
 
+	@Autowired
+	private TaskContainerRepository taskContainerRepository;
+	
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
 
@@ -128,15 +132,14 @@ public class UserService extends CommonService<String, UserSO, AppUser> implemen
 		final Set<UserInProject> userInProjects = userInProjectRepository
 				.findAllByUserIdAndTeamInProjectProjectId(login, id);
 
-		List<TitleNameSO<Long>> xx = userInProjects.stream().map(x -> {
+		return userInProjects.stream().map(x -> {
 			Team t = x.getTeamInProject().getTeam();
 			TitleNameSO<Long> titleName = new TitleNameSO<>();
-			titleName.setId(id);
+			titleName.setId(t.getId());
 			titleName.setTitle(t.getTitle());
 			return titleName;
 		}).collect(Collectors.toList());
 
-		return xx;
 	}
 
 	public DetailedUserProjectSO getProjectTeamOfUser(String login, Long projectId, Long teamId) {
@@ -160,7 +163,7 @@ public class UserService extends CommonService<String, UserSO, AppUser> implemen
 				.collect(Collectors.toSet());
 		final String projectType = teamInProject.getType().name();
 
-		Stream<TaskContainer> streamForContainer = teamInProject.getTaskContainers().stream();
+		Stream<TaskContainer> streamForContainer = taskContainerRepository.findAllByTeamInProjectId(teamInProject.getId()).stream();
 		if (!projectType.equals(ProjectType.XP.name())) {
 			streamForContainer = streamForContainer.filter(x -> x.getOvercontainer() == null);
 		}

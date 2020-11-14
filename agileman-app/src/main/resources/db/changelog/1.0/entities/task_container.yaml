@@ -15,8 +15,6 @@ databaseChangeLog:
         - column:
             name: overcontainer_id
             type: bigint
-            constraints:
-              nullable: false
         - column:
             name: type
             type: varchar(10)
