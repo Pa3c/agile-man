@@ -7,7 +7,7 @@ import lombok.Data;
 import pl.pa3c.agileman.api.task.TaskSO;
 
 @Data
-public class TaskContainerContent extends TaskContainerSO {
+public class DetailedTaskContainerSO extends TaskContainerSO {
 	Set<StateSO> states;
 	List<TaskSO> tasks;
 }
