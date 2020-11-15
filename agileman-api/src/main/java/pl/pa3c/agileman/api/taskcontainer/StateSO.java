@@ -8,6 +8,6 @@ import pl.pa3c.agileman.api.IdSO;
 @Data
 @EqualsAndHashCode(callSuper = false)
 public class StateSO extends IdSO<Long>{
-	private String text;
+	private String name;
 	private Integer order;
 }

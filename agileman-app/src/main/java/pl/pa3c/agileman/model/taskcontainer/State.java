@@ -14,7 +14,7 @@ import pl.pa3c.agileman.model.IdEntity;
 @Data
 @EqualsAndHashCode(callSuper = false)
 public class State extends IdEntity<Long>{
-	private String text;
+	private String name;
 	private Integer order;
 	
 	@ManyToOne
