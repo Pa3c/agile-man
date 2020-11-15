@@ -1,6 +1,9 @@
 package pl.pa3c.agileman.service;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.TreeSet;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,8 +43,14 @@ public class TaskContainerService extends CommonService<Long, TaskContainerSO, T
 		final List<State> containerStates = stateRepository.findByTaskContainerId(taskContainerSO.getId());
 		final List<Task> containerTasks = taskRepository.findByTaskContainerId(taskContainerSO.getId());
 		
+		final Comparator<StateSO> byOrder = Comparator.comparingInt(StateSO::getOrder);
+		final Supplier<TreeSet<StateSO>> orderStates = () -> new TreeSet<>(byOrder);
+		
 		detailedTaskContainerSO.setTasks(containerTasks.stream().map(x->mapper.map(x, TaskSO.class)).collect(Collectors.toList()));
-		detailedTaskContainerSO.setStates(containerStates.stream().map(x->mapper.map(x, StateSO.class)).collect(Collectors.toSet()));
+		detailedTaskContainerSO
+		.setStates(containerStates.stream()
+				.map(x->mapper.map(x, StateSO.class))
+				.collect(Collectors.toCollection(orderStates)));
 		
 		return detailedTaskContainerSO;
 	}
