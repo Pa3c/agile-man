@@ -23,6 +23,6 @@ public class SpringSecurityAuditorAware implements AuditorAware<String> {
 			return Optional.of(ANONYMOUS_USER);
 		}
 
-		return Optional.of(((UserCreds) authentication.getPrincipal()).getUsername());
+		return Optional.of((String)authentication.getPrincipal());
 	}
 }

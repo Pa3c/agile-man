@@ -25,7 +25,7 @@ public interface BaseCrudInterface<T, ID> {
 	@ApiResponses(value = { @ApiResponse(code = 404, message = "Entity not found"),
 			@ApiResponse(code = 200, message = "Entity found") })
 	@GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	T get(@PathVariable(name = "id") ID id);
+	T get(@PathVariable(name = "id") ID id);	
 
 	@ApiOperation(value = "Creates an entity.")
 	@ApiResponses(value = { @ApiResponse(code = 409, message = "Resource already exists"),

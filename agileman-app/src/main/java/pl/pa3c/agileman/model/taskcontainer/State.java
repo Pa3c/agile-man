@@ -1,5 +1,6 @@
 package pl.pa3c.agileman.model.taskcontainer;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -15,6 +16,7 @@ import pl.pa3c.agileman.model.IdEntity;
 @EqualsAndHashCode(callSuper = false)
 public class State extends IdEntity<Long>{
 	private String name;
+	@Column(name="state_order")
 	private Integer order;
 	
 	@ManyToOne

@@ -25,8 +25,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import pl.pa3c.agileman.api.IdSO;
+import pl.pa3c.agileman.api.state.StateSO;
 import pl.pa3c.agileman.filter.TokenAuthorizationFilter;
 import pl.pa3c.agileman.model.IdEntity;
+import pl.pa3c.agileman.model.taskcontainer.State;
 import pl.pa3c.agileman.security.SecurityConstants;
 import pl.pa3c.agileman.service.UserService;
 
@@ -68,6 +70,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		ModelMapper mapper = new ModelMapper();
 		mapper.getConfiguration().setPropertyCondition(Conditions.isNotNull());
 		mapper.typeMap(IdEntity.class, IdSO.class).addMapping(IdEntity::getId, IdSO::setId);
+		mapper.typeMap(State.class, StateSO.class).addMapping(src->src.getTaskContainer().getId(), (dst,value)->{
+			dst.setTaskContainerId((Long) value);
+		});
 		return mapper;
 	}
 
