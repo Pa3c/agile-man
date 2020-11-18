@@ -5,20 +5,13 @@ import javax.persistence.Table;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import pl.pa3c.agileman.model.IdEntity;
+import pl.pa3c.agileman.model.base.StringIdEntity;
 
 @Entity
 @Table
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class Label extends IdEntity<String>{
+public class Label extends StringIdEntity{
 	private Type type;
-	
-	public String getName() {
-		return id;
-	}
-	
-	public void setName(String name) {
-		this.id = name;
-	}
+
 }

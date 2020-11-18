@@ -11,14 +11,14 @@ import javax.persistence.Table;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import pl.pa3c.agileman.model.IdEntity;
+import pl.pa3c.agileman.model.base.LongIdEntity;
 import pl.pa3c.agileman.model.user.AppUser;
 
 @Entity
 @Table
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class UserInProject extends IdEntity<Long>{
+public class UserInProject extends LongIdEntity{
 	@ManyToOne(cascade={CascadeType.ALL})
 	@JoinColumn(name="user_id")
 	private AppUser user;

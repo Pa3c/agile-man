@@ -8,14 +8,14 @@ import javax.persistence.Table;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import pl.pa3c.agileman.model.IdEntity;
+import pl.pa3c.agileman.model.base.LongIdEntity;
 import pl.pa3c.agileman.model.project.Project;
 
 @Entity
 @Table
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class DocumentationVersion extends IdEntity<Long>{
+public class DocumentationVersion extends LongIdEntity{
 	private Integer version;
 	
 	@ManyToOne(cascade={CascadeType.ALL})

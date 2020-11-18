@@ -5,10 +5,10 @@ import javax.persistence.Enumerated;
 import javax.persistence.MappedSuperclass;
 import javax.validation.constraints.NotNull;
 
-import pl.pa3c.agileman.model.BaseEntity;
+import pl.pa3c.agileman.model.base.BaseLongEntity;
 
 @MappedSuperclass
-public abstract class BaseCommentary extends BaseEntity<Long>{
+public abstract class BaseCommentary extends BaseLongEntity{
 	
 	protected String content;
 	

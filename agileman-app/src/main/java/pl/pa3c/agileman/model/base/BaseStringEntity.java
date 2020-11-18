@@ -1,4 +1,4 @@
-package pl.pa3c.agileman.model;
+package pl.pa3c.agileman.model.base;
 
 import java.time.LocalDateTime;
 
@@ -12,11 +12,14 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import lombok.Data;
 
+@Data
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public abstract class BaseEntity<T> extends IdEntity<T>{
+public class BaseStringEntity extends StringIdEntity{
 
+	
 	@Version
 	protected int version;
 	@CreatedDate

@@ -7,13 +7,13 @@ import javax.persistence.Table;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import pl.pa3c.agileman.model.IdEntity;
+import pl.pa3c.agileman.model.base.LongIdEntity;
 
 @Entity
 @Table
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class TaskRelation extends IdEntity<Long>{
+public class TaskRelation extends LongIdEntity{
 	
 	@ManyToOne
 	@JoinColumn(name = "related_task_id")

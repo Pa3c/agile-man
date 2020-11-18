@@ -5,12 +5,13 @@ import javax.persistence.Table;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import pl.pa3c.agileman.model.IdEntity;
+import pl.pa3c.agileman.model.base.IdEntity;
+import pl.pa3c.agileman.model.base.StringIdEntity;
 
 @Entity
 @Table
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class Role extends IdEntity<String>{
+public class Role extends StringIdEntity{
 	
 }

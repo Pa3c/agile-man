@@ -5,13 +5,13 @@ import javax.persistence.Table;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import pl.pa3c.agileman.model.BaseEntity;
+import pl.pa3c.agileman.model.base.BaseLongEntity;
 
 @Entity
 @Table
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class Team extends BaseEntity<Long>{
+public class Team extends BaseLongEntity{
 	private String description; 
 	private String title;
 }

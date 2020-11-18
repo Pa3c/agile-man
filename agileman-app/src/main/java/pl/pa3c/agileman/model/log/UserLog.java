@@ -7,14 +7,13 @@ import javax.persistence.Table;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import pl.pa3c.agileman.model.IdEntity;
 import pl.pa3c.agileman.model.user.AppUser;
 
 @Entity
 @Table
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class UserLog extends IdEntity<Long>{
+public class UserLog extends BaseLog{
 	@ManyToOne
 	@JoinColumn(name = "user_id")
 	private AppUser user;

@@ -10,14 +10,14 @@ import javax.validation.constraints.NotNull;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import pl.pa3c.agileman.model.IdEntity;
+import pl.pa3c.agileman.model.base.LongIdEntity;
 import pl.pa3c.agileman.model.project.UserInProject;
 
 @Entity
 @Table
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class UserTaskInProjectTeam extends IdEntity<Long>{
+public class UserTaskInProjectTeam extends LongIdEntity{
 
 	@ManyToOne
 	@JoinColumn(name = "task_id")

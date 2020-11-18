@@ -9,14 +9,15 @@ import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import pl.pa3c.agileman.model.IdEntity;
+import pl.pa3c.agileman.model.base.IdEntity;
+import pl.pa3c.agileman.model.base.LongIdEntity;
 
 @Entity
 @Table
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserRole extends IdEntity<Long>{
+public class UserRole extends LongIdEntity{
 	@ManyToOne(cascade = { CascadeType.ALL })
 	@JoinColumn(name = "login")
 	private AppUser user;

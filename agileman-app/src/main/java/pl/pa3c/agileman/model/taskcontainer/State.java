@@ -8,13 +8,13 @@ import javax.persistence.Table;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import pl.pa3c.agileman.model.IdEntity;
+import pl.pa3c.agileman.model.base.LongIdEntity;
 
 @Entity
 @Table
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class State extends IdEntity<Long>{
+public class State extends LongIdEntity{
 	private String name;
 	@Column(name="state_order")
 	private Integer order;
@@ -22,4 +22,5 @@ public class State extends IdEntity<Long>{
 	@ManyToOne
 	@JoinColumn(name = "task_container_id")
 	private TaskContainer taskContainer;
+
 }

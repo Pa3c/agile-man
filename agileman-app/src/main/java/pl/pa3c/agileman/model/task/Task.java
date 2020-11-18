@@ -9,14 +9,14 @@ import javax.persistence.Table;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import pl.pa3c.agileman.model.BaseEntity;
+import pl.pa3c.agileman.model.base.BaseLongEntity;
 import pl.pa3c.agileman.model.taskcontainer.TaskContainer;
 
 @Entity
 @Table
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class Task extends BaseEntity<Long>{
+public class Task extends BaseLongEntity{
 
 	private String title;
 	private String description;

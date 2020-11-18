@@ -7,13 +7,13 @@ import javax.persistence.Table;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import pl.pa3c.agileman.model.BaseEntity;
+import pl.pa3c.agileman.model.base.BaseStringEntity;
 
 @Entity
 @Table
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class AppUser extends BaseEntity<String> {
+public class AppUser extends BaseStringEntity{
 
 	private String name;
 	private String surname;
