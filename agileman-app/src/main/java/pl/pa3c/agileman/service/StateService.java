@@ -40,5 +40,15 @@ public class StateService extends CommonService<Long, StateSO, State>{
 		entitySO.forEach(x->updatedList.add(super.update(x.getId(), x)));
 		return updatedList;
 	}
+	
+	@Override
+	@Transactional
+	public void delete(Long id) {
+		final State state = commonRepository.getOne(id);
+		final Long containerId = state.getTaskContainer().getId();
+		taskRepostiory.deleteAllByTaskContainerIdAndState(containerId,state.getName());
+		super.delete(id);
+		
+	}
 
 }
