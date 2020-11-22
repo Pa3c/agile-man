@@ -1,6 +1,6 @@
 databaseChangeLog:
 - changeSet:  
-   id:  admin_role_insertion
+   id:  admin_user_insertion
    author:  patryk.klos
    changes:  
     -  insert:  

@@ -37,12 +37,12 @@ import pl.pa3c.agileman.model.taskcontainer.TaskContainer;
 import pl.pa3c.agileman.model.team.Team;
 import pl.pa3c.agileman.model.user.AppUser;
 import pl.pa3c.agileman.model.user.UserRole;
+import pl.pa3c.agileman.repository.RoleInProjectRepository;
 import pl.pa3c.agileman.repository.RoleRepository;
 import pl.pa3c.agileman.repository.TaskContainerRepository;
 import pl.pa3c.agileman.repository.TeamInProjectRepository;
 import pl.pa3c.agileman.repository.UserInProjectRepository;
 import pl.pa3c.agileman.repository.UserRoleRepository;
-import pl.pa3c.agileman.security.SpringSecurityAuditorAware;
 import pl.pa3c.agileman.security.UserCreds;
 
 @Service
@@ -54,6 +54,9 @@ public class UserService extends CommonService<String, UserSO, AppUser> implemen
 
 	@Autowired
 	private UserInProjectRepository userInProjectRepository;
+	
+	@Autowired
+	private RoleInProjectRepository roleInProjectRepository;
 
 	@Autowired
 	private UserRoleRepository userRoleRepository;
@@ -67,8 +70,6 @@ public class UserService extends CommonService<String, UserSO, AppUser> implemen
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
 
-	@Autowired
-	private SpringSecurityAuditorAware userAuditor;
 
 	@Autowired
 	public UserService(JpaRepository<AppUser, String> userRepository) {
@@ -103,11 +104,12 @@ public class UserService extends CommonService<String, UserSO, AppUser> implemen
 			final Project project = x.getTeamInProject().getProject();
 			final Team team = x.getTeamInProject().getTeam();
 			if (teamsOfUser.containsKey(team.getId())) {
-				teamsOfUser.get(team.getId()).getProjects().add(createProjectSO(project, x.getProjectRoles()));
+				
+				teamsOfUser.get(team.getId()).getProjects().add(createProjectSO(project, roleInProjectRepository.findAllByUserInProjectId(x.getId())));
 				return;
 			}
 			TeamSO teamSO = mapper.map(team, TeamSO.class);
-			UserTeamProjectSO userTeamProjectSO = createProjectSO(project, x.getProjectRoles());
+			UserTeamProjectSO userTeamProjectSO = createProjectSO(project, roleInProjectRepository.findAllByUserInProjectId(x.getId()));
 			teamsOfUser.put(team.getId(), new UserTeamSO(teamSO, userTeamProjectSO));
 		});
 
@@ -118,14 +120,6 @@ public class UserService extends CommonService<String, UserSO, AppUser> implemen
 		final List<UserInProject> userInProjects = getUserInProjects(login);
 		return getTeamsInProject(userInProjects).map(x -> mapper.map(x.getProject(), ProjectSO.class))
 				.collect(Collectors.toSet());
-	}
-
-	private Stream<TeamInProject> getTeamsInProject(List<UserInProject> userInProjects) {
-		return userInProjects.stream().map(UserInProject::getTeamInProject);
-	}
-
-	private List<UserInProject> getUserInProjects(String login) {
-		return userInProjectRepository.findByUserId(login);
 	}
 
 	public List<TitleNameSO<Long>> getProjectTeamsOfUser(String login, Long id) {
@@ -159,8 +153,8 @@ public class UserService extends CommonService<String, UserSO, AppUser> implemen
 							ERROR_MESSAGE);
 				});
 
-		final Set<String> roles = userInProject.getProjectRoles().stream().map(x -> x.getRole().getId())
-				.collect(Collectors.toSet());
+		final Set<String> roles = roleInProjectRepository
+				.findAllByUserInProjectId(userInProject.getId()).stream().map(x->x.getRole().getId()).collect(Collectors.toSet());
 		final String projectType = teamInProject.getType().name();
 
 		Stream<TaskContainer> streamForContainer = taskContainerRepository.findAllByTeamInProjectId(teamInProject.getId()).stream();
@@ -178,6 +172,14 @@ public class UserService extends CommonService<String, UserSO, AppUser> implemen
 		detailedUserProject.setTaskContainers(taskContainers);
 
 		return detailedUserProject;
+	}
+	
+	private Stream<TeamInProject> getTeamsInProject(List<UserInProject> userInProjects) {
+		return userInProjects.stream().map(UserInProject::getTeamInProject);
+	}
+
+	private List<UserInProject> getUserInProjects(String login) {
+		return userInProjectRepository.findByUserId(login);
 	}
 
 	private UserTeamProjectSO createProjectSO(Project project, Collection<RoleInProject> roles) {

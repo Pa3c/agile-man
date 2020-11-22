@@ -7,6 +7,7 @@ import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
 
+import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -27,7 +28,7 @@ public abstract class BaseLongEntity extends LongIdEntity{
 	protected LocalDateTime creationDate;
 	@LastModifiedDate
 	protected LocalDateTime modificationDate;
-	@CreatedDate
+	@CreatedBy
 	protected String createdBy;
 	@LastModifiedBy
 	protected String modifiedBy;

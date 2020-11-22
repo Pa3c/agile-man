@@ -8,6 +8,7 @@ import pl.pa3c.agileman.api.project.ProjectSI;
 import pl.pa3c.agileman.api.project.ProjectSO;
 import pl.pa3c.agileman.model.project.Project;
 import pl.pa3c.agileman.service.CommonService;
+import pl.pa3c.agileman.service.ProjectService;
 
 @RestController
 @CrossOrigin
@@ -18,4 +19,8 @@ public class ProjectController extends CommonController<Long, ProjectSO, Project
 		super(commonService);
 	}
 
+	@Override
+	public void addTeamToProject(Long projectId, Long teamId, String type) {
+		((ProjectService)commonService).addTeamToProject(projectId, teamId,type);
+	}
 }

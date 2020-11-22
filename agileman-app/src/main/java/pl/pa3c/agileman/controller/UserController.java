@@ -44,7 +44,6 @@ public class UserController extends CommonController<String, UserSO, AppUser> im
 
 	@Override
 	public DetailedUserProjectSO projectTeamOfUser(String login, Long projectId, Long teamId) {
-		// TODO Auto-generated method stub
 		return ((UserService) commonService).getProjectTeamOfUser(login, projectId,teamId);
 	}
 

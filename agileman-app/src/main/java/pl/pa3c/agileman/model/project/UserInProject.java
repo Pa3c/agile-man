@@ -23,11 +23,7 @@ public class UserInProject extends LongIdEntity{
 	@JoinColumn(name="user_id")
 	private AppUser user;
 	
-	@ManyToOne(cascade={CascadeType.ALL})
+	@ManyToOne
 	@JoinColumn(name="team_in_project_id")
 	private TeamInProject teamInProject;
-	
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name = "user_in_project_id")
-	private List<RoleInProject> projectRoles;
 }
