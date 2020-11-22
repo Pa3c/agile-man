@@ -1,6 +1,7 @@
 package pl.pa3c.agileman.service;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import com.google.common.collect.Lists;
 
 import pl.pa3c.agileman.api.TitleNameSO;
 import pl.pa3c.agileman.api.auth.SignUpSO;
@@ -103,13 +106,24 @@ public class UserService extends CommonService<String, UserSO, AppUser> implemen
 
 			final Project project = x.getTeamInProject().getProject();
 			final Team team = x.getTeamInProject().getTeam();
+			
+			if(project.getId() == ProjectService.NO_PROJECT_ID) {
+				if(teamsOfUser.containsKey(team.getId())){
+					return;
+				}
+				final UserTeamProjectSO[] NO_PROJECTS = {};
+				teamsOfUser.put(team.getId(), new UserTeamSO(mapper.map(team, TeamSO.class),NO_PROJECTS));
+				return;
+			}
+			
 			if (teamsOfUser.containsKey(team.getId())) {
 				
 				teamsOfUser.get(team.getId()).getProjects().add(createProjectSO(project, roleInProjectRepository.findAllByUserInProjectId(x.getId())));
 				return;
 			}
-			TeamSO teamSO = mapper.map(team, TeamSO.class);
-			UserTeamProjectSO userTeamProjectSO = createProjectSO(project, roleInProjectRepository.findAllByUserInProjectId(x.getId()));
+			final TeamSO teamSO = mapper.map(team, TeamSO.class);
+			final List<RoleInProject> roles = Collections.emptyList();
+			final UserTeamProjectSO userTeamProjectSO = createProjectSO(project,roleInProjectRepository.findAllByUserInProjectId(x.getId()));
 			teamsOfUser.put(team.getId(), new UserTeamSO(teamSO, userTeamProjectSO));
 		});
 
@@ -118,7 +132,7 @@ public class UserService extends CommonService<String, UserSO, AppUser> implemen
 
 	public Set<ProjectSO> getProjectsOfUser(String login) {
 		final List<UserInProject> userInProjects = getUserInProjects(login);
-		return getTeamsInProject(userInProjects).map(x -> mapper.map(x.getProject(), ProjectSO.class))
+		return getTeamsInProject(userInProjects).filter(x->x.getProject().getId()>ProjectService.NO_PROJECT_ID).map(x -> mapper.map(x.getProject(), ProjectSO.class))
 				.collect(Collectors.toSet());
 	}
 

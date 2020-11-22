@@ -21,9 +21,10 @@ public class TeamController extends CommonController<Long, TeamSO, Team> impleme
 	}
 
 	@Override
-	public TeamWithUsersSO addUserToTeam(Long id, String login) {
+	public TeamWithUsersSO createTeamWithUsers(TeamWithUsersSO teamWithUsersSO) {
 		
-		return ((TeamService)commonService).addUserToTeam(id,login);
+		return ((TeamService)commonService).createTeamWithUsers(teamWithUsersSO);
 	}
-
+	
 }
+

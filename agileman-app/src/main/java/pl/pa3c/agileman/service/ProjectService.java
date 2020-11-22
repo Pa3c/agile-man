@@ -25,6 +25,7 @@ import pl.pa3c.agileman.repository.UserInProjectRepository;
 
 @Service
 public class ProjectService extends CommonService<Long, ProjectSO, Project> {
+	public static final long NO_PROJECT_ID = -1;
 
 	@Autowired
 	private UserInProjectRepository userInProjectRepository;

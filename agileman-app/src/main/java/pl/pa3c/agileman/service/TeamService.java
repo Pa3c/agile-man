@@ -12,13 +12,16 @@ import org.springframework.stereotype.Service;
 import pl.pa3c.agileman.api.team.TeamSO;
 import pl.pa3c.agileman.api.team.TeamWithUsersSO;
 import pl.pa3c.agileman.api.user.UserSO;
+import pl.pa3c.agileman.model.project.ProjectType;
 import pl.pa3c.agileman.model.project.RoleInProject;
 import pl.pa3c.agileman.model.project.TeamInProject;
 import pl.pa3c.agileman.model.project.UserInProject;
 import pl.pa3c.agileman.model.team.Team;
 import pl.pa3c.agileman.model.user.AppUser;
+import pl.pa3c.agileman.repository.ProjectRepository;
 import pl.pa3c.agileman.repository.ProjectRoleRepository;
 import pl.pa3c.agileman.repository.RoleInProjectRepository;
+import pl.pa3c.agileman.repository.TeamInProjectRepository;
 import pl.pa3c.agileman.repository.UserInProjectRepository;
 import pl.pa3c.agileman.repository.UserRepository;
 
@@ -35,7 +38,13 @@ public class TeamService extends CommonService<Long, TeamSO, Team> {
 	private ProjectRoleRepository projectRoleRepository;
 
 	@Autowired
+	private ProjectRepository projectRepository;
+
+	@Autowired
 	private RoleInProjectRepository roleInProjectRepository;
+
+	@Autowired
+	private TeamInProjectRepository teamInProjectRepository;
 
 	@Autowired
 	public TeamService(JpaRepository<Team, Long> teamRepository) {
@@ -59,6 +68,9 @@ public class TeamService extends CommonService<Long, TeamSO, Team> {
 			roleInProject.setRole(projectRoleRepository.getOne(basic));
 		}
 
+		if (teamInProjects.size() == 0) {
+
+		}
 		teamInProjects.forEach(x -> {
 			final UserInProject uip = new UserInProject();
 			uip.setUser(user);
@@ -78,6 +90,26 @@ public class TeamService extends CommonService<Long, TeamSO, Team> {
 	private Set<AppUser> usersFromProjects(long teamId) {
 		return userInProjectRepository.findDistinctByTeamInProjectTeamId(teamId).stream().map(UserInProject::getUser)
 				.collect(Collectors.toSet());
+	}
+
+	@Transactional
+	public TeamWithUsersSO createTeamWithUsers(TeamWithUsersSO teamWithUsersSO) {
+		TeamSO createdTeam = super.create(teamWithUsersSO);
+
+		final TeamInProject teamInProject = new TeamInProject();
+		teamInProject.setProject(projectRepository.getOne(ProjectService.NO_PROJECT_ID));
+		teamInProject.setTeam(commonRepository.getOne(createdTeam.getId()));
+		teamInProject.setType(ProjectType.BASIC_TEAM);
+		final TeamInProject savedTiP = teamInProjectRepository.save(teamInProject);
+
+		teamWithUsersSO.getUsers().forEach(x -> {
+			UserInProject userInProject = new UserInProject();
+			userInProject.setTeamInProject(savedTiP);
+			userInProject.setUser(userRepository.getOne(x.getId()));
+			userInProjectRepository.save(userInProject);
+		});
+
+		return teamWithUsersSO;
 	}
 
 }

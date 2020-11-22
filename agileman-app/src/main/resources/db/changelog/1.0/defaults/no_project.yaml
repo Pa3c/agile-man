@@ -1,0 +1,20 @@
+databaseChangeLog:
+ - changeSet: 
+    id:  project_roles_insertion
+    author:  patryk.klos
+    changes: 
+    -  insert:  
+        columns:  
+        -  column:  
+            name:  id
+            value: -1        
+        -  column:  
+            name:  title
+            value: 'NONE'
+        -  column:  
+            name:  description
+            value: 'NO PROJECT'         
+        -  column:  
+            name:  version
+            value: 0            
+        tableName: project
