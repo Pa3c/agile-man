@@ -6,8 +6,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import pl.pa3c.agileman.api.team.TeamSI;
 import pl.pa3c.agileman.api.team.TeamSO;
+import pl.pa3c.agileman.api.team.TeamWithUsersSO;
 import pl.pa3c.agileman.model.team.Team;
 import pl.pa3c.agileman.service.CommonService;
+import pl.pa3c.agileman.service.TeamService;
 
 @RestController
 @CrossOrigin
@@ -16,6 +18,12 @@ public class TeamController extends CommonController<Long, TeamSO, Team> impleme
 	@Autowired
 	public TeamController(CommonService<Long, TeamSO, Team> commonService) {
 		super(commonService);
+	}
+
+	@Override
+	public TeamWithUsersSO addUserToTeam(Long id, String login) {
+		
+		return ((TeamService)commonService).addUserToTeam(id,login);
 	}
 
 }
