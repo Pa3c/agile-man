@@ -1,7 +1,6 @@
 package pl.pa3c.agileman.service;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,8 +18,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.google.common.collect.Lists;
-
 import pl.pa3c.agileman.api.TitleNameSO;
 import pl.pa3c.agileman.api.auth.SignUpSO;
 import pl.pa3c.agileman.api.project.ProjectSO;
@@ -31,6 +28,7 @@ import pl.pa3c.agileman.api.user.UserSO;
 import pl.pa3c.agileman.api.user.UserTeamProjectSO;
 import pl.pa3c.agileman.api.user.UserTeamSO;
 import pl.pa3c.agileman.controller.exception.ResourceNotFoundException;
+import pl.pa3c.agileman.model.base.LongIdEntity;
 import pl.pa3c.agileman.model.project.Project;
 import pl.pa3c.agileman.model.project.ProjectType;
 import pl.pa3c.agileman.model.project.RoleInProject;
@@ -40,6 +38,7 @@ import pl.pa3c.agileman.model.taskcontainer.TaskContainer;
 import pl.pa3c.agileman.model.team.Team;
 import pl.pa3c.agileman.model.user.AppUser;
 import pl.pa3c.agileman.model.user.UserRole;
+import pl.pa3c.agileman.repository.ProjectRepository;
 import pl.pa3c.agileman.repository.RoleInProjectRepository;
 import pl.pa3c.agileman.repository.RoleRepository;
 import pl.pa3c.agileman.repository.TaskContainerRepository;
@@ -57,7 +56,7 @@ public class UserService extends CommonService<String, UserSO, AppUser> implemen
 
 	@Autowired
 	private UserInProjectRepository userInProjectRepository;
-	
+
 	@Autowired
 	private RoleInProjectRepository roleInProjectRepository;
 
@@ -69,16 +68,19 @@ public class UserService extends CommonService<String, UserSO, AppUser> implemen
 
 	@Autowired
 	private TaskContainerRepository taskContainerRepository;
-	
+
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
 
+	@Autowired
+	private ProjectRepository projectRepository;
 
 	@Autowired
 	public UserService(JpaRepository<AppUser, String> userRepository) {
 		super(userRepository);
 	}
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	public UserSO register(SignUpSO signUpSO) {
 		AppUser user = mapper.map(signUpSO, AppUser.class);
 		user.setPassword(passwordEncoder.encode(signUpSO.getPassword()));
@@ -97,97 +99,122 @@ public class UserService extends CommonService<String, UserSO, AppUser> implemen
 	public List<UserRole> findUserRoles(String username) {
 		return userRoleRepository.findByUserId(username);
 	}
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	public Collection<UserTeamSO> getTeamsOfUser(String login) {
-		final List<UserInProject> userInProjects = getUserInProjects(login);
 
 		final Map<Long, UserTeamSO> teamsOfUser = new HashMap<>();
-		userInProjects.forEach(x -> {
+		getUserInProjects(login).forEach(x -> {
 
 			final Project project = x.getTeamInProject().getProject();
 			final Team team = x.getTeamInProject().getTeam();
-			
-			if(project.getId() == ProjectService.NO_PROJECT_ID) {
-				if(teamsOfUser.containsKey(team.getId())){
-					return;
-				}
-				final UserTeamProjectSO[] NO_PROJECTS = {};
-				teamsOfUser.put(team.getId(), new UserTeamSO(mapper.map(team, TeamSO.class),NO_PROJECTS));
+
+			if (project.getId() == ProjectService.NO_PROJECT_ID && !teamsOfUser.containsKey(team.getId())) {
+				teamsOfUser.put(team.getId(), userTeamSOWithoutProjects(team));
 				return;
 			}
-			
+
 			if (teamsOfUser.containsKey(team.getId())) {
-				
-				teamsOfUser.get(team.getId()).getProjects().add(createProjectSO(project, roleInProjectRepository.findAllByUserInProjectId(x.getId())));
+				teamsOfUser.get(team.getId()).getProjects().add(createProjectSO(project, userProjectRoles(x.getId())));
 				return;
 			}
-			final TeamSO teamSO = mapper.map(team, TeamSO.class);
-			final List<RoleInProject> roles = Collections.emptyList();
-			final UserTeamProjectSO userTeamProjectSO = createProjectSO(project,roleInProjectRepository.findAllByUserInProjectId(x.getId()));
-			teamsOfUser.put(team.getId(), new UserTeamSO(teamSO, userTeamProjectSO));
+
+			teamsOfUser.put(team.getId(), userTeamSO(team, project, x.getId()));
 		});
 
 		return teamsOfUser.values();
 	}
 
 	public Set<ProjectSO> getProjectsOfUser(String login) {
+
 		final List<UserInProject> userInProjects = getUserInProjects(login);
-		return getTeamsInProject(userInProjects).filter(x->x.getProject().getId()>ProjectService.NO_PROJECT_ID).map(x -> mapper.map(x.getProject(), ProjectSO.class))
-				.collect(Collectors.toSet());
+		final Set<ProjectSO> projectsWithUser = getTeamsInProject(userInProjects)
+				.filter(x -> x.getProject().getId() > ProjectService.NO_PROJECT_ID)
+				.map(x -> mapper.map(x.getProject(), ProjectSO.class)).collect(Collectors.toSet());
+
+		final List<Project> projectCreatedByUser = projectRepository.findAllByCreatedBy(login);
+		projectCreatedByUser.stream().forEach(x -> {
+			projectsWithUser.add(mapper.map(x, ProjectSO.class));
+		});
+
+		return projectsWithUser;
 	}
 
 	public List<TitleNameSO<Long>> getProjectTeamsOfUser(String login, Long id) {
-		final Set<UserInProject> userInProjects = userInProjectRepository
-				.findAllByUserIdAndTeamInProjectProjectId(login, id);
-
-		return userInProjects.stream().map(x -> {
-			Team t = x.getTeamInProject().getTeam();
-			TitleNameSO<Long> titleName = new TitleNameSO<>();
-			titleName.setId(t.getId());
-			titleName.setTitle(t.getTitle());
-			return titleName;
-		}).collect(Collectors.toList());
+		return userInProjectRepository.findAllByUserIdAndTeamInProjectProjectId(login, id).stream()
+				.map(x -> x.getTeamInProject().getTeam()).map(x -> new TitleNameSO<>(x.getId(), x.getTitle()))
+				.collect(Collectors.toList());
 
 	}
 
-	public DetailedUserProjectSO getProjectTeamOfUser(String login, Long projectId, Long teamId) {
-		final TeamInProject teamInProject = teamInProjectRepository.findByProjectIdAndTeamId(projectId, teamId)
-				.orElseThrow(() -> {
-					final short EXPECTED_SIZE = 1;
-					final String ERROR_MESSAGE = "project id " + projectId + " and team id " + teamId;
-					throw new ResourceNotFoundException(new EmptyResultDataAccessException(EXPECTED_SIZE),
-							ERROR_MESSAGE);
-				});
-
-		final UserInProject userInProject = userInProjectRepository
-				.findByUserIdAndTeamInProjectId(login, teamInProject.getId()).orElseThrow(() -> {
-					final short EXPECTED_SIZE = 1;
-					final String ERROR_MESSAGE = "login " + login + " and team in project id " + teamInProject.getId();
-					throw new ResourceNotFoundException(new EmptyResultDataAccessException(EXPECTED_SIZE),
-							ERROR_MESSAGE);
-				});
-
-		final Set<String> roles = roleInProjectRepository
-				.findAllByUserInProjectId(userInProject.getId()).stream().map(x->x.getRole().getId()).collect(Collectors.toSet());
+	public DetailedUserProjectSO getDetailedUserTeamProject(String login, Long projectId, Long teamId) {
+		final TeamInProject teamInProject = findTeamInProject(projectId, teamId);
+		final Long userInProjectId = findUserInProject(login, teamInProject.getId()).getId();
+		final Set<String> roles = userProjectRoleNames(userInProjectId);
 		final String projectType = teamInProject.getType().name();
 
-		Stream<TaskContainer> streamForContainer = taskContainerRepository.findAllByTeamInProjectId(teamInProject.getId()).stream();
+		Stream<TaskContainer> streamForContainer = taskContainerRepository
+				.findAllByTeamInProjectId(teamInProject.getId()).stream();
+
 		if (!projectType.equals(ProjectType.XP.name())) {
-			streamForContainer = streamForContainer.filter(x -> x.getOvercontainer() == null);
+			streamForContainer = removeOverContainers(streamForContainer);
 		}
 
 		final Set<TaskContainerSO> taskContainers = streamForContainer.map(x -> mapper.map(x, TaskContainerSO.class))
 				.collect(Collectors.toSet());
 
-		final DetailedUserProjectSO detailedUserProject = mapper.map(teamInProject.getProject(),
-				DetailedUserProjectSO.class);
+		return createDetailedUserProject(teamInProject.getProject(), roles, projectType, taskContainers);
+	}
+
+	private TeamInProject findTeamInProject(Long projectId, Long teamId) {
+		return teamInProjectRepository.findByProjectIdAndTeamId(projectId, teamId).orElseThrow(() -> {
+			final String message = "project id " + projectId + " and team id " + teamId;
+			throw new ResourceNotFoundException(new EmptyResultDataAccessException(1), message);
+		});
+	}
+
+	private UserInProject findUserInProject(String login, Long id) {
+		return userInProjectRepository.findByUserIdAndTeamInProjectId(login, id).orElseThrow(() -> {
+			final String message = "login " + login + " and team in project id " + id;
+			throw new ResourceNotFoundException(new EmptyResultDataAccessException(1), message);
+		});
+
+	}
+
+	private DetailedUserProjectSO createDetailedUserProject(Project project, Set<String> roles, String projectType,
+			Set<TaskContainerSO> taskContainers) {
+		final DetailedUserProjectSO detailedUserProject = mapper.map(project, DetailedUserProjectSO.class);
 		detailedUserProject.setRoles(roles);
 		detailedUserProject.setType(projectType);
 		detailedUserProject.setTaskContainers(taskContainers);
-
 		return detailedUserProject;
 	}
-	
+
+	private Stream<TaskContainer> removeOverContainers(Stream<TaskContainer> streamForContainer) {
+		return streamForContainer.filter(x -> x.getOvercontainer() == null);
+	}
+
+	private UserTeamSO userTeamSO(final Team team, final Project project, final Long userInProjectId) {
+
+		final UserTeamProjectSO userTeamProjectSO = createProjectSO(project,
+				roleInProjectRepository.findAllByUserInProjectId(userInProjectId));
+
+		return new UserTeamSO(mapper.map(team, TeamSO.class), userTeamProjectSO);
+
+	}
+
+	private UserTeamSO userTeamSOWithoutProjects(final Team team) {
+		return new UserTeamSO(mapper.map(team, TeamSO.class), ProjectService.NO_PROJECTS);
+	}
+
+	private Collection<RoleInProject> userProjectRoles(Long userInProjectId) {
+		return roleInProjectRepository.findAllByUserInProjectId(userInProjectId);
+	}
+
+	private Set<String> userProjectRoleNames(Long userInProjectId) {
+		return userProjectRoles(userInProjectId).stream().map(x -> x.getRole().getId()).collect(Collectors.toSet());
+	}
+
 	private Stream<TeamInProject> getTeamsInProject(List<UserInProject> userInProjects) {
 		return userInProjects.stream().map(UserInProject::getTeamInProject);
 	}

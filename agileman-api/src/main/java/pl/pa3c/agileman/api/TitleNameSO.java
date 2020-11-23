@@ -10,6 +10,11 @@ import lombok.NoArgsConstructor;
 public class TitleNameSO<T> extends IdSO<T> {
 	String title;
 
+	public TitleNameSO(T id, String title) {
+		this.id = id;
+		this.title = title;
+	}
+
 	@JsonIgnore
 	public void setName(String name) {
 		this.title = name;

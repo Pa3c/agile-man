@@ -38,13 +38,13 @@ public class UserController extends CommonController<String, UserSO, AppUser> im
 	}
 
 	@Override
-	public List<TitleNameSO<Long>> projectTeamsOfUser(String login, Long id) {
+	public List<TitleNameSO<Long>> teamsOfUser(String login, Long id) {
 		return ((UserService) commonService).getProjectTeamsOfUser(login, id);
 	}
 
 	@Override
-	public DetailedUserProjectSO projectTeamOfUser(String login, Long projectId, Long teamId) {
-		return ((UserService) commonService).getProjectTeamOfUser(login, projectId,teamId);
+	public DetailedUserProjectSO detailedUserTeamProject(String login, Long projectId, Long teamId) {
+		return ((UserService) commonService).getDetailedUserTeamProject(login, projectId,teamId);
 	}
 
 }

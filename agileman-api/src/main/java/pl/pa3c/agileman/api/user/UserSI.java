@@ -37,9 +37,9 @@ public interface UserSI {
 	
 	@ApiOperation(value = "Return teams from user project")
 	@GetMapping(path = "/{login}/project/{id}/team", produces = MediaType.APPLICATION_JSON_VALUE)
-	List<TitleNameSO<Long>> projectTeamsOfUser(@PathVariable String login,@PathVariable Long id);
+	List<TitleNameSO<Long>> teamsOfUser(@PathVariable String login,@PathVariable Long id);
 	
 	@ApiOperation(value = "Return teams from user project")
 	@GetMapping(path = "/{login}/project/{project_id}/team/{team_id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	DetailedUserProjectSO projectTeamOfUser(@PathVariable String login,@PathVariable("project_id") Long projectId,@PathVariable("team_id") Long teamId);
+	DetailedUserProjectSO detailedUserTeamProject(@PathVariable String login,@PathVariable("project_id") Long projectId,@PathVariable("team_id") Long teamId);
 }

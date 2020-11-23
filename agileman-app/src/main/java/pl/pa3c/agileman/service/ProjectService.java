@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 import pl.pa3c.agileman.api.project.ProjectSO;
+import pl.pa3c.agileman.api.user.UserTeamProjectSO;
 import pl.pa3c.agileman.model.project.Project;
 import pl.pa3c.agileman.model.project.ProjectRole;
 import pl.pa3c.agileman.model.project.ProjectType;
@@ -26,6 +27,7 @@ import pl.pa3c.agileman.repository.UserInProjectRepository;
 @Service
 public class ProjectService extends CommonService<Long, ProjectSO, Project> {
 	public static final long NO_PROJECT_ID = -1;
+	public static final UserTeamProjectSO[] NO_PROJECTS = {};
 
 	@Autowired
 	private UserInProjectRepository userInProjectRepository;
