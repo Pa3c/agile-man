@@ -163,7 +163,7 @@ public class UserService extends CommonService<String, UserSO, AppUser> implemen
 		final Set<TaskContainerSO> taskContainers = streamForContainer.map(x -> mapper.map(x, TaskContainerSO.class))
 				.collect(Collectors.toSet());
 
-		return createDetailedUserProject(teamInProject.getProject(), roles, projectType, taskContainers);
+		return createDetailedUserProject(teamInProject.getId(),teamInProject.getProject(), roles, projectType, taskContainers);
 	}
 
 	private TeamInProject findTeamInProject(Long projectId, Long teamId) {
@@ -181,9 +181,10 @@ public class UserService extends CommonService<String, UserSO, AppUser> implemen
 
 	}
 
-	private DetailedUserProjectSO createDetailedUserProject(Project project, Set<String> roles, String projectType,
+	private DetailedUserProjectSO createDetailedUserProject(Long tipId,Project project, Set<String> roles, String projectType,
 			Set<TaskContainerSO> taskContainers) {
 		final DetailedUserProjectSO detailedUserProject = mapper.map(project, DetailedUserProjectSO.class);
+		detailedUserProject.setTeamInProjectId(tipId);
 		detailedUserProject.setRoles(roles);
 		detailedUserProject.setType(projectType);
 		detailedUserProject.setTaskContainers(taskContainers);

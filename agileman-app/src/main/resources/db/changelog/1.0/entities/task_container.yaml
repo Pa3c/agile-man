@@ -24,7 +24,8 @@ databaseChangeLog:
             type: varchar(50)
         - column:
             name: closed
-            type: boolean            
+            type: boolean    
+            defaultValue: false        
         - column:
             name: version
             type: int

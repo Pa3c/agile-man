@@ -12,6 +12,7 @@ import pl.pa3c.agileman.api.taskcontainer.TaskContainerSO;
 @Data
 @EqualsAndHashCode(callSuper = false)
 public class DetailedUserProjectSO extends ProjectSO {
+	private Long teamInProjectId;
 	private String type;
 	private Set<TaskContainerSO> taskContainers;
 	private Set<String> roles;

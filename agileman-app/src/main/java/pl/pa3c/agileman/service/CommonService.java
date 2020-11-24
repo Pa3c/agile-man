@@ -56,7 +56,8 @@ public abstract class CommonService<ID, T, V> {
 
 	public T create(T entitySO) {
 		try {
-			final V entity = commonRepository.save(mapper.map(entitySO, classEntity));
+			final V en = mapper.map(entitySO, classEntity);
+			final V entity = commonRepository.save(en);
 			return mapper.map(entity, classSo);
 		} catch (DataIntegrityViolationException ex) {
 			throw new ResourceAlreadyExistsException();

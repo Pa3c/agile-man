@@ -20,7 +20,7 @@ import pl.pa3c.agileman.model.project.TeamInProject;
 @EqualsAndHashCode(callSuper = false)
 public class TaskContainer extends BaseLongEntity{
 	private String title;
-	private Boolean closed;
+	private Boolean closed = false;
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
@@ -33,4 +33,20 @@ public class TaskContainer extends BaseLongEntity{
 	@ManyToOne
 	@JoinColumn(name="team_in_project_id")
 	private TeamInProject teamInProject;
+	
+	public void setType(String type){
+		this.type = Type.valueOf(type);
+	}
+	
+	public String getStringType() {
+		return type.toString();
+	}
+	
+	public void setType(Type type){
+		this.type = type;
+	}
+	
+	public Type getType() {
+		return type;
+	}
 }

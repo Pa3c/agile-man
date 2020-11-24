@@ -17,9 +17,12 @@ import pl.pa3c.agileman.model.project.ProjectType;
 import pl.pa3c.agileman.model.project.RoleInProject;
 import pl.pa3c.agileman.model.project.TeamInProject;
 import pl.pa3c.agileman.model.project.UserInProject;
+import pl.pa3c.agileman.model.taskcontainer.TaskContainer;
+import pl.pa3c.agileman.model.taskcontainer.Type;
 import pl.pa3c.agileman.model.user.AppUser;
 import pl.pa3c.agileman.repository.ProjectRoleRepository;
 import pl.pa3c.agileman.repository.RoleInProjectRepository;
+import pl.pa3c.agileman.repository.TaskContainerRepository;
 import pl.pa3c.agileman.repository.TeamInProjectRepository;
 import pl.pa3c.agileman.repository.TeamRepository;
 import pl.pa3c.agileman.repository.UserInProjectRepository;
@@ -42,6 +45,9 @@ public class ProjectService extends CommonService<Long, ProjectSO, Project> {
 	private RoleInProjectRepository roleInProjectRepository;
 
 	@Autowired
+	private TaskContainerRepository taskContainerRepository;
+
+	@Autowired
 	private TeamRepository teamRepository;
 
 	@Autowired
@@ -59,10 +65,11 @@ public class ProjectService extends CommonService<Long, ProjectSO, Project> {
 		teamInProject.setType(ProjectType.valueOf(type));
 
 		final TeamInProject savedTiP = teamInProjectRepository.save(teamInProject);
-		
-		final Set<AppUser> usersFromTeam = userInProjectRepository
-				.findDistinctByTeamInProjectTeamId(teamId).stream().map(UserInProject::getUser).collect(Collectors.toSet());
-		
+		createBackLog(savedTiP);
+
+		final Set<AppUser> usersFromTeam = userInProjectRepository.findDistinctByTeamInProjectTeamId(teamId).stream()
+				.map(UserInProject::getUser).collect(Collectors.toSet());
+
 		final String basic = "BASIC";
 		final String admin = "ADMIN";
 		final RoleInProject roleInProject = new RoleInProject();
@@ -74,7 +81,7 @@ public class ProjectService extends CommonService<Long, ProjectSO, Project> {
 			uip.setUser(x);
 			uip.setTeamInProject(savedTiP);
 			final UserInProject savedUiP = userInProjectRepository.save(uip);
-			
+
 			if (x.getLogin().equals(project.getCreatedBy())) {
 				roleInProject.setRole(adminRole);
 			} else {
@@ -83,6 +90,14 @@ public class ProjectService extends CommonService<Long, ProjectSO, Project> {
 			roleInProject.setUserInProject(savedUiP);
 			roleInProjectRepository.save(roleInProject);
 		});
+	}
+
+	private void createBackLog(TeamInProject tip) {
+		final TaskContainer taskContainer = new TaskContainer();
+		taskContainer.setTeamInProject(tip);
+		taskContainer.setTitle("Backlog");
+		taskContainer.setType(Type.BACKLOG);
+		taskContainerRepository.save(taskContainer);
 	}
 
 }
