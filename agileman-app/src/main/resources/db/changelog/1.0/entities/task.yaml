@@ -40,8 +40,6 @@ databaseChangeLog:
         - column:
             name: description
             type: varchar(1000)
-            constraints:
-              nullable: false
         - column:
             name: story_points
             type: integer     
@@ -63,12 +61,7 @@ databaseChangeLog:
             name: type
             type: varchar(20)
             constraints:
-              nullable: false
-        - column:
-            name: components
-            type: varchar(100)
-            constraints:
-              nullable: false      
+              nullable: false   
         - column:
             name: version
             type: int

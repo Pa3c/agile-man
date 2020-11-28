@@ -24,7 +24,6 @@ public class Task extends BaseLongEntity{
 	private LocalDateTime deadline;
 	private String type;
 	private Integer likes;
-	private String components;
 	private Integer majority;
 	private Integer complexity;
 	private String state;
