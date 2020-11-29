@@ -48,15 +48,14 @@ databaseChangeLog:
             type: integer     
         - column:
             name: likes
-            type: integer               
+            type: integer  
+            value: 0             
         - column:
             name: complexity
             type: integer                
         - column:
             name: deadline
             type: timestamp
-            constraints:
-              nullable: false    
         - column:
             name: type
             type: varchar(20)

@@ -26,10 +26,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import pl.pa3c.agileman.api.IdSO;
 import pl.pa3c.agileman.api.state.StateSO;
+import pl.pa3c.agileman.api.task.StepSO;
+import pl.pa3c.agileman.api.task.TaskSO;
 import pl.pa3c.agileman.api.taskcontainer.TaskContainerSO;
 import pl.pa3c.agileman.filter.TokenAuthorizationFilter;
 import pl.pa3c.agileman.model.base.LongIdEntity;
 import pl.pa3c.agileman.model.base.StringIdEntity;
+import pl.pa3c.agileman.model.task.Step;
+import pl.pa3c.agileman.model.task.Task;
 import pl.pa3c.agileman.model.taskcontainer.State;
 import pl.pa3c.agileman.model.taskcontainer.TaskContainer;
 import pl.pa3c.agileman.security.SecurityConstants;
@@ -74,16 +78,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		mapper.getConfiguration().setPropertyCondition(Conditions.isNotNull());
 		mapper.typeMap(LongIdEntity.class, IdSO.class).addMapping(LongIdEntity::getId, IdSO::setId);
 		mapper.typeMap(StringIdEntity.class, IdSO.class).addMapping(StringIdEntity::getId, IdSO::setId);
-		mapper.typeMap(State.class, StateSO.class).addMapping(src -> src.getTaskContainer().getId(), (dst, value) -> {
-			dst.setTaskContainerId((Long) value);
-		});
-		mapper.typeMap(TaskContainerSO.class, TaskContainer.class).addMapping(TaskContainerSO::getTeamInProjectId,
-				(dst, value) -> {
-					dst.getTeamInProject().setId((Long) value);
-				});
-
 		mapper.typeMap(TaskContainer.class, TaskContainerSO.class).addMapping(TaskContainer::getStringType,
 				TaskContainerSO::setType);
+
+		mapper.typeMap(State.class, StateSO.class).addMapping(src -> src.getTaskContainer().getId(),
+				(dst, value) -> dst.setTaskContainerId((Long) value));
+		mapper.typeMap(TaskContainerSO.class, TaskContainer.class).addMapping(TaskContainerSO::getTeamInProjectId,
+				(dst, value) -> dst.getTeamInProject().setId((Long) value));
+		mapper.typeMap(TaskSO.class, Task.class).addMapping(TaskSO::getTaskContainerId,
+				(dst, value) -> dst.getTaskContainer().setId((Long) value));
+		mapper.typeMap(StepSO.class, Step.class).addMapping(StepSO::getTaskId,
+				(dst, value) -> dst.getTask().setId((Long) value));
+		
 		return mapper;
 	}
 

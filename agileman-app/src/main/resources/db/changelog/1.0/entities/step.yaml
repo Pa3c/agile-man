@@ -21,8 +21,11 @@ databaseChangeLog:
         - column:
             name: overstep_id
             type: bigint
+        - column:
+            name: step_order
+            type: int
             constraints:
-              nullable: false               
+              nullable: false                          
         - column:
             name: description
             type: varchar(50)
