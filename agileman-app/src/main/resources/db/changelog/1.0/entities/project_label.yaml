@@ -1,20 +1,18 @@
 databaseChangeLog:
 - changeSet:
-    id: label_in_project_entity_creation
+    id: label_entity_creation
     author: patryk.klos
     changes:
     - createTable:
-        tableName: label_in_project
+        tableName: project_label
         columns:
         - column:
             name: id
-            type: bigint
-            autoIncrement: true
+            type: varchar(20)
             constraints:
-              primaryKey: true
               nullable: false
         - column:
-            name: label_id
+            name: type
             type: varchar(20)
             constraints:
               nullable: false
@@ -22,4 +20,4 @@ databaseChangeLog:
             name: project_id
             type: bigint
             constraints:
-              nullable: false
+              nullable: false              

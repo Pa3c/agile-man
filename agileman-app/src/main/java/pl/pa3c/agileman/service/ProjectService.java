@@ -1,5 +1,6 @@
 package pl.pa3c.agileman.service;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -9,8 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
+import pl.pa3c.agileman.api.label.LabelSO;
 import pl.pa3c.agileman.api.project.ProjectSO;
 import pl.pa3c.agileman.api.user.UserTeamProjectSO;
+import pl.pa3c.agileman.model.label.ProjectLabel;
 import pl.pa3c.agileman.model.project.Project;
 import pl.pa3c.agileman.model.project.ProjectRole;
 import pl.pa3c.agileman.model.project.ProjectType;
@@ -20,6 +23,7 @@ import pl.pa3c.agileman.model.project.UserInProject;
 import pl.pa3c.agileman.model.taskcontainer.TaskContainer;
 import pl.pa3c.agileman.model.taskcontainer.Type;
 import pl.pa3c.agileman.model.user.AppUser;
+import pl.pa3c.agileman.repository.ProjectLabelRepository;
 import pl.pa3c.agileman.repository.ProjectRoleRepository;
 import pl.pa3c.agileman.repository.RoleInProjectRepository;
 import pl.pa3c.agileman.repository.TaskContainerRepository;
@@ -48,6 +52,9 @@ public class ProjectService extends CommonService<Long, ProjectSO, Project> {
 	private TaskContainerRepository taskContainerRepository;
 
 	@Autowired
+	private ProjectLabelRepository projectLabelRepository;
+
+	@Autowired
 	private TeamRepository teamRepository;
 
 	@Autowired
@@ -56,7 +63,16 @@ public class ProjectService extends CommonService<Long, ProjectSO, Project> {
 	}
 
 	@Transactional
-	public void addTeamToProject(Long projectId, Long teamId, String type) {
+	public void addLabels(Long projectId, List<LabelSO> labels) {
+		final Project project = commonRepository.getOne(projectId);
+		labels.forEach(x->{
+			projectLabelRepository
+					.save(new ProjectLabel(x.getId(), pl.pa3c.agileman.model.label.Type.valueOf(x.getType()),project));
+		});
+	}
+
+	@Transactional
+	public void addTeam(Long projectId, Long teamId, String type) {
 
 		final Project project = commonRepository.getOne(projectId);
 		final TeamInProject teamInProject = new TeamInProject();

@@ -4,15 +4,8 @@ databaseChangeLog:
     author: patryk.klos
     changes:
     - addForeignKeyConstraint:
-        baseColumnNames: label_id
-        baseTableName: label_in_project
-        constraintName: label_in_project_label
-        referencedColumnNames: id
-        referencedTableName: label
-        validate: true
-    - addForeignKeyConstraint:
         baseColumnNames: project_id
-        baseTableName: label_in_project
+        baseTableName: project_label
         constraintName: label_in_project_project
         referencedColumnNames: id
         referencedTableName: project

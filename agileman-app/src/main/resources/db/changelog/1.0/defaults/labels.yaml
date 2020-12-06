@@ -1,0 +1,77 @@
+databaseChangeLog:
+ - changeSet: 
+    id:  basic_labels_insertion
+    author:  patryk.klos
+    changes: 
+    -  insert:  
+        columns:  
+        -  column:  
+            name:  id
+            value: Java
+        -  column:  
+            name:  type
+            value: TECHNOLOGY            
+        tableName: label
+    -  insert:  
+        columns:  
+        -  column:  
+            name:  id
+            value: C#
+        -  column:  
+            name:  type
+            value: TECHNOLOGY            
+        tableName: label  
+    -  insert:  
+        columns:  
+        -  column:  
+            name:  id
+            value: Python
+        -  column:  
+            name:  type
+            value: TECHNOLOGY            
+        tableName: label 
+    -  insert:  
+        columns:  
+        -  column:  
+            name:  id
+            value: Angular
+        -  column:  
+            name:  type
+            value: TECHNOLOGY            
+        tableName: label   
+    -  insert:  
+        columns:  
+        -  column:  
+            name:  id
+            value: Frontend
+        -  column:  
+            name:  type
+            value: LABEL            
+        tableName: label 
+    -  insert:  
+        columns:  
+        -  column:  
+            name:  id
+            value: Backend
+        -  column:  
+            name:  type
+            value: LABEL            
+        tableName: label          
+    -  insert:  
+        columns:  
+        -  column:  
+            name:  id
+            value: API
+        -  column:  
+            name:  type
+            value: LABEL            
+        tableName: label 
+    -  insert:  
+        columns:  
+        -  column:  
+            name:  id
+            value: Documentation
+        -  column:  
+            name:  type
+            value: LABEL            
+        tableName: label                                      

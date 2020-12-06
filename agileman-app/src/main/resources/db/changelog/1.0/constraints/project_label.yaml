@@ -1,0 +1,10 @@
+databaseChangeLog:
+- changeSet:  
+   id:  team_in_project_unqiue_team
+   author:  patryk.klos  
+   changes:  
+   -  addUniqueConstraint:  
+       columnNames:  id, project_id  
+       constraintName:  project_label_unique_project  
+       tableName:  project_label  
+       validate:  true
