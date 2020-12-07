@@ -42,4 +42,10 @@ public interface UserSI {
 	@ApiOperation(value = "Return teams from user project")
 	@GetMapping(path = "/{login}/project/{project_id}/team/{team_id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	DetailedUserProjectSO detailedUserTeamProject(@PathVariable String login,@PathVariable("project_id") Long projectId,@PathVariable("team_id") Long teamId);
+	
+	@ApiOperation(value = "Return basic info of user")
+	@GetMapping(path = "/{login}/basic", produces = MediaType.APPLICATION_JSON_VALUE)
+	BaseUserSO getBasicInfo(@PathVariable String login);
+	
+	
 }

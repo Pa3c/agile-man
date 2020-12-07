@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import pl.pa3c.agileman.api.TitleNameSO;
 import pl.pa3c.agileman.api.project.ProjectSO;
+import pl.pa3c.agileman.api.user.BaseUserSO;
 import pl.pa3c.agileman.api.user.DetailedUserProjectSO;
 import pl.pa3c.agileman.api.user.UserSI;
 import pl.pa3c.agileman.api.user.UserSO;
@@ -45,6 +46,12 @@ public class UserController extends CommonController<String, UserSO, AppUser> im
 	@Override
 	public DetailedUserProjectSO detailedUserTeamProject(String login, Long projectId, Long teamId) {
 		return ((UserService) commonService).getDetailedUserTeamProject(login, projectId,teamId);
+	}
+
+	@Override
+	public BaseUserSO getBasicInfo(String login) {
+		
+		return ((UserService) commonService).getBasicInfo(login);
 	}
 
 }

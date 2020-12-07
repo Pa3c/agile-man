@@ -2,6 +2,8 @@ package pl.pa3c.agileman.api;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,7 +12,9 @@ import lombok.NoArgsConstructor;
 public class BaseSO<T> extends IdSO<T>{
 
 	protected int version;
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
 	protected LocalDateTime creationDate;
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")	
 	protected LocalDateTime modificationDate;
 	protected String createdBy;
 	protected String modifiedBy;

@@ -23,6 +23,7 @@ import pl.pa3c.agileman.api.auth.SignUpSO;
 import pl.pa3c.agileman.api.project.ProjectSO;
 import pl.pa3c.agileman.api.taskcontainer.TaskContainerSO;
 import pl.pa3c.agileman.api.team.TeamSO;
+import pl.pa3c.agileman.api.user.BaseUserSO;
 import pl.pa3c.agileman.api.user.DetailedUserProjectSO;
 import pl.pa3c.agileman.api.user.UserSO;
 import pl.pa3c.agileman.api.user.UserTeamProjectSO;
@@ -45,6 +46,8 @@ import pl.pa3c.agileman.repository.TaskContainerRepository;
 import pl.pa3c.agileman.repository.TeamInProjectRepository;
 import pl.pa3c.agileman.repository.UserInProjectRepository;
 import pl.pa3c.agileman.repository.UserRoleRepository;
+import pl.pa3c.agileman.repository.user.IBasicUserInfo;
+import pl.pa3c.agileman.repository.user.UserRepository;
 import pl.pa3c.agileman.security.UserCreds;
 
 @Service
@@ -163,7 +166,8 @@ public class UserService extends CommonService<String, UserSO, AppUser> implemen
 		final Set<TaskContainerSO> taskContainers = streamForContainer.map(x -> mapper.map(x, TaskContainerSO.class))
 				.collect(Collectors.toSet());
 
-		return createDetailedUserProject(teamInProject.getId(),teamInProject.getProject(), roles, projectType, taskContainers);
+		return createDetailedUserProject(teamInProject.getId(), teamInProject.getProject(), roles, projectType,
+				taskContainers);
 	}
 
 	private TeamInProject findTeamInProject(Long projectId, Long teamId) {
@@ -181,8 +185,8 @@ public class UserService extends CommonService<String, UserSO, AppUser> implemen
 
 	}
 
-	private DetailedUserProjectSO createDetailedUserProject(Long tipId,Project project, Set<String> roles, String projectType,
-			Set<TaskContainerSO> taskContainers) {
+	private DetailedUserProjectSO createDetailedUserProject(Long tipId, Project project, Set<String> roles,
+			String projectType, Set<TaskContainerSO> taskContainers) {
 		final DetailedUserProjectSO detailedUserProject = mapper.map(project, DetailedUserProjectSO.class);
 		detailedUserProject.setTeamInProjectId(tipId);
 		detailedUserProject.setRoles(roles);
@@ -233,6 +237,11 @@ public class UserService extends CommonService<String, UserSO, AppUser> implemen
 		projectSO.setTitle(project.getTitle());
 		projectSO.setRoles(roles.stream().map(x -> x.getRole().getId()).collect(Collectors.toSet()));
 		return projectSO;
+	}
+
+	public BaseUserSO getBasicInfo(String login) {
+		final IBasicUserInfo userInfo = ((UserRepository) commonRepository).getBasicInfo(login);
+		return new BaseUserSO(userInfo.getId(), userInfo.getName(), userInfo.getSurname());
 	}
 
 }

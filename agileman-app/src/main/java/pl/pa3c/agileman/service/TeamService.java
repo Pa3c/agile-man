@@ -23,7 +23,7 @@ import pl.pa3c.agileman.repository.ProjectRoleRepository;
 import pl.pa3c.agileman.repository.RoleInProjectRepository;
 import pl.pa3c.agileman.repository.TeamInProjectRepository;
 import pl.pa3c.agileman.repository.UserInProjectRepository;
-import pl.pa3c.agileman.repository.UserRepository;
+import pl.pa3c.agileman.repository.user.UserRepository;
 
 @Service
 public class TeamService extends CommonService<Long, TeamSO, Team> {
