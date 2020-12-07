@@ -37,6 +37,9 @@ public class Task extends BaseLongEntity{
 	private String labels;
 	private String technologies;
 	
+	//added due to issues with passing project id values in admin
+	private Long projectId;
+	
 	@ManyToOne
 	@JoinColumn(name = "task_container_id")
 	private TaskContainer taskContainer;

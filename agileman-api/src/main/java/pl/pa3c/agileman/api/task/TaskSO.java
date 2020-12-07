@@ -24,5 +24,6 @@ public class TaskSO extends BaseSO<Long>{
 	private String labels;
 	private String technologies;
 	private Long taskContainerId;
+	private Long projectId;
 	private List<StepSO> steps = new ArrayList<>();
 }

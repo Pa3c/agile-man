@@ -2,9 +2,11 @@ package pl.pa3c.agileman.api;
 
 import java.time.LocalDateTime;
 
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
+@Data
 public class BaseSO<T> extends IdSO<T>{
 
 	protected int version;
