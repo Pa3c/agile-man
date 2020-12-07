@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -51,5 +52,14 @@ public interface ProjectSI {
 	@PutMapping(path = "/{project_id}/label", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(code = HttpStatus.OK)
 	void addLabels(@PathVariable(name = "project_id") Long projectId,@RequestBody List<LabelSO> labels);
+	
+	@ApiOperation(value = "Add labels to project")
+	@ApiResponses(value = { 
+			@ApiResponse(code = 200, message = "Project labels returned successfully"), 
+			@ApiResponse(code = 404, message = "If project not exists"), 
+			})
+	@GetMapping(path = "/{project_id}/label", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseStatus(code = HttpStatus.OK)
+	List<ProjectLabelSO> getLabels(@PathVariable(name = "project_id") Long projectId);
 
 }

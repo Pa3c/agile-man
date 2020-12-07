@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 import pl.pa3c.agileman.api.label.LabelSO;
+import pl.pa3c.agileman.api.project.ProjectLabelSO;
 import pl.pa3c.agileman.api.project.ProjectSO;
 import pl.pa3c.agileman.api.user.UserTeamProjectSO;
 import pl.pa3c.agileman.model.label.ProjectLabel;
@@ -65,9 +66,9 @@ public class ProjectService extends CommonService<Long, ProjectSO, Project> {
 	@Transactional
 	public void addLabels(Long projectId, List<LabelSO> labels) {
 		final Project project = commonRepository.getOne(projectId);
-		labels.forEach(x->{
+		labels.forEach(x -> {
 			projectLabelRepository
-					.save(new ProjectLabel(x.getId(), pl.pa3c.agileman.model.label.Type.valueOf(x.getType()),project));
+					.save(new ProjectLabel(x.getId(), pl.pa3c.agileman.model.label.Type.valueOf(x.getType()), project));
 		});
 	}
 
@@ -114,6 +115,12 @@ public class ProjectService extends CommonService<Long, ProjectSO, Project> {
 		taskContainer.setTitle("Backlog");
 		taskContainer.setType(Type.BACKLOG);
 		taskContainerRepository.save(taskContainer);
+	}
+
+	public List<ProjectLabelSO> getLabels(Long projectId) {
+
+		return projectLabelRepository.findByProjectId(projectId).stream().map(x -> mapper.map(x, ProjectLabelSO.class))
+				.collect(Collectors.toList());
 	}
 
 }
