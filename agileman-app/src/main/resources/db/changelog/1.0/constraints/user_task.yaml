@@ -1,0 +1,10 @@
+databaseChangeLog:
+- changeSet:  
+   id:  user_task_unique
+   author:  patryk.klos  
+   changes:  
+   -  addUniqueConstraint:  
+       columnNames:  task_id, user_id, type
+       constraintName:  user_task_unique
+       tableName:  user_task  
+       validate:  true

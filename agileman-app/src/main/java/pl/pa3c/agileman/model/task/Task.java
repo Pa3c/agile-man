@@ -29,7 +29,7 @@ public class Task extends BaseLongEntity{
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	private TaskType type;
-	private Integer likes;
+	private Integer likes = 0;
 	private Integer majority;
 	private Integer complexity;
 	private String state;

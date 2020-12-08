@@ -65,7 +65,7 @@ public class ProjectService extends CommonService<Long, ProjectSO, Project> {
 
 	@Transactional
 	public void addLabels(Long projectId, List<LabelSO> labels) {
-		final Project project = commonRepository.getOne(projectId);
+		final Project project = repository.getOne(projectId);
 		labels.forEach(x -> {
 			projectLabelRepository
 					.save(new ProjectLabel(x.getId(), pl.pa3c.agileman.model.label.Type.valueOf(x.getType()), project));
@@ -75,7 +75,7 @@ public class ProjectService extends CommonService<Long, ProjectSO, Project> {
 	@Transactional
 	public void addTeam(Long projectId, Long teamId, String type) {
 
-		final Project project = commonRepository.getOne(projectId);
+		final Project project = repository.getOne(projectId);
 		final TeamInProject teamInProject = new TeamInProject();
 		teamInProject.setProject(project);
 		teamInProject.setTeam(teamRepository.getOne(teamId));

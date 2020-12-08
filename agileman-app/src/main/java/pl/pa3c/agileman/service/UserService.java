@@ -87,11 +87,11 @@ public class UserService extends CommonService<String, UserSO, AppUser> implemen
 	public UserSO register(SignUpSO signUpSO) {
 		AppUser user = mapper.map(signUpSO, AppUser.class);
 		user.setPassword(passwordEncoder.encode(signUpSO.getPassword()));
-		user = commonRepository.save(user);
+		user = repository.save(user);
 		UserRole role = new UserRole(user, roleRepository.getOne("COMMON"));
 		role.setId(userRoleRepository.count() + 1);
 		userRoleRepository.save(role);
-		return mapper.map(commonRepository.getOne(user.getLogin()), UserSO.class);
+		return mapper.map(repository.getOne(user.getLogin()), UserSO.class);
 	}
 
 	@Override
@@ -240,7 +240,7 @@ public class UserService extends CommonService<String, UserSO, AppUser> implemen
 	}
 
 	public BaseUserSO getBasicInfo(String login) {
-		final IBasicUserInfo userInfo = ((UserRepository) commonRepository).getBasicInfo(login);
+		final IBasicUserInfo userInfo = ((UserRepository) repository).getBasicInfo(login);
 		return new BaseUserSO(userInfo.getId(), userInfo.getName(), userInfo.getSurname());
 	}
 

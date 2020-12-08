@@ -44,7 +44,7 @@ public class StateService extends CommonService<Long, StateSO, State>{
 	@Override
 	@Transactional
 	public void delete(Long id) {
-		final State state = commonRepository.getOne(id);
+		final State state = repository.getOne(id);
 		final Long containerId = state.getTaskContainer().getId();
 		taskRepostiory.deleteAllByTaskContainerIdAndState(containerId,state.getName());
 		super.delete(id);

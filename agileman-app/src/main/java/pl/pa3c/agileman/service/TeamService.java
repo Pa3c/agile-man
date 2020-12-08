@@ -53,7 +53,7 @@ public class TeamService extends CommonService<Long, TeamSO, Team> {
 
 	@Transactional
 	public TeamWithUsersSO addUserToTeam(Long id, String login) {
-		final Team team = commonRepository.getOne(id);
+		final Team team = repository.getOne(id);
 		final AppUser user = userRepository.getOne(login);
 		final Set<TeamInProject> teamInProjects = userInProjectRepository.findDistinctByTeamInProjectTeamId(id).stream()
 				.map(UserInProject::getTeamInProject).collect(Collectors.toSet());
@@ -98,7 +98,7 @@ public class TeamService extends CommonService<Long, TeamSO, Team> {
 
 		final TeamInProject teamInProject = new TeamInProject();
 		teamInProject.setProject(projectRepository.getOne(ProjectService.NO_PROJECT_ID));
-		teamInProject.setTeam(commonRepository.getOne(createdTeam.getId()));
+		teamInProject.setTeam(repository.getOne(createdTeam.getId()));
 		teamInProject.setType(ProjectType.BASIC_TEAM);
 		final TeamInProject savedTiP = teamInProjectRepository.save(teamInProject);
 

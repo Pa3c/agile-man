@@ -1,0 +1,19 @@
+databaseChangeLog:
+- changeSet:
+    id: user_task
+    author: patryk.klos
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: task_id
+        baseTableName: user_task
+        constraintName: user_task_task
+        referencedColumnNames: id
+        referencedTableName: task
+        validate: true
+    - addForeignKeyConstraint:
+        baseColumnNames: user_id
+        baseTableName: user_task
+        constraintName: user_task_user
+        referencedColumnNames: id
+        referencedTableName: app_user
+        validate: true

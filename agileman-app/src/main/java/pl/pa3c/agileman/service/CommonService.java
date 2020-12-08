@@ -23,7 +23,7 @@ public abstract class CommonService<ID, T, V> {
 
 	@Autowired
 	protected ModelMapper mapper;
-	protected JpaRepository<V, ID> commonRepository;
+	protected JpaRepository<V, ID> repository;
 	
 	@Autowired
 	protected SpringSecurityAuditorAware securityAutditor;
@@ -33,7 +33,7 @@ public abstract class CommonService<ID, T, V> {
 
 	@SuppressWarnings("unchecked")
 	public CommonService(JpaRepository<V, ID> commonRepository) {
-		this.commonRepository = commonRepository;
+		this.repository = commonRepository;
 
 		Type[] actualTypeArguments = ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments();
 
@@ -43,7 +43,7 @@ public abstract class CommonService<ID, T, V> {
 
 	public List<T> get() {
 
-		return commonRepository //
+		return repository //
 				.findAll().stream() //
 				.map(c -> mapper.map(c, classSo)) //
 				.collect(Collectors.toList());
@@ -57,7 +57,7 @@ public abstract class CommonService<ID, T, V> {
 	public T create(T entitySO) {
 		try {
 			final V en = mapper.map(entitySO, classEntity);
-			final V entity = commonRepository.save(en);
+			final V entity = repository.save(en);
 			return mapper.map(entity, classSo);
 		} catch (DataIntegrityViolationException ex) {
 			throw new ResourceAlreadyExistsException();
@@ -73,14 +73,14 @@ public abstract class CommonService<ID, T, V> {
 
 	public V findById(ID id) {
 		final int EXPECTED_SIZE = 1; // IT IS 1 BECAUSE WE EXPECT THAT EXACTLY ONE OBJECT WILL BE RETURNED
-		return commonRepository.findById(id)
+		return repository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException(new EmptyResultDataAccessException(EXPECTED_SIZE),
 						String.valueOf(id)));
 	}
 
 	public void delete(ID id) {
 		try {
-			commonRepository.deleteById(id);
+			repository.deleteById(id);
 		} catch (EmptyResultDataAccessException e) {
 			throw new ResourceNotFoundException(e, String.valueOf(id));
 		} catch (DataIntegrityViolationException e) {
