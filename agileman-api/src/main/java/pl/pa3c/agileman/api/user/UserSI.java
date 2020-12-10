@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -46,6 +47,12 @@ public interface UserSI {
 	@ApiOperation(value = "Return basic info of user")
 	@GetMapping(path = "/{login}/basic", produces = MediaType.APPLICATION_JSON_VALUE)
 	BaseUserSO getBasicInfo(@PathVariable String login);
+	
+	@ApiOperation(value = "Return basic filtered info of users")
+	@GetMapping(path = "basic/filtered", produces = MediaType.APPLICATION_JSON_VALUE)
+	List<BaseUserSO> getFilteredBasicInfo(@RequestParam String login);
+		
+	
 	
 	
 }

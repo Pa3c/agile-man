@@ -244,4 +244,9 @@ public class UserService extends CommonService<String, UserSO, AppUser> implemen
 		return new BaseUserSO(userInfo.getId(), userInfo.getName(), userInfo.getSurname());
 	}
 
+	public List<BaseUserSO> getFilteredBasicInfo(String login) {
+		final List<IBasicUserInfo> usersInfo = ((UserRepository)repository).getFilteredBasicInfo(login);
+		return usersInfo.stream().map(x->new BaseUserSO(x.getId(), x.getName(), x.getSurname())).collect(Collectors.toList());
+	}
+
 }

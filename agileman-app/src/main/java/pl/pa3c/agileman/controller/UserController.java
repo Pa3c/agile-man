@@ -54,4 +54,9 @@ public class UserController extends CommonController<String, UserSO, AppUser> im
 		return ((UserService) commonService).getBasicInfo(login);
 	}
 
+	@Override
+	public List<BaseUserSO> getFilteredBasicInfo(String login) {
+		return ((UserService) commonService).getFilteredBasicInfo(login);
+	}
+
 }
