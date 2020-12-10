@@ -84,7 +84,7 @@ public class TaskService extends CommonService<Long, TaskSO, Task> {
 
 	@Transactional
 	public void removeTaskUser(Long id, String login, String type) {
-
+		
 		utRepository.deleteByTaskIdAndUserIdAndType(id, login, Type.valueOf(type));
 	}
 
