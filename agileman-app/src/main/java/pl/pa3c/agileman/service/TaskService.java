@@ -73,7 +73,7 @@ public class TaskService extends CommonService<Long, TaskSO, Task> {
 		final Task task = repository.getOne(id);
 		final AppUser user = userRepository.getOne(taskUserSO.getId());
 		final Type relationType = Type.valueOf(taskUserSO.getType());
-
+		
 		final UserTask userTask = new UserTask();
 		userTask.setTask(task);
 		userTask.setUser(user);

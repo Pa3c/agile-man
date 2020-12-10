@@ -29,7 +29,7 @@ public interface TaskSI {
 	}
 
 	@ApiOperation(value = "Return users of task")
-	@GetMapping(path = "/{id}/user/", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(path = "/{id}/user", produces = MediaType.APPLICATION_JSON_VALUE)
 	List<TaskUserSO> getTaskUsers(@PathVariable("id") Long id);
 
 	@ApiOperation(value = "Add user to task")
