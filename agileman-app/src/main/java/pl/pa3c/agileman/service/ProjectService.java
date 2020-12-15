@@ -109,6 +109,16 @@ public class ProjectService extends CommonService<Long, ProjectSO, Project> {
 		});
 	}
 
+	public List<ProjectLabelSO> getLabels(Long projectId) {
+		return projectLabelRepository.findByProjectId(projectId).stream().map(x -> mapper.map(x, ProjectLabelSO.class))
+				.collect(Collectors.toList());
+	}
+
+	public List<LabelSO> getFilteredLabels(Long projectId, String type, String id) {
+		return projectLabelRepository.findByProjectIdAndTypeAndIdLike(projectId,type,id).stream().map(x -> mapper.map(x, LabelSO.class))
+				.collect(Collectors.toList());
+	}
+	
 	private void createBackLog(TeamInProject tip) {
 		final TaskContainer taskContainer = new TaskContainer();
 		taskContainer.setTeamInProject(tip);
@@ -117,10 +127,6 @@ public class ProjectService extends CommonService<Long, ProjectSO, Project> {
 		taskContainerRepository.save(taskContainer);
 	}
 
-	public List<ProjectLabelSO> getLabels(Long projectId) {
 
-		return projectLabelRepository.findByProjectId(projectId).stream().map(x -> mapper.map(x, ProjectLabelSO.class))
-				.collect(Collectors.toList());
-	}
 
 }

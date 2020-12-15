@@ -37,4 +37,10 @@ public class ProjectController extends CommonController<Long, ProjectSO, Project
 	public List<ProjectLabelSO> getLabels(Long projectId) {
 		return ((ProjectService)commonService).getLabels(projectId);
 	}
+
+	@Override
+	public List<LabelSO> getFilteredLabels(Long projectId, String type, String value) {
+		return ((ProjectService)commonService).getFilteredLabels(projectId,type,value);
+	}
+
 }

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import io.swagger.annotations.Api;
@@ -61,5 +62,16 @@ public interface ProjectSI {
 	@GetMapping(path = "/{project_id}/label", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(code = HttpStatus.OK)
 	List<ProjectLabelSO> getLabels(@PathVariable(name = "project_id") Long projectId);
+	
+	
+	@ApiOperation(value = "Add labels to project")
+	@ApiResponses(value = { 
+			@ApiResponse(code = 200, message = "Project labels returned successfully"), 
+			@ApiResponse(code = 404, message = "If project not exists"), 
+			})
+	@GetMapping(path = "/{project_id}/label/filtered", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseStatus(code = HttpStatus.OK)
+	List<LabelSO> getFilteredLabels(@PathVariable(name = "project_id") Long projectId,
+			@RequestParam("type")String type,@RequestParam("filter")String value);
 
 }
