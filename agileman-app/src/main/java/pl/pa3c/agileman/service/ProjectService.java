@@ -115,10 +115,12 @@ public class ProjectService extends CommonService<Long, ProjectSO, Project> {
 	}
 
 	public List<LabelSO> getFilteredLabels(Long projectId, String type, String id) {
-		return projectLabelRepository.findByProjectIdAndTypeAndIdLike(projectId,type,id).stream().map(x -> mapper.map(x, LabelSO.class))
-				.collect(Collectors.toList());
+		List<LabelSO> labels = projectLabelRepository
+				.findByProjectIdAndTypeAndIdContainingIgnoreCase(projectId, pl.pa3c.agileman.model.label.Type.valueOf(type), id)
+				.stream().map(x -> mapper.map(x, LabelSO.class)).collect(Collectors.toList());
+		return labels;
 	}
-	
+
 	private void createBackLog(TeamInProject tip) {
 		final TaskContainer taskContainer = new TaskContainer();
 		taskContainer.setTeamInProject(tip);
@@ -126,7 +128,5 @@ public class ProjectService extends CommonService<Long, ProjectSO, Project> {
 		taskContainer.setType(Type.BACKLOG);
 		taskContainerRepository.save(taskContainer);
 	}
-
-
 
 }
