@@ -61,6 +61,22 @@ public class TaskService extends CommonService<Long, TaskSO, Task> {
 		return taskSO;
 	}
 
+	@Override
+	public TaskSO update(Long id, TaskSO entitySO) {
+
+		if (entitySO.getSteps() == null) {
+			return super.update(id, entitySO);
+		}
+		stepRepository.deleteAllByTaskId(id);
+		final List<Step> savedSteps = stepRepository
+				.saveAll(entitySO.getSteps().stream().map(x -> mapper.map(x, Step.class)).collect(Collectors.toList()));
+		final TaskSO returnedSO = super.update(id, entitySO);
+		returnedSO.setSteps(savedSteps.stream().map(x -> mapper.map(x, StepSO.class)).collect(Collectors.toList()));
+
+		return returnedSO;
+
+	}
+
 	public List<TaskUserSO> getTaskUsers(Long id) {
 		final List<ITaskUserInfo> taskUserInfo = utRepository.getTaskBasicUserInfo(id);
 		return taskUserInfo.stream()
@@ -73,7 +89,7 @@ public class TaskService extends CommonService<Long, TaskSO, Task> {
 		final Task task = repository.getOne(id);
 		final AppUser user = userRepository.getOne(taskUserSO.getId());
 		final Type relationType = Type.valueOf(taskUserSO.getType());
-		
+
 		final UserTask userTask = new UserTask();
 		userTask.setTask(task);
 		userTask.setUser(user);
@@ -84,7 +100,7 @@ public class TaskService extends CommonService<Long, TaskSO, Task> {
 
 	@Transactional
 	public void removeTaskUser(Long id, String login, String type) {
-		
+
 		utRepository.deleteByTaskIdAndUserIdAndType(id, login, Type.valueOf(type));
 	}
 
