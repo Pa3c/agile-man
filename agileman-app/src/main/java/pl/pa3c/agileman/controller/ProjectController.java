@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 
 import pl.pa3c.agileman.api.label.LabelSO;
+import pl.pa3c.agileman.api.project.BaseProjectTeamSO;
 import pl.pa3c.agileman.api.project.ProjectLabelSO;
 import pl.pa3c.agileman.api.project.ProjectSI;
 import pl.pa3c.agileman.api.project.ProjectSO;
@@ -46,6 +47,16 @@ public class ProjectController extends CommonController<Long, ProjectSO, Project
 	@Override
 	public void removeLabel(Long projectId, String labelId) {
 		((ProjectService)commonService).removeLabel(projectId,labelId);
+	}
+
+	@Override
+	public List<BaseProjectTeamSO> getTeams(Long projectId) {
+		return ((ProjectService)commonService).getTeams(projectId);
+	}
+
+	@Override
+	public void removeTeam(Long projectId, Long teamId) {
+		((ProjectService)commonService).removeTeam(projectId,teamId);
 	}
 
 }

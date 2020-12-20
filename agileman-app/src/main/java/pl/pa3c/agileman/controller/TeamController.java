@@ -1,9 +1,12 @@
 package pl.pa3c.agileman.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 
+import pl.pa3c.agileman.api.TitleNameSO;
 import pl.pa3c.agileman.api.team.TeamSI;
 import pl.pa3c.agileman.api.team.TeamSO;
 import pl.pa3c.agileman.api.team.TeamWithUsersSO;
@@ -40,6 +43,12 @@ public class TeamController extends CommonController<Long, TeamSO, Team> impleme
 	@Override
 	public void deleteUserFromTeam(Long id, String login) {
 		((TeamService)commonService).deleteUserFromTeam(id,login);
+	}
+
+	@Override
+	public List<TitleNameSO<Long>> getFilteredBasicTeam(String value) {
+		
+		return ((TeamService) commonService).getFilteredBasicTeam(value);
 	}
 	
 }

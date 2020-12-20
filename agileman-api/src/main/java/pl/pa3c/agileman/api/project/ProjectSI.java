@@ -45,6 +45,15 @@ public interface ProjectSI {
 	void addTeam(@PathVariable(name = "project_id") Long projectId,
 			@PathVariable(name = "team_id") Long teamId, @PathVariable(name = "type") String type);
 	
+	@ApiOperation(value = "Add team to project")
+	@ApiResponses(value = { 
+			@ApiResponse(code = 200, message = "Added teamF to project"),
+			@ApiResponse(code = 404, message = "If project or team not exists"),
+			})
+	@GetMapping(path = "/{project_id}/team", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseStatus(code = HttpStatus.OK)
+	List<BaseProjectTeamSO> getTeams(@PathVariable(name = "project_id") Long projectId);
+	
 	@ApiOperation(value = "Add labels to project")
 	@ApiResponses(value = { 
 			@ApiResponse(code = 409, message = "Project has got alredy that label"),
@@ -64,6 +73,15 @@ public interface ProjectSI {
 	@ResponseStatus(code = HttpStatus.ACCEPTED)
 	void removeLabel(@PathVariable(name = "project_id") Long projectId,@PathVariable(name = "label_id") String labelId);
 	
+	
+	@ApiOperation(value = "Remvoe label from project")
+	@ApiResponses(value = { 
+			@ApiResponse(code = 202, message = "Team removed from project"), 
+			@ApiResponse(code = 404, message = "If team or project not exists"), 
+			})
+	@DeleteMapping(path = "/{project_id}/team/{team_id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseStatus(code = HttpStatus.ACCEPTED)
+	void removeTeam(@PathVariable(name = "project_id") Long projectId,@PathVariable(name = "team_id") Long teamId);
 	
 	@ApiOperation(value = "Add labels to project")
 	@ApiResponses(value = { 

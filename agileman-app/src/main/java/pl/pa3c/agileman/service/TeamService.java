@@ -3,6 +3,7 @@ package pl.pa3c.agileman.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
+import pl.pa3c.agileman.api.TitleNameSO;
 import pl.pa3c.agileman.api.team.TeamSO;
 import pl.pa3c.agileman.api.team.TeamWithUsersSO;
 import pl.pa3c.agileman.api.user.RoleBaseUserSO;
@@ -26,6 +28,7 @@ import pl.pa3c.agileman.repository.ProjectRepository;
 import pl.pa3c.agileman.repository.RoleInProjectRepository;
 import pl.pa3c.agileman.repository.TeamInProjectRepository;
 import pl.pa3c.agileman.repository.UserInProjectRepository;
+import pl.pa3c.agileman.repository.team.TeamRepository;
 import pl.pa3c.agileman.repository.user.UserRepository;
 
 @Service
@@ -194,6 +197,16 @@ public class TeamService extends CommonService<Long, TeamSO, Team> {
 		uip.setTeamInProject(x);
 		uip.setUser(user);
 		return userInProjectRepository.save(uip);
+	}
+
+	public List<TitleNameSO<Long>> getFilteredBasicTeam(String value) {
+		Long teamId = -1l;
+		if(value.matches("\\d+")) {
+			teamId = Long.parseLong(value);
+		}
+		
+		return ((TeamRepository) repository).getFilteredBasicTeam(teamId,value).stream()
+				.map(x -> new TitleNameSO<Long>(x.getId(), x.getTitle())).collect(Collectors.toList());
 	}
 
 }

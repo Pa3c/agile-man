@@ -2,6 +2,8 @@ package pl.pa3c.agileman.api.team;
 
 import static pl.pa3c.agileman.api.team.TeamSI.Constants.URL;
 
+import java.util.List;
+
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,9 +11,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import pl.pa3c.agileman.api.TitleNameSO;
 import pl.pa3c.agileman.api.user.RoleBaseUserSO;
 
 @Api("Team Management API")
@@ -42,4 +46,8 @@ public interface TeamSI {
 	@ApiOperation(value = "Get users of team")
 	@DeleteMapping(path = "/{id}/user/{login}",produces = MediaType.APPLICATION_JSON_VALUE)
 	public void deleteUserFromTeam(@PathVariable Long id,@PathVariable String login);
+	
+	@ApiOperation(value = "Return basic filtered info of users")
+	@GetMapping(path = "basic/filtered", produces = MediaType.APPLICATION_JSON_VALUE)
+	List<TitleNameSO<Long>> getFilteredBasicTeam(@RequestParam String value);
 }

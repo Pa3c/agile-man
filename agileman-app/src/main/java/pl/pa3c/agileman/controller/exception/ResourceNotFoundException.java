@@ -10,5 +10,8 @@ public class ResourceNotFoundException extends AgilemanException {
 	public ResourceNotFoundException(EmptyResultDataAccessException e, String id) {
         super(e, "Resource with id=" + id + " not found : " + (e != null ? e.getMessage() : ""));
     }
+	public ResourceNotFoundException(String msg) {
+		super(msg);
+	}
 
 }

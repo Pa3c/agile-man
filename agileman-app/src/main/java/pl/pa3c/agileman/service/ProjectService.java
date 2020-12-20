@@ -7,19 +7,22 @@ import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 import pl.pa3c.agileman.api.label.LabelSO;
+import pl.pa3c.agileman.api.project.BaseProjectTeamSO;
 import pl.pa3c.agileman.api.project.ProjectLabelSO;
 import pl.pa3c.agileman.api.project.ProjectSO;
 import pl.pa3c.agileman.api.user.UserTeamProjectSO;
+import pl.pa3c.agileman.controller.exception.ResourceNotFoundException;
 import pl.pa3c.agileman.model.label.ProjectLabel;
 import pl.pa3c.agileman.model.project.Project;
-import pl.pa3c.agileman.model.project.TeamProjectRole;
 import pl.pa3c.agileman.model.project.ProjectType;
 import pl.pa3c.agileman.model.project.RoleInProject;
 import pl.pa3c.agileman.model.project.TeamInProject;
+import pl.pa3c.agileman.model.project.TeamProjectRole;
 import pl.pa3c.agileman.model.project.UserInProject;
 import pl.pa3c.agileman.model.taskcontainer.TaskContainer;
 import pl.pa3c.agileman.model.taskcontainer.Type;
@@ -28,8 +31,8 @@ import pl.pa3c.agileman.repository.ProjectLabelRepository;
 import pl.pa3c.agileman.repository.RoleInProjectRepository;
 import pl.pa3c.agileman.repository.TaskContainerRepository;
 import pl.pa3c.agileman.repository.TeamInProjectRepository;
-import pl.pa3c.agileman.repository.TeamRepository;
 import pl.pa3c.agileman.repository.UserInProjectRepository;
+import pl.pa3c.agileman.repository.team.TeamRepository;
 
 @Service
 public class ProjectService extends CommonService<Long, ProjectSO, Project> {
@@ -122,7 +125,24 @@ public class ProjectService extends CommonService<Long, ProjectSO, Project> {
 	}
 
 	public void removeLabel(Long projectId, String labelId) {
-		projectLabelRepository.deleteAllByIdAndProjectId(labelId,projectId);
+		projectLabelRepository.deleteAllByIdAndProjectId(labelId, projectId);
+	}
+
+	public List<BaseProjectTeamSO> getTeams(Long projectId) {
+		final List<TeamInProject> tips = teamInProjectRepository.findAllByProjectId(projectId);
+
+		return tips.stream().map(x -> {
+			final BaseProjectTeamSO bptSO = mapper.map(x.getTeam(), BaseProjectTeamSO.class);
+			bptSO.setType(x.getType().name());
+			return bptSO;
+		}).collect(Collectors.toList());
+	}
+
+	public void removeTeam(Long projectId, Long teamId) {
+		final TeamInProject tip = teamInProjectRepository.findByProjectIdAndTeamId(projectId, teamId)
+				.orElseThrow(()->new ResourceNotFoundException("Cannot find project with id: "+projectId
+						+" which contains team with id: "+teamId));
+		//taskContainerRepository.deleteAllByTeamInProjectId(tip.getId());
 	}
 
 }
