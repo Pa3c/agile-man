@@ -9,4 +9,5 @@ databaseChangeLog:
         constraintName: team_project_to_task_container
         referencedColumnNames: id
         referencedTableName: team_in_project
+        onDelete: "CASCADE"
         validate: true

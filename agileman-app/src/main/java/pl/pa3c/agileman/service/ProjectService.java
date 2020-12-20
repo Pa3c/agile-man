@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
@@ -138,11 +137,12 @@ public class ProjectService extends CommonService<Long, ProjectSO, Project> {
 		}).collect(Collectors.toList());
 	}
 
+	@Transactional
 	public void removeTeam(Long projectId, Long teamId) {
 		final TeamInProject tip = teamInProjectRepository.findByProjectIdAndTeamId(projectId, teamId)
 				.orElseThrow(()->new ResourceNotFoundException("Cannot find project with id: "+projectId
 						+" which contains team with id: "+teamId));
-		//taskContainerRepository.deleteAllByTeamInProjectId(tip.getId());
+		teamInProjectRepository.delete(tip);
 	}
 
 }

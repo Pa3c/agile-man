@@ -181,7 +181,6 @@ public class TeamService extends CommonService<Long, TeamSO, Team> {
 	public void deleteUserFromTeam(Long id, String login) {
 		final List<TeamInProject> tips = teamInProjectRepository.findAllByTeamId(id);
 		final List<UserInProject> uips = userInProjectRepository.findAllByUserIdAndTeamInProjectIn(login, tips);
-		uips.forEach(x -> roleInProjectRepository.deleteByUserInProjectId(x.getId()));
 		userInProjectRepository.deleteAll(uips);
 	}
 

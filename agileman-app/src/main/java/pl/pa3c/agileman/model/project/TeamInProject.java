@@ -10,7 +10,6 @@ import javax.validation.constraints.NotNull;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import pl.pa3c.agileman.model.base.IdEntity;
 import pl.pa3c.agileman.model.base.LongIdEntity;
 import pl.pa3c.agileman.model.team.Team;
 
@@ -31,4 +30,6 @@ public class TeamInProject extends LongIdEntity {
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	private ProjectType type;
+	
+	
 }
