@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import pl.pa3c.agileman.model.project.TeamInProject;
 import pl.pa3c.agileman.model.project.UserInProject;
 
 public interface UserInProjectRepository extends JpaRepository<UserInProject, Long> {
@@ -19,5 +20,7 @@ public interface UserInProjectRepository extends JpaRepository<UserInProject, Lo
 	List<UserInProject> findDistinctByTeamInProjectTeamId(Long teamId);
 
 	List<UserInProject> findAllByTeamInProjectId(Long id);
+
+	List<UserInProject> findAllByUserIdAndTeamInProjectIn(String login, List<TeamInProject> tips);
 
 }

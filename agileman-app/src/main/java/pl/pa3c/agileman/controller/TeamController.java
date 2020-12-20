@@ -36,6 +36,11 @@ public class TeamController extends CommonController<Long, TeamSO, Team> impleme
 	public RoleBaseUserSO addUserToTeam(Long id, RoleBaseUserSO roleBaseUserSO) {
 		return ((TeamService)commonService).addUserToTeam(id,roleBaseUserSO);
 	}
+
+	@Override
+	public void deleteUserFromTeam(Long id, String login) {
+		((TeamService)commonService).deleteUserFromTeam(id,login);
+	}
 	
 }
 

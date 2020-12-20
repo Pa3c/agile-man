@@ -1,7 +1,7 @@
 package pl.pa3c.agileman.repository;
 
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -11,6 +11,6 @@ public interface TeamInProjectRepository extends JpaRepository<TeamInProject, Lo
 
 	Optional<TeamInProject> findByProjectIdAndTeamId(Long projectId, Long teamId);
 
-	Set<TeamInProject> findAllByTeamId(Long id);
+	List<TeamInProject> findAllByTeamId(Long id);
 
 }

@@ -1,6 +1,5 @@
 package pl.pa3c.agileman.model.project;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -16,8 +15,8 @@ import pl.pa3c.agileman.model.user.AppUser;
 @Data
 @EqualsAndHashCode(callSuper = false)
 public class UserInProject extends LongIdEntity{
-	@ManyToOne(cascade={CascadeType.ALL})
-	@JoinColumn(name="user_id")
+	@ManyToOne
+	@JoinColumn(name="user_id",updatable = false)
 	private AppUser user;
 	
 	@ManyToOne

@@ -157,7 +157,7 @@ public class TeamService extends CommonService<Long, TeamSO, Team> {
 	public RoleBaseUserSO addUserToTeam(Long id, RoleBaseUserSO roleBaseUserSO) {
 		final Optional<Boolean> consistenceErrorFlag = Optional.of(Boolean.FALSE);
 		final AppUser user = userRepository.getOne(roleBaseUserSO.getId());
-		final Set<TeamInProject> tips = teamInProjectRepository.findAllByTeamId(id);
+		final List<TeamInProject> tips = teamInProjectRepository.findAllByTeamId(id);
 
 		tips.forEach(x -> {
 			if (x.getProject().getId() > ProjectService.NO_PROJECT_ID) {
@@ -171,8 +171,16 @@ public class TeamService extends CommonService<Long, TeamSO, Team> {
 		if (!consistenceErrorFlag.get().booleanValue()) {
 			return roleBaseUserSO;
 		}
-		
+
 		throw new UnconsistentDataException("There is a team with id: " + id + " without basic project.");
+	}
+
+	@Transactional
+	public void deleteUserFromTeam(Long id, String login) {
+		final List<TeamInProject> tips = teamInProjectRepository.findAllByTeamId(id);
+		final List<UserInProject> uips = userInProjectRepository.findAllByUserIdAndTeamInProjectIn(login, tips);
+		uips.forEach(x -> roleInProjectRepository.deleteByUserInProjectId(x.getId()));
+		userInProjectRepository.deleteAll(uips);
 	}
 
 	private void createRoleInProject(UserInProject userInProject, TeamProjectRole role) {

@@ -3,6 +3,7 @@ package pl.pa3c.agileman.api.team;
 import static pl.pa3c.agileman.api.team.TeamSI.Constants.URL;
 
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,4 +38,8 @@ public interface TeamSI {
 	@ApiOperation(value = "Get users of team")
 	@PostMapping(path = "/{id}/user",produces = MediaType.APPLICATION_JSON_VALUE)
 	public RoleBaseUserSO addUserToTeam(@PathVariable Long id,@RequestBody RoleBaseUserSO roleBaseUserSO);
+	
+	@ApiOperation(value = "Get users of team")
+	@DeleteMapping(path = "/{id}/user/{login}",produces = MediaType.APPLICATION_JSON_VALUE)
+	public void deleteUserFromTeam(@PathVariable Long id,@PathVariable String login);
 }
