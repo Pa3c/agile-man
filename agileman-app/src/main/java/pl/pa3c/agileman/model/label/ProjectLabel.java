@@ -24,7 +24,7 @@ import pl.pa3c.agileman.model.project.Project;
 @NoArgsConstructor
 @IdClass(ProjectLabelId.class)
 public class ProjectLabel extends StringIdEntity {
-	@ManyToOne(cascade = { CascadeType.ALL })
+	@ManyToOne
 	@JoinColumn(name = "project_id")
 	private Project project;
 

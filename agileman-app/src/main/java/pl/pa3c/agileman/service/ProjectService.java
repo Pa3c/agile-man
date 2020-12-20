@@ -121,4 +121,8 @@ public class ProjectService extends CommonService<Long, ProjectSO, Project> {
 		taskContainerRepository.save(taskContainer);
 	}
 
+	public void removeLabel(Long projectId, String labelId) {
+		projectLabelRepository.deleteAllByIdAndProjectId(labelId,projectId);
+	}
+
 }

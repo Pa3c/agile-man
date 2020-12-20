@@ -3,7 +3,6 @@ package pl.pa3c.agileman.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import javax.transaction.Transactional;
 

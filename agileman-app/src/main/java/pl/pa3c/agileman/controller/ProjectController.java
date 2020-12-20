@@ -43,4 +43,9 @@ public class ProjectController extends CommonController<Long, ProjectSO, Project
 		return ((ProjectService)commonService).getFilteredLabels(projectId,type,value);
 	}
 
+	@Override
+	public void removeLabel(Long projectId, String labelId) {
+		((ProjectService)commonService).removeLabel(projectId,labelId);
+	}
+
 }
