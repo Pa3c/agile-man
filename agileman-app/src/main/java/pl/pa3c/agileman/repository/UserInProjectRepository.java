@@ -18,4 +18,6 @@ public interface UserInProjectRepository extends JpaRepository<UserInProject, Lo
 
 	List<UserInProject> findDistinctByTeamInProjectTeamId(Long teamId);
 
+	List<UserInProject> findAllByTeamInProjectId(Long id);
+
 }

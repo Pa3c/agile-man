@@ -31,6 +31,7 @@ import pl.pa3c.agileman.api.user.UserTeamSO;
 import pl.pa3c.agileman.controller.exception.ResourceNotFoundException;
 import pl.pa3c.agileman.model.base.LongIdEntity;
 import pl.pa3c.agileman.model.project.Project;
+import pl.pa3c.agileman.model.project.TeamProjectRole;
 import pl.pa3c.agileman.model.project.ProjectType;
 import pl.pa3c.agileman.model.project.RoleInProject;
 import pl.pa3c.agileman.model.project.TeamInProject;
@@ -111,9 +112,16 @@ public class UserService extends CommonService<String, UserSO, AppUser> implemen
 
 			final Project project = x.getTeamInProject().getProject();
 			final Team team = x.getTeamInProject().getTeam();
+			final String teamRole = roleInProjectRepository
+					.findTeamRole(x.getId(), List.of(TeamProjectRole.TEAM_ADMIN, TeamProjectRole.TEAM_BASIC)).orElseGet(() -> {
+						final RoleInProject rip = new RoleInProject();
+						rip.setUserInProject(x);
+						rip.setRole(TeamProjectRole.TEAM_BASIC);
+						return rip;
+					}).getRole().name();
 
 			if (project.getId() == ProjectService.NO_PROJECT_ID && !teamsOfUser.containsKey(team.getId())) {
-				teamsOfUser.put(team.getId(), userTeamSOWithoutProjects(team));
+				teamsOfUser.put(team.getId(), userTeamSOWithoutProjects(team, teamRole));
 				return;
 			}
 
@@ -122,7 +130,7 @@ public class UserService extends CommonService<String, UserSO, AppUser> implemen
 				return;
 			}
 
-			teamsOfUser.put(team.getId(), userTeamSO(team, project, x.getId()));
+			teamsOfUser.put(team.getId(), userTeamSO(team, project, x.getId(), teamRole));
 		});
 
 		return teamsOfUser.values();
@@ -199,17 +207,17 @@ public class UserService extends CommonService<String, UserSO, AppUser> implemen
 		return streamForContainer.filter(x -> x.getOvercontainer() == null);
 	}
 
-	private UserTeamSO userTeamSO(final Team team, final Project project, final Long userInProjectId) {
+	private UserTeamSO userTeamSO(final Team team, final Project project, final Long userInProjectId, String teamRole) {
 
 		final UserTeamProjectSO userTeamProjectSO = createProjectSO(project,
 				roleInProjectRepository.findAllByUserInProjectId(userInProjectId));
 
-		return new UserTeamSO(mapper.map(team, TeamSO.class), userTeamProjectSO);
+		return new UserTeamSO(mapper.map(team, TeamSO.class), teamRole, userTeamProjectSO);
 
 	}
 
-	private UserTeamSO userTeamSOWithoutProjects(final Team team) {
-		return new UserTeamSO(mapper.map(team, TeamSO.class), ProjectService.NO_PROJECTS);
+	private UserTeamSO userTeamSOWithoutProjects(final Team team, String teamRole) {
+		return new UserTeamSO(mapper.map(team, TeamSO.class), teamRole, ProjectService.NO_PROJECTS);
 	}
 
 	private Collection<RoleInProject> userProjectRoles(Long userInProjectId) {
@@ -217,7 +225,7 @@ public class UserService extends CommonService<String, UserSO, AppUser> implemen
 	}
 
 	private Set<String> userProjectRoleNames(Long userInProjectId) {
-		return userProjectRoles(userInProjectId).stream().map(x -> x.getRole().getId()).collect(Collectors.toSet());
+		return userProjectRoles(userInProjectId).stream().map(x -> x.getRole().name()).collect(Collectors.toSet());
 	}
 
 	private Stream<TeamInProject> getTeamsInProject(List<UserInProject> userInProjects) {
@@ -235,7 +243,7 @@ public class UserService extends CommonService<String, UserSO, AppUser> implemen
 		final UserTeamProjectSO projectSO = new UserTeamProjectSO();
 		projectSO.setId(project.getId());
 		projectSO.setTitle(project.getTitle());
-		projectSO.setRoles(roles.stream().map(x -> x.getRole().getId()).collect(Collectors.toSet()));
+		projectSO.setRoles(roles.stream().map(x -> x.getRole().name()).collect(Collectors.toSet()));
 		return projectSO;
 	}
 
@@ -245,8 +253,9 @@ public class UserService extends CommonService<String, UserSO, AppUser> implemen
 	}
 
 	public List<BaseUserSO> getFilteredBasicInfo(String login) {
-		final List<IBasicUserInfo> usersInfo = ((UserRepository)repository).getFilteredBasicInfo(login);
-		return usersInfo.stream().map(x->new BaseUserSO(x.getId(), x.getName(), x.getSurname())).collect(Collectors.toList());
+		final List<IBasicUserInfo> usersInfo = ((UserRepository) repository).getFilteredBasicInfo(login);
+		return usersInfo.stream().map(x -> new BaseUserSO(x.getId(), x.getName(), x.getSurname()))
+				.collect(Collectors.toList());
 	}
 
 }

@@ -1,0 +1,10 @@
+databaseChangeLog:
+- changeSet:  
+   id:  role_in_project_unqiue_role
+   author:  patryk.klos  
+   changes:  
+   -  addUniqueConstraint:  
+       columnNames:  user_in_project_id, role  
+       constraintName:  role_in_project_unique_role
+       tableName:  role_in_project
+       validate:  true

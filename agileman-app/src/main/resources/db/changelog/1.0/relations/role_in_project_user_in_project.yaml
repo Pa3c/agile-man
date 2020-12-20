@@ -10,10 +10,3 @@ databaseChangeLog:
         referencedColumnNames: id
         referencedTableName: user_in_project
         validate: true
-    - addForeignKeyConstraint:
-        baseColumnNames: role
-        baseTableName: role_in_project
-        constraintName: role_role_in_project
-        referencedColumnNames: id
-        referencedTableName: project_role
-        validate: true

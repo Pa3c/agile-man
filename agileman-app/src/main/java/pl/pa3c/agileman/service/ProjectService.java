@@ -16,7 +16,7 @@ import pl.pa3c.agileman.api.project.ProjectSO;
 import pl.pa3c.agileman.api.user.UserTeamProjectSO;
 import pl.pa3c.agileman.model.label.ProjectLabel;
 import pl.pa3c.agileman.model.project.Project;
-import pl.pa3c.agileman.model.project.ProjectRole;
+import pl.pa3c.agileman.model.project.TeamProjectRole;
 import pl.pa3c.agileman.model.project.ProjectType;
 import pl.pa3c.agileman.model.project.RoleInProject;
 import pl.pa3c.agileman.model.project.TeamInProject;
@@ -25,7 +25,6 @@ import pl.pa3c.agileman.model.taskcontainer.TaskContainer;
 import pl.pa3c.agileman.model.taskcontainer.Type;
 import pl.pa3c.agileman.model.user.AppUser;
 import pl.pa3c.agileman.repository.ProjectLabelRepository;
-import pl.pa3c.agileman.repository.ProjectRoleRepository;
 import pl.pa3c.agileman.repository.RoleInProjectRepository;
 import pl.pa3c.agileman.repository.TaskContainerRepository;
 import pl.pa3c.agileman.repository.TeamInProjectRepository;
@@ -42,9 +41,6 @@ public class ProjectService extends CommonService<Long, ProjectSO, Project> {
 
 	@Autowired
 	private TeamInProjectRepository teamInProjectRepository;
-
-	@Autowired
-	private ProjectRoleRepository projectRoleRepository;
 
 	@Autowired
 	private RoleInProjectRepository roleInProjectRepository;
@@ -87,11 +83,7 @@ public class ProjectService extends CommonService<Long, ProjectSO, Project> {
 		final Set<AppUser> usersFromTeam = userInProjectRepository.findDistinctByTeamInProjectTeamId(teamId).stream()
 				.map(UserInProject::getUser).collect(Collectors.toSet());
 
-		final String basic = "BASIC";
-		final String admin = "ADMIN";
 		final RoleInProject roleInProject = new RoleInProject();
-		final ProjectRole adminRole = projectRoleRepository.getOne(admin);
-		final ProjectRole basicRole = projectRoleRepository.getOne(basic);
 
 		usersFromTeam.forEach(x -> {
 			final UserInProject uip = new UserInProject();
@@ -100,9 +92,9 @@ public class ProjectService extends CommonService<Long, ProjectSO, Project> {
 			final UserInProject savedUiP = userInProjectRepository.save(uip);
 
 			if (x.getLogin().equals(project.getCreatedBy())) {
-				roleInProject.setRole(adminRole);
+				roleInProject.setRole(TeamProjectRole.PROJECT_SUPER_ADMIN);
 			} else {
-				roleInProject.setRole(basicRole);
+				roleInProject.setRole(TeamProjectRole.PROJECT_BASIC);
 			}
 			roleInProject.setUserInProject(savedUiP);
 			roleInProjectRepository.save(roleInProject);
@@ -115,10 +107,10 @@ public class ProjectService extends CommonService<Long, ProjectSO, Project> {
 	}
 
 	public List<LabelSO> getFilteredLabels(Long projectId, String type, String id) {
-		List<LabelSO> labels = projectLabelRepository
-				.findByProjectIdAndTypeAndIdContainingIgnoreCase(projectId, pl.pa3c.agileman.model.label.Type.valueOf(type), id)
+		return projectLabelRepository
+				.findByProjectIdAndTypeAndIdContainingIgnoreCase(projectId,
+						pl.pa3c.agileman.model.label.Type.valueOf(type), id)
 				.stream().map(x -> mapper.map(x, LabelSO.class)).collect(Collectors.toList());
-		return labels;
 	}
 
 	private void createBackLog(TeamInProject tip) {

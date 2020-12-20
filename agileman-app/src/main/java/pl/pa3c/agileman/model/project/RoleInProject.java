@@ -1,9 +1,12 @@
 package pl.pa3c.agileman.model.project;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,9 +19,10 @@ import pl.pa3c.agileman.model.base.LongIdEntity;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RoleInProject extends LongIdEntity {
-	@ManyToOne
-	@JoinColumn(name = "role")
-	private ProjectRole role;
+	public static final String TEAM_PREIX = "TEAM_";
+	@NotNull
+	@Enumerated(EnumType.STRING)
+	private TeamProjectRole role;
 	@ManyToOne
 	@JoinColumn(name = "user_in_project_id")
 	private UserInProject userInProject;

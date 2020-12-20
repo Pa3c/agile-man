@@ -13,7 +13,7 @@ import pl.pa3c.agileman.model.base.BaseStringEntity;
 @Table
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class AppUser extends BaseStringEntity{
+public class AppUser extends BaseStringEntity {
 
 	private String name;
 	private String surname;
@@ -22,24 +22,22 @@ public class AppUser extends BaseStringEntity{
 	private String phoneNumber;
 	private String skype;
 	private LocalDateTime birthday;
-	
-	public String getLogin(){
+
+	public String getLogin() {
 		return id;
 	}
-	
-	public void setLogin(String login){
+
+	public void setLogin(String login) {
 		this.id = login;
 	}
-	
-	@Override
-	public void setId(String id) {
-		// TODO Auto-generated method stub
-		super.setId(id);
-	}
-	
-	@Override
-	public String getId() {
-		// TODO Auto-generated method stub
-		return super.getId();
-	}
+//
+//	@Override
+//	public void setId(String id) {
+//		super.setId(id);
+//	}
+//
+//	@Override
+//	public String getId() {
+//		return super.getId();
+//	}
 }
