@@ -20,6 +20,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import pl.pa3c.agileman.api.label.LabelSO;
+import pl.pa3c.agileman.api.user.MultiRoleBaseUserSO;
 
 @Api("Project Management API")
 @RequestMapping(URL)
@@ -102,5 +103,16 @@ public interface ProjectSI {
 	@ResponseStatus(code = HttpStatus.OK)
 	List<LabelSO> getFilteredLabels(@PathVariable(name = "project_id") Long projectId,
 			@RequestParam("type")String type,@RequestParam("filter")String value);
+	
+	
+	@ApiOperation(value = "Get project team users with project roles")
+	@ApiResponses(value = { 
+			@ApiResponse(code = 200, message = "Returned successful"), 
+			@ApiResponse(code = 404, message = "Any project do not have specific team"), 
+			})
+	@GetMapping(path = "/{project_id}/team/{team_id}/user", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseStatus(code = HttpStatus.OK)
+	ProjectUserRolesInfoSO getTeamProjectUsersRoles(@PathVariable(name = "project_id") Long projectId,
+			@PathVariable("team_id")Long teamId);
 
 }

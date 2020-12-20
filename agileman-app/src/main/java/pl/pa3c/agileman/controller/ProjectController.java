@@ -11,6 +11,8 @@ import pl.pa3c.agileman.api.project.BaseProjectTeamSO;
 import pl.pa3c.agileman.api.project.ProjectLabelSO;
 import pl.pa3c.agileman.api.project.ProjectSI;
 import pl.pa3c.agileman.api.project.ProjectSO;
+import pl.pa3c.agileman.api.project.ProjectUserRolesInfoSO;
+import pl.pa3c.agileman.api.user.MultiRoleBaseUserSO;
 import pl.pa3c.agileman.model.project.Project;
 import pl.pa3c.agileman.service.CommonService;
 import pl.pa3c.agileman.service.ProjectService;
@@ -57,6 +59,11 @@ public class ProjectController extends CommonController<Long, ProjectSO, Project
 	@Override
 	public void removeTeam(Long projectId, Long teamId) {
 		((ProjectService)commonService).removeTeam(projectId,teamId);
+	}
+
+	@Override
+	public ProjectUserRolesInfoSO getTeamProjectUsersRoles(Long projectId, Long teamId) {
+		return ((ProjectService)commonService).getTeamProjectUsersRoles(projectId,teamId);
 	}
 
 }

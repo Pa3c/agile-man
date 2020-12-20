@@ -14,6 +14,8 @@ import pl.pa3c.agileman.api.label.LabelSO;
 import pl.pa3c.agileman.api.project.BaseProjectTeamSO;
 import pl.pa3c.agileman.api.project.ProjectLabelSO;
 import pl.pa3c.agileman.api.project.ProjectSO;
+import pl.pa3c.agileman.api.project.ProjectUserRolesInfoSO;
+import pl.pa3c.agileman.api.user.MultiRoleBaseUserSO;
 import pl.pa3c.agileman.api.user.UserTeamProjectSO;
 import pl.pa3c.agileman.controller.exception.ResourceNotFoundException;
 import pl.pa3c.agileman.model.label.ProjectLabel;
@@ -140,9 +142,31 @@ public class ProjectService extends CommonService<Long, ProjectSO, Project> {
 	@Transactional
 	public void removeTeam(Long projectId, Long teamId) {
 		final TeamInProject tip = teamInProjectRepository.findByProjectIdAndTeamId(projectId, teamId)
-				.orElseThrow(()->new ResourceNotFoundException("Cannot find project with id: "+projectId
-						+" which contains team with id: "+teamId));
+				.orElseThrow(() -> new ResourceNotFoundException(
+						"Cannot find project with id: " + projectId + " which contains team with id: " + teamId));
 		teamInProjectRepository.delete(tip);
+	}
+
+	public ProjectUserRolesInfoSO getTeamProjectUsersRoles(Long projectId, Long teamId) {
+		final TeamInProject tip = teamInProjectRepository.findByProjectIdAndTeamId(projectId, teamId)
+				.orElseThrow(() -> new ResourceNotFoundException(
+						"Cannot find project with id: " + projectId + " which contains team with id: " + teamId));
+
+		final List<UserInProject> uips = userInProjectRepository.findAllByTeamInProjectId(tip.getId());
+
+		final ProjectUserRolesInfoSO projectUserRolesInfoSO = new ProjectUserRolesInfoSO();
+		projectUserRolesInfoSO.setProjectType(tip.getType().name());
+
+		uips.forEach(x -> {
+			final List<RoleInProject> rips = roleInProjectRepository.findAllByUserInProjectId(x.getId());
+			final MultiRoleBaseUserSO multiRoleUser = mapper.map(x.getUser(), MultiRoleBaseUserSO.class);
+
+			multiRoleUser.setRoles(rips.stream().map(rip -> rip.getRole().name()).collect(Collectors.toList()));
+			projectUserRolesInfoSO.getUsers().add(multiRoleUser);
+
+		});
+
+		return projectUserRolesInfoSO;
 	}
 
 }
