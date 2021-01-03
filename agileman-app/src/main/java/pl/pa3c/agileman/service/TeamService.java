@@ -53,47 +53,6 @@ public class TeamService extends CommonService<Long, TeamSO, Team> {
 	public TeamService(JpaRepository<Team, Long> teamRepository) {
 		super(teamRepository);
 	}
-//
-//	@Transactional
-//	public TeamWithUsersSO addUserToTeam(Long id, String login) {
-//		final Team team = repository.getOne(id);
-//		final AppUser user = userRepository.getOne(login);
-//		final Set<TeamInProject> teamInProjects = userInProjectRepository.findDistinctByTeamInProjectTeamId(id).stream()
-//				.map(UserInProject::getTeamInProject).collect(Collectors.toSet());
-//
-//		final String basic = "BASIC";
-//		final String teamLead = "TEAM_LEAD";
-//
-//		final RoleInProject roleInProject = new RoleInProject();
-//		if (team.getCreatedBy().equals(login)) {
-//			roleInProject.setRole(projectRoleRepository.getOne(teamLead));
-//		} else {
-//			roleInProject.setRole(projectRoleRepository.getOne(basic));
-//		}
-//
-//		if (teamInProjects.size() == 0) {
-//
-//		}
-//		teamInProjects.forEach(x -> {
-//			final UserInProject uip = new UserInProject();
-//			uip.setUser(user);
-//			uip.setTeamInProject(x);
-//			final UserInProject savedUiP = userInProjectRepository.save(uip);
-//			roleInProject.setUserInProject(savedUiP);
-//			roleInProjectRepository.save(roleInProject);
-//		});
-//
-//		final TeamWithUsersSO teamWithUsersSO = mapper.map(team, TeamWithUsersSO.class);
-//		teamWithUsersSO.setUsers(
-//				usersFromProjects(id).stream().map(x -> mapper.map(x, UserSO.class)).collect(Collectors.toSet()));
-//
-//		return teamWithUsersSO;
-//	}
-
-//	private Set<AppUser> usersFromProjects(long teamId) {
-//		return userInProjectRepository.findDistinctByTeamInProjectTeamId(teamId).stream().map(UserInProject::getUser)
-//				.collect(Collectors.toSet());
-//	}
 
 	@Transactional
 	public TeamWithUsersSO createTeamWithUsers(TeamWithUsersSO teamWithUsersSO) {
@@ -113,7 +72,7 @@ public class TeamService extends CommonService<Long, TeamSO, Team> {
 			userInProjectRepository.save(userInProject);
 
 			final TeamProjectRole teamRole = TeamProjectRole.valueOf(x.getRole());
-			if (!teamRole.name().startsWith(RoleInProject.TEAM_PREIX)) {
+			if (!teamRole.name().startsWith(RoleInProject.TEAM_PREFIX)) {
 				throw new BadRequestException(
 						"When creating a team it can only have users with team related roles ! Was: " + x.getRole());
 			}
@@ -183,6 +142,17 @@ public class TeamService extends CommonService<Long, TeamSO, Team> {
 		final List<UserInProject> uips = userInProjectRepository.findAllByUserIdAndTeamInProjectIn(login, tips);
 		userInProjectRepository.deleteAll(uips);
 	}
+	
+
+	public List<TitleNameSO<Long>> getFilteredBasicTeam(String value) {
+		Long teamId = -1l;
+		if(value.matches("\\d+")) {
+			teamId = Long.parseLong(value);
+		}
+		
+		return ((TeamRepository) repository).getFilteredBasicTeam(teamId,value).stream()
+				.map(x -> new TitleNameSO<Long>(x.getId(), x.getTitle())).collect(Collectors.toList());
+	}
 
 	private void createRoleInProject(UserInProject userInProject, TeamProjectRole role) {
 		final RoleInProject rip = new RoleInProject();
@@ -198,14 +168,5 @@ public class TeamService extends CommonService<Long, TeamSO, Team> {
 		return userInProjectRepository.save(uip);
 	}
 
-	public List<TitleNameSO<Long>> getFilteredBasicTeam(String value) {
-		Long teamId = -1l;
-		if(value.matches("\\d+")) {
-			teamId = Long.parseLong(value);
-		}
-		
-		return ((TeamRepository) repository).getFilteredBasicTeam(teamId,value).stream()
-				.map(x -> new TitleNameSO<Long>(x.getId(), x.getTitle())).collect(Collectors.toList());
-	}
 
 }

@@ -53,9 +53,7 @@ public class TaskContainerService extends CommonService<Long, TaskContainerSO, T
 				.collect(Collectors.toCollection(orderStates)));
 		final Map<String, List<TaskSO>> tasks = new HashMap<>();
 
-		detailedTaskContainerSO.getStates().forEach(x -> {
-			tasks.putIfAbsent(x.getName(), new ArrayList<>());
-		});
+		detailedTaskContainerSO.getStates().forEach(x -> tasks.putIfAbsent(x.getName(), new ArrayList<>()));
 
 		containerTasks.stream().forEach(x -> {
 			if (!tasks.containsKey(x.getState())) {

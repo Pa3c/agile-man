@@ -19,6 +19,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import pl.pa3c.agileman.api.label.LabelSO;
 import pl.pa3c.agileman.api.user.MultiRoleBaseUserSO;
 
@@ -26,13 +28,9 @@ import pl.pa3c.agileman.api.user.MultiRoleBaseUserSO;
 @RequestMapping(URL)
 public interface ProjectSI {
 
+	@NoArgsConstructor(access = AccessLevel.PRIVATE)
 	final class Constants {
 		public static final String URL = "/project";
-
-		private Constants() {
-			super();
-		}
-
 	}
 
 	@ApiOperation(value = "Add team to project")
@@ -114,5 +112,15 @@ public interface ProjectSI {
 	@ResponseStatus(code = HttpStatus.OK)
 	ProjectUserRolesInfoSO getTeamProjectUsersRoles(@PathVariable(name = "project_id") Long projectId,
 			@PathVariable("team_id")Long teamId);
+	
+	@ApiOperation(value = "Get project team users with project roles")
+	@ApiResponses(value = { 
+			@ApiResponse(code = 200, message = "Returned successful"), 
+			@ApiResponse(code = 404, message = "Any project do not have specific team"), 
+			})
+	@PutMapping(path = "/{project_id}/team/{team_id}/user/{login}/role", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseStatus(code = HttpStatus.OK)
+	MultiRoleBaseUserSO updateProjectUserRoles(@PathVariable(name = "project_id") Long projectId,
+			@PathVariable("team_id")Long teamId,@PathVariable(name = "login")String login,@RequestBody List<String>roles);
 
 }

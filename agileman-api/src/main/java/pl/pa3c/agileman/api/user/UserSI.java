@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import pl.pa3c.agileman.api.TitleNameSO;
 import pl.pa3c.agileman.api.project.ProjectSO;
 
@@ -21,11 +23,9 @@ import pl.pa3c.agileman.api.project.ProjectSO;
 @RequestMapping(URL)
 public interface UserSI {
 
+	@NoArgsConstructor(access = AccessLevel.PRIVATE)
 	final class Constants {
 		public static final String URL = "/user";
-		private Constants() {
-			super();
-		}
 	}
 
 	@ApiOperation(value = "Return teams of user")

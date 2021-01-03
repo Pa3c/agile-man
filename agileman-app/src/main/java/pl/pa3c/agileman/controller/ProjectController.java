@@ -66,4 +66,11 @@ public class ProjectController extends CommonController<Long, ProjectSO, Project
 		return ((ProjectService)commonService).getTeamProjectUsersRoles(projectId,teamId);
 	}
 
+	@Override
+	public MultiRoleBaseUserSO updateProjectUserRoles(Long projectId, Long teamId, String login,
+			List<String> roles) {
+		
+		return ((ProjectService)commonService).updateProjectUserRoles(projectId,teamId,login,roles);
+	}
+
 }

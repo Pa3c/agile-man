@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import pl.pa3c.agileman.api.TitleNameSO;
 import pl.pa3c.agileman.api.user.RoleBaseUserSO;
 
@@ -22,12 +24,9 @@ import pl.pa3c.agileman.api.user.RoleBaseUserSO;
 @RequestMapping(URL)
 public interface TeamSI {
 
+	@NoArgsConstructor(access = AccessLevel.PRIVATE)
 	final class Constants {
         public static final String URL = "/team";
-        private Constants() {
-            super();
-        }
-
     }
 	
 	

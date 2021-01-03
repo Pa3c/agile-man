@@ -14,18 +14,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 @Api("Task  Management API")
 @RequestMapping(URL)
 public interface TaskSI {
 
+	@NoArgsConstructor(access = AccessLevel.PRIVATE)
 	final class Constants {
 		public static final String URL = "/task";
-
-		private Constants() {
-			super();
-		}
-
 	}
 
 	@ApiOperation(value = "Return users of task")

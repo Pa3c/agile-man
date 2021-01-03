@@ -20,5 +20,7 @@ public interface RoleInProjectRepository extends JpaRepository<RoleInProject, Lo
 
 	@Transactional
 	void deleteByUserInProjectId(Long id);
-
+	
+	@Transactional
+	void deleteAllByUserInProjectId(Long id);
 }
