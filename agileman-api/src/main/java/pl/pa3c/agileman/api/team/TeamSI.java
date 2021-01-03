@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -49,4 +50,8 @@ public interface TeamSI {
 	@ApiOperation(value = "Return basic filtered info of users")
 	@GetMapping(path = "basic/filtered", produces = MediaType.APPLICATION_JSON_VALUE)
 	List<TitleNameSO<Long>> getFilteredBasicTeam(@RequestParam String value);
+	
+	@ApiOperation(value = "Return basic filtered info of users")
+	@PutMapping(path = "/{id}/role", produces = MediaType.APPLICATION_JSON_VALUE)
+	RoleBaseUserSO updateUserRole(@PathVariable Long id,@RequestBody RoleBaseUserSO roleBaseUserSO);
 }

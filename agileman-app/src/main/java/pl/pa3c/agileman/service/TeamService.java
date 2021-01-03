@@ -16,6 +16,7 @@ import pl.pa3c.agileman.api.team.TeamSO;
 import pl.pa3c.agileman.api.team.TeamWithUsersSO;
 import pl.pa3c.agileman.api.user.RoleBaseUserSO;
 import pl.pa3c.agileman.controller.exception.BadRequestException;
+import pl.pa3c.agileman.controller.exception.ResourceNotFoundException;
 import pl.pa3c.agileman.controller.exception.UnconsistentDataException;
 import pl.pa3c.agileman.model.project.ProjectType;
 import pl.pa3c.agileman.model.project.RoleInProject;
@@ -137,20 +138,41 @@ public class TeamService extends CommonService<Long, TeamSO, Team> {
 	}
 
 	@Transactional
+	public RoleBaseUserSO updateUserRole(Long id, RoleBaseUserSO roleBaseUserSO) {
+		final TeamInProject tip = teamInProjectRepository.findByProjectIdAndTeamId(ProjectService.NO_PROJECT_ID, id)
+				.orElseThrow(() -> new UnconsistentDataException(
+						"There is a team with id: " + id + " without basic project."));
+		UserInProject uip = userInProjectRepository.findByUserIdAndTeamInProjectId(roleBaseUserSO.getId(), tip.getId())
+				.orElseThrow(() -> new UnconsistentDataException(
+						"There is no team with id: " + id + " and user " + roleBaseUserSO.getId()));
+
+		roleInProjectRepository
+				.findTeamRole(uip.getId(), List.of(TeamProjectRole.TEAM_ADMIN, TeamProjectRole.TEAM_BASIC))
+				.ifPresentOrElse(x -> x.setRole(TeamProjectRole.valueOf(roleBaseUserSO.getRole().toUpperCase())),
+						() -> {
+							throw new ResourceNotFoundException("There is no user "+roleBaseUserSO.getId()+" in a team with roles BASIC or ADMIN");
+						});
+
+		final RoleBaseUserSO returnedRoleBaseUserSO = mapper.map(uip.getUser(), RoleBaseUserSO.class);
+		returnedRoleBaseUserSO.setRole(roleBaseUserSO.getRole().toUpperCase());
+
+		return returnedRoleBaseUserSO;
+	}
+
+	@Transactional
 	public void deleteUserFromTeam(Long id, String login) {
 		final List<TeamInProject> tips = teamInProjectRepository.findAllByTeamId(id);
 		final List<UserInProject> uips = userInProjectRepository.findAllByUserIdAndTeamInProjectIn(login, tips);
 		userInProjectRepository.deleteAll(uips);
 	}
-	
 
 	public List<TitleNameSO<Long>> getFilteredBasicTeam(String value) {
 		Long teamId = -1l;
-		if(value.matches("\\d+")) {
+		if (value.matches("\\d+")) {
 			teamId = Long.parseLong(value);
 		}
-		
-		return ((TeamRepository) repository).getFilteredBasicTeam(teamId,value).stream()
+
+		return ((TeamRepository) repository).getFilteredBasicTeam(teamId, value).stream()
 				.map(x -> new TitleNameSO<Long>(x.getId(), x.getTitle())).collect(Collectors.toList());
 	}
 
@@ -167,6 +189,5 @@ public class TeamService extends CommonService<Long, TeamSO, Team> {
 		uip.setUser(user);
 		return userInProjectRepository.save(uip);
 	}
-
 
 }

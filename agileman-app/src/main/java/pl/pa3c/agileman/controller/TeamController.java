@@ -50,6 +50,12 @@ public class TeamController extends CommonController<Long, TeamSO, Team> impleme
 		
 		return ((TeamService) commonService).getFilteredBasicTeam(value);
 	}
+
+	@Override
+	public RoleBaseUserSO updateUserRole(Long id,RoleBaseUserSO roleBaseUserSO) {
+		
+		return ((TeamService) commonService).updateUserRole(id,roleBaseUserSO);
+	}
 	
 }
 
