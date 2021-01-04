@@ -62,6 +62,7 @@ public class TaskService extends CommonService<Long, TaskSO, Task> {
 	}
 
 	@Override
+	@Transactional
 	public TaskSO update(Long id, TaskSO entitySO) {
 
 		if (entitySO.getSteps() == null) {
