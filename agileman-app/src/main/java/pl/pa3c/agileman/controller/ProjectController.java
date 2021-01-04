@@ -12,6 +12,7 @@ import pl.pa3c.agileman.api.project.ProjectLabelSO;
 import pl.pa3c.agileman.api.project.ProjectSI;
 import pl.pa3c.agileman.api.project.ProjectSO;
 import pl.pa3c.agileman.api.project.ProjectUserRolesInfoSO;
+import pl.pa3c.agileman.api.taskcontainer.TaskContainerSO;
 import pl.pa3c.agileman.api.user.MultiRoleBaseUserSO;
 import pl.pa3c.agileman.model.project.Project;
 import pl.pa3c.agileman.service.CommonService;
@@ -71,6 +72,11 @@ public class ProjectController extends CommonController<Long, ProjectSO, Project
 			List<String> roles) {
 		
 		return ((ProjectService)commonService).updateProjectUserRoles(projectId,teamId,login,roles);
+	}
+
+	@Override
+	public List<TaskContainerSO> getTeamInProjectTaskContainers(Long projectId, Long teamId) {
+		return ((ProjectService)commonService).getTeamInProjectTaskContainers(projectId,teamId);
 	}
 
 }

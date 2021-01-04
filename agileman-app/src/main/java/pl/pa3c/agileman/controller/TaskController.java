@@ -37,4 +37,19 @@ public class TaskController extends CommonController<Long, TaskSO, Task> impleme
 		((TaskService) commonService).removeTaskUser(id, login, type);
 	}
 
+	@Override
+	public TaskSO setStatus(Long id, String status) {
+		return ((TaskService) commonService).setStatus(id, status);
+	}
+
+	@Override
+	public TaskSO move(Long id, Long containerId) {
+		return ((TaskService) commonService).move(id, containerId);
+	}
+
+	@Override
+	public TaskSO copy(Long id, Long containerId) {
+		return ((TaskService) commonService).copy(id, containerId);
+	}
+
 }

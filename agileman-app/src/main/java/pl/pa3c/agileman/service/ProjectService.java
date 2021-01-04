@@ -15,6 +15,7 @@ import pl.pa3c.agileman.api.project.BaseProjectTeamSO;
 import pl.pa3c.agileman.api.project.ProjectLabelSO;
 import pl.pa3c.agileman.api.project.ProjectSO;
 import pl.pa3c.agileman.api.project.ProjectUserRolesInfoSO;
+import pl.pa3c.agileman.api.taskcontainer.TaskContainerSO;
 import pl.pa3c.agileman.api.user.MultiRoleBaseUserSO;
 import pl.pa3c.agileman.api.user.UserTeamProjectSO;
 import pl.pa3c.agileman.controller.exception.BadRequestException;
@@ -137,21 +138,21 @@ public class ProjectService extends CommonService<Long, ProjectSO, Project> {
 
 		return projectUserRolesInfoSO;
 	}
-	
+
 	public MultiRoleBaseUserSO updateProjectUserRoles(Long projectId, Long teamId, String login, List<String> roles) {
 		final TeamInProject tip = getTeamInProject(projectId, teamId);
 		final UserInProject uip = userInProjectRepository.findByUserIdAndTeamInProjectId(login, tip.getId())
-				.orElseThrow(() -> new ResourceNotFoundException(
-						"Cannot find project with id: " + projectId + " which contains team with id: " + teamId+" and user "+login));
-		
-		if(!RoleUtil.getRolesByType(tip.getType().name()).containsAll(roles)) {
-			throw new BadRequestException("There are roles that are not valid for type of project "+tip.getType().name());
+				.orElseThrow(() -> new ResourceNotFoundException("Cannot find project with id: " + projectId
+						+ " which contains team with id: " + teamId + " and user " + login));
+
+		if (!RoleUtil.getRolesByType(tip.getType().name()).containsAll(roles)) {
+			throw new BadRequestException(
+					"There are roles that are not valid for type of project " + tip.getType().name());
 		}
-		
+
 		roleInProjectRepository.deleteAllByUserInProjectId(uip.getId());
-		roles.forEach(x->roleInProjectRepository.save(new RoleInProject(RoleUtil.toEnum(x), uip)));
-		
-		
+		roles.forEach(x -> roleInProjectRepository.save(new RoleInProject(RoleUtil.toEnum(x), uip)));
+
 		return getProjectUserWithRoles(uip);
 	}
 
@@ -159,7 +160,7 @@ public class ProjectService extends CommonService<Long, ProjectSO, Project> {
 		final List<RoleInProject> rips = roleInProjectRepository.findAllByUserInProjectId(uip.getId());
 		final MultiRoleBaseUserSO multiRoleUser = mapper.map(uip.getUser(), MultiRoleBaseUserSO.class);
 
-		multiRoleUser.setRoles(rips.stream().map(rip->rip.getRole().name()).collect(Collectors.toList()));
+		multiRoleUser.setRoles(rips.stream().map(rip -> rip.getRole().name()).collect(Collectors.toList()));
 		return multiRoleUser;
 
 	}
@@ -192,6 +193,11 @@ public class ProjectService extends CommonService<Long, ProjectSO, Project> {
 		return teamInProjectRepository.findByProjectIdAndTeamId(projectId, teamId)
 				.orElseThrow(() -> new ResourceNotFoundException(
 						"Cannot find project with id: " + projectId + " which contains team with id: " + teamId));
+	}
+
+	public List<TaskContainerSO> getTeamInProjectTaskContainers(Long projectId, Long teamId) {
+		return taskContainerRepository.findAllByTeamInProjectId(getTeamInProject(projectId, teamId).getId()).stream()
+				.map(x -> mapper.map(x, TaskContainerSO.class)).collect(Collectors.toList());
 	}
 
 }

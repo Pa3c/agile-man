@@ -17,5 +17,4 @@ public class TaskContainerController extends CommonController<Long, TaskContaine
 	public TaskContainerController(CommonService<Long, TaskContainerSO, TaskContainer> commonService) {
 		super(commonService);
 	}
-
 }

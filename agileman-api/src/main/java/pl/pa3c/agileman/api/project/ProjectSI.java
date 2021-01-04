@@ -22,6 +22,7 @@ import io.swagger.annotations.ApiResponses;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import pl.pa3c.agileman.api.label.LabelSO;
+import pl.pa3c.agileman.api.taskcontainer.TaskContainerSO;
 import pl.pa3c.agileman.api.user.MultiRoleBaseUserSO;
 
 @Api("Project Management API")
@@ -122,5 +123,11 @@ public interface ProjectSI {
 	@ResponseStatus(code = HttpStatus.OK)
 	MultiRoleBaseUserSO updateProjectUserRoles(@PathVariable(name = "project_id") Long projectId,
 			@PathVariable("team_id")Long teamId,@PathVariable(name = "login")String login,@RequestBody List<String>roles);
+	
+	
+	@ApiOperation(value = "Return task containers of team in project")
+	@GetMapping(path = "/{project_id}/team/{team_id}/taskcontainer", produces = MediaType.APPLICATION_JSON_VALUE)
+	List<TaskContainerSO>getTeamInProjectTaskContainers(@PathVariable(name = "project_id") Long projectId,
+			@PathVariable("team_id")Long teamId);
 
 }

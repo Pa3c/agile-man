@@ -1,5 +1,6 @@
 package pl.pa3c.agileman.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -12,12 +13,16 @@ import org.springframework.stereotype.Service;
 import pl.pa3c.agileman.api.task.StepSO;
 import pl.pa3c.agileman.api.task.TaskSO;
 import pl.pa3c.agileman.api.task.TaskUserSO;
+import pl.pa3c.agileman.controller.exception.BadRequestException;
+import pl.pa3c.agileman.controller.exception.ResourceNotFoundException;
 import pl.pa3c.agileman.model.task.Step;
 import pl.pa3c.agileman.model.task.Task;
 import pl.pa3c.agileman.model.task.Type;
 import pl.pa3c.agileman.model.task.UserTask;
+import pl.pa3c.agileman.model.taskcontainer.TaskContainer;
 import pl.pa3c.agileman.model.user.AppUser;
 import pl.pa3c.agileman.repository.StepRepository;
+import pl.pa3c.agileman.repository.TaskContainerRepository;
 import pl.pa3c.agileman.repository.user.UserRepository;
 import pl.pa3c.agileman.repository.usertask.ITaskUserInfo;
 import pl.pa3c.agileman.repository.usertask.UserTaskRepository;
@@ -33,6 +38,9 @@ public class TaskService extends CommonService<Long, TaskSO, Task> {
 
 	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired
+	private TaskContainerRepository tkRepository;
 
 	@Autowired
 	public TaskService(JpaRepository<Task, Long> taskRepository) {
@@ -103,6 +111,46 @@ public class TaskService extends CommonService<Long, TaskSO, Task> {
 	public void removeTaskUser(Long id, String login, String type) {
 
 		utRepository.deleteByTaskIdAndUserIdAndType(id, login, Type.valueOf(type));
+	}
+
+	@Transactional
+	public TaskSO setStatus(Long id, String status) {
+		status = status.toUpperCase();
+
+		Task task = findById(id);
+		if (status.equals("REOPEN")) {
+			task.setClosed(null);
+			task.setReopened(LocalDateTime.now());
+		} else if (status.equals("CLOSE")) {
+			task.setClosed(LocalDateTime.now());
+		} else {
+			throw new BadRequestException("Please provide VALID STATUS. Possible options are REPOPEN AND CLOSE ");
+		}
+		return mapper.map(task, TaskSO.class);
+	}
+
+	@Transactional
+	public TaskSO move(Long id, Long containerId) {
+
+		final TaskContainer tk = tkRepository.findById(containerId)
+				.orElseThrow(() -> new ResourceNotFoundException("Container with id " + id + " not found"));
+		final Task task = findById(id);
+		task.setTaskContainer(tk);
+
+		return mapper.map(task, TaskSO.class);
+	}
+
+	@Transactional
+	public TaskSO copy(Long id, Long containerId) {
+		final TaskSO task = get(id);
+		final TaskContainer tk = tkRepository.findById(containerId)
+				.orElseThrow(() -> new ResourceNotFoundException("Container with id " + id + " not found"));
+		
+		task.setId(null);
+		task.getSteps().forEach(x->x.setId(null));
+		task.setTaskContainerId(tk.getId());
+		
+		return create(task);
 	}
 
 }

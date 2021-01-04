@@ -9,4 +9,5 @@ databaseChangeLog:
         constraintName: step_to_task
         referencedColumnNames: id
         referencedTableName: task
+        onUpdate: "CASCADE"
         validate: true
