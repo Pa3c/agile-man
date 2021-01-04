@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import pl.pa3c.agileman.api.BaseSO;
+import pl.pa3c.agileman.api.common.DtFormat;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -16,8 +17,12 @@ public class TaskSO extends BaseSO<Long>{
 	private String title;
 	private String description;
 	private Integer storyPoints;
-	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")	
+	@JsonFormat(pattern =  DtFormat.COMMON)
 	private LocalDateTime deadline;
+	@JsonFormat(pattern =  DtFormat.COMMON)
+	private LocalDateTime closed;
+	@JsonFormat(pattern =  DtFormat.COMMON)
+	private LocalDateTime reopened;
 	private String type;
 	private Integer likes;
 	private Integer majority;

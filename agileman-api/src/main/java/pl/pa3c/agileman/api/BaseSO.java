@@ -6,20 +6,21 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import pl.pa3c.agileman.api.common.DtFormat;
 
 @NoArgsConstructor
 @Data
-public class BaseSO<T> extends IdSO<T>{
+public class BaseSO<T> extends IdSO<T> {
 
 	protected int version;
-	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+	@JsonFormat(pattern = DtFormat.COMMON)
 	protected LocalDateTime creationDate;
-	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")	
+	@JsonFormat(pattern = DtFormat.COMMON)
 	protected LocalDateTime modificationDate;
 	protected String createdBy;
 	protected String modifiedBy;
-	
-	public BaseSO(BaseSO<T> baseSO){
+
+	public BaseSO(BaseSO<T> baseSO) {
 		super(baseSO);
 		this.createdBy = baseSO.createdBy;
 		this.creationDate = baseSO.creationDate;

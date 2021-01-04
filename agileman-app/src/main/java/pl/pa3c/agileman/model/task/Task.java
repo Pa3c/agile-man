@@ -25,6 +25,8 @@ public class Task extends BaseLongEntity{
 	private String description;
 	private Integer storyPoints;
 	private LocalDateTime deadline;
+	private LocalDateTime closed;
+	private LocalDateTime reopened;
 	
 	@NotNull
 	@Enumerated(EnumType.STRING)

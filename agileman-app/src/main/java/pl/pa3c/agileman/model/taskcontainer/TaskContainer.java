@@ -1,5 +1,7 @@
 package pl.pa3c.agileman.model.taskcontainer;
 
+import java.time.LocalDateTime;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -21,6 +23,13 @@ import pl.pa3c.agileman.model.project.TeamInProject;
 public class TaskContainer extends BaseLongEntity{
 	private String title;
 	private Boolean closed = false;
+	
+	//THIS IS FOR XP PURPOSES
+	private Boolean abandoned = false;
+	
+	//THIS IS ONLY FOR SCRUM PURPOSES
+	private LocalDateTime openDate;
+	private LocalDateTime closeDate;
 
 	@NotNull
 	@Enumerated(EnumType.STRING)

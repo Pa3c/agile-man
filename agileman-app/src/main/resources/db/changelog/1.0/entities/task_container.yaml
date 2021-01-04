@@ -25,7 +25,11 @@ databaseChangeLog:
         - column:
             name: closed
             type: boolean    
-            defaultValue: false        
+            defaultValue: false      
+        - column:
+            name: abandoned
+            type: boolean    
+            defaultValue: false              
         - column:
             name: version
             type: int
@@ -40,6 +44,12 @@ databaseChangeLog:
         - column:
             name: modification_date
             type: timestamp
+        - column:
+            name: open_date
+            type: timestamp   
+        - column:
+            name: close_date
+            type: timestamp                     
         - column:
             name: created_by
             type: varchar(50)

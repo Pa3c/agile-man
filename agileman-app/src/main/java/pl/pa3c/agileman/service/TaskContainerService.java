@@ -62,7 +62,6 @@ public class TaskContainerService extends CommonService<Long, TaskContainerSO, T
 			}
 			tasks.get(x.getState()).add(mapper.map(x, TaskSO.class));
 		});
-
 		detailedTaskContainerSO.setTasks(tasks);
 
 		return detailedTaskContainerSO;

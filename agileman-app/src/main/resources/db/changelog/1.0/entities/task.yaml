@@ -83,6 +83,12 @@ databaseChangeLog:
             name: modification_date
             type: timestamp
         - column:
+            name: closed
+            type: timestamp
+        - column:
+            name: reopened
+            type: timestamp
+        - column:
             name: created_by
             type: varchar(50)            
         - column:
