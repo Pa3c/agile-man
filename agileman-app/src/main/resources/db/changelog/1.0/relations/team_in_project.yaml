@@ -9,6 +9,7 @@ databaseChangeLog:
         constraintName: team_in_project_team
         referencedColumnNames: id
         referencedTableName: team
+        onDelete: "CASCADE"
         validate: true
     - addForeignKeyConstraint:
         baseColumnNames: project_id
@@ -16,4 +17,5 @@ databaseChangeLog:
         constraintName: team_in_project_project
         referencedColumnNames: id
         referencedTableName: project
+        onDelete: "CASCADE"
         validate: true

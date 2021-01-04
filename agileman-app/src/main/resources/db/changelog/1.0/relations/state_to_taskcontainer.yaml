@@ -9,4 +9,5 @@ databaseChangeLog:
         constraintName: state_to_taskcontainer
         referencedColumnNames: id
         referencedTableName: task_container
+        onDelete: "CASCADE"
         validate: true
