@@ -24,7 +24,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import pl.pa3c.agileman.api.BaseSO;
 import pl.pa3c.agileman.api.IdSO;
 import pl.pa3c.agileman.api.project.ProjectLabelSO;
 import pl.pa3c.agileman.api.state.StateSO;
@@ -32,7 +31,6 @@ import pl.pa3c.agileman.api.task.StepSO;
 import pl.pa3c.agileman.api.task.TaskSO;
 import pl.pa3c.agileman.api.taskcontainer.TaskContainerSO;
 import pl.pa3c.agileman.filter.TokenAuthorizationFilter;
-import pl.pa3c.agileman.model.base.BaseLongEntity;
 import pl.pa3c.agileman.model.base.LongIdEntity;
 import pl.pa3c.agileman.model.base.StringIdEntity;
 import pl.pa3c.agileman.model.label.ProjectLabel;
@@ -47,7 +45,7 @@ import pl.pa3c.agileman.service.UserService;
 @EnableWebSecurity
 @ComponentScan
 @EnableJpaAuditing
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+public class BaseConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	private UserService userDetailsService;

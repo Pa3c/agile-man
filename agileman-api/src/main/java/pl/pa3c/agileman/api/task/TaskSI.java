@@ -4,6 +4,7 @@ import static pl.pa3c.agileman.api.task.TaskSI.Constants.URL;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -42,6 +44,7 @@ public interface TaskSI {
 
 	@ApiOperation(value = "Remove user from task")
 	@DeleteMapping(path = "/{id}/user/{login}/type/{type}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseStatus(code = HttpStatus.ACCEPTED)
 	void removeTaskUser(@PathVariable("id") Long id, @PathVariable("login") String login,
 			@PathVariable("type") String type);
 	
@@ -51,6 +54,7 @@ public interface TaskSI {
 
 	@ApiOperation(value = "Copy task to the other container")
 	@PostMapping(path = "/{id}/taskcontainer/{containerId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseStatus(code = HttpStatus.CREATED)
 	TaskSO copy(@PathVariable("id") Long id,@PathVariable("containerId") Long containerId);	
 
 }

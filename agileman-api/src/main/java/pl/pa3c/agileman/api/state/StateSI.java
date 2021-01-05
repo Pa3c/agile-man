@@ -12,17 +12,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 @Api("State Management API")
 @RequestMapping(URL)
 public interface StateSI {
 
+	@NoArgsConstructor(access = AccessLevel.PRIVATE)
 	final class Constants {
         public static final String URL = "/state";
-        private Constants() {
-            super();
-        }
-
     }
 	
 	@ApiOperation(value = "Modifies an entity.")

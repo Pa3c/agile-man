@@ -4,10 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 
+import pl.pa3c.agileman.api.IdSO;
 import pl.pa3c.agileman.api.taskcontainer.TaskContainerSI;
 import pl.pa3c.agileman.api.taskcontainer.TaskContainerSO;
 import pl.pa3c.agileman.model.taskcontainer.TaskContainer;
 import pl.pa3c.agileman.service.CommonService;
+import pl.pa3c.agileman.service.TaskContainerService;
 
 @RestController
 @CrossOrigin
@@ -17,4 +19,17 @@ public class TaskContainerController extends CommonController<Long, TaskContaine
 	public TaskContainerController(CommonService<Long, TaskContainerSO, TaskContainer> commonService) {
 		super(commonService);
 	}
+
+	@Override
+	public TaskContainerSO copy(Long id, TaskContainerSO taskContainerSO) {
+		
+		return ((TaskContainerService)commonService).copy(id,taskContainerSO);
+	}
+
+	@Override
+	public TaskContainerSO changeStatus(Long id, String status,IdSO<Long> taskContainerId) {
+		
+		return ((TaskContainerService)commonService).changeStatus(id,status,taskContainerId);
+	}
+
 }

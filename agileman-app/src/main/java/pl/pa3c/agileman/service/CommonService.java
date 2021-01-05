@@ -13,7 +13,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import pl.pa3c.agileman.api.team.TeamSO;
 import pl.pa3c.agileman.controller.exception.ResourceAlreadyExistsException;
 import pl.pa3c.agileman.controller.exception.ResourceIsInUseException;
 import pl.pa3c.agileman.controller.exception.ResourceNotFoundException;

@@ -10,4 +10,5 @@ databaseChangeLog:
         referencedColumnNames: id
         referencedTableName: task
         onUpdate: "CASCADE"
+        onDelete: "CASCADE"
         validate: true

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import pl.pa3c.agileman.api.state.StateSO;
 import pl.pa3c.agileman.model.task.Task;
 import pl.pa3c.agileman.model.taskcontainer.State;
+import pl.pa3c.agileman.repository.StateRepository;
 import pl.pa3c.agileman.repository.TaskRepository;
 
 @Service
@@ -48,6 +49,9 @@ public class StateService extends CommonService<Long, StateSO, State>{
 		final Long containerId = state.getTaskContainer().getId();
 		taskRepostiory.deleteAllByTaskContainerIdAndState(containerId,state.getName());
 		super.delete(id);
+		
+		((StateRepository)repository).findByTaskContainerId(containerId)
+		.stream().filter(x->x.getOrder()>state.getOrder()).forEach(x->x.setOrder(x.getOrder()-1));
 		
 	}
 
