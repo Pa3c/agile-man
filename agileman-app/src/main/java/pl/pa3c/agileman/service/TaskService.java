@@ -14,6 +14,7 @@ import pl.pa3c.agileman.api.task.StepSO;
 import pl.pa3c.agileman.api.task.TaskSO;
 import pl.pa3c.agileman.api.task.TaskUserSO;
 import pl.pa3c.agileman.controller.exception.BadRequestException;
+import pl.pa3c.agileman.controller.exception.ConflictException;
 import pl.pa3c.agileman.controller.exception.ResourceNotFoundException;
 import pl.pa3c.agileman.model.task.Step;
 import pl.pa3c.agileman.model.task.Task;
@@ -50,6 +51,11 @@ public class TaskService extends CommonService<Long, TaskSO, Task> {
 	@Override
 	@Transactional
 	public TaskSO create(TaskSO entitySO) {
+
+		if (getTaskContainer(entitySO.getTaskContainerId()).getClosed().booleanValue()) {
+			throw new ConflictException("You cannot create task in closed container ");
+		}
+
 		final TaskSO so = super.create(entitySO);
 
 		entitySO.getSteps().forEach(x -> {
@@ -72,6 +78,10 @@ public class TaskService extends CommonService<Long, TaskSO, Task> {
 	@Override
 	@Transactional
 	public TaskSO update(Long id, TaskSO entitySO) {
+		
+		if (getTaskContainer(entitySO.getTaskContainerId()).getClosed().booleanValue()) {
+			throw new ConflictException("You cannot create task in closed container ");
+		}
 
 		if (entitySO.getSteps() == null) {
 			return super.update(id, entitySO);
@@ -145,12 +155,17 @@ public class TaskService extends CommonService<Long, TaskSO, Task> {
 		final TaskSO task = get(id);
 		final TaskContainer tk = tkRepository.findById(containerId)
 				.orElseThrow(() -> new ResourceNotFoundException("Container with id " + id + " not found"));
-		
+
 		task.setId(null);
-		task.getSteps().forEach(x->x.setId(null));
+		task.getSteps().forEach(x -> x.setId(null));
 		task.setTaskContainerId(tk.getId());
-		
+
 		return create(task);
+	}
+
+	private TaskContainer getTaskContainer(Long id) {
+		return tkRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(
+				"There is no task container with id" + id));
 	}
 
 }

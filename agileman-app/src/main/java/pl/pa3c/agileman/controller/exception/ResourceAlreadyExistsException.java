@@ -6,7 +6,12 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(value = HttpStatus.CONFLICT)
 public class ResourceAlreadyExistsException extends AgilemanException {
 
-    public ResourceAlreadyExistsException() {
-        super("Resource already exists");
-    }
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4220765434745339357L;
+
+	public ResourceAlreadyExistsException() {
+		super("Resource already exists");
+	}
 }

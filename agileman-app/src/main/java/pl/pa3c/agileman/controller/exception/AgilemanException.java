@@ -5,7 +5,12 @@ import lombok.Getter;
 @Getter
 public class AgilemanException extends RuntimeException {
 
-    public AgilemanException(String message) {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 2560190580771694752L;
+
+	public AgilemanException(String message) {
         super(message);
     }
 
