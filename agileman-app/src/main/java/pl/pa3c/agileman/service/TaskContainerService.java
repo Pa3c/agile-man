@@ -2,6 +2,7 @@ package pl.pa3c.agileman.service;
 
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -19,6 +20,7 @@ import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import pl.pa3c.agileman.api.IdSO;
@@ -40,6 +42,7 @@ import pl.pa3c.agileman.model.taskcontainer.TaskContainer;
 import pl.pa3c.agileman.model.taskcontainer.TaskContainerStatus;
 import pl.pa3c.agileman.model.user.AppUser;
 import pl.pa3c.agileman.repository.StateRepository;
+import pl.pa3c.agileman.repository.TaskContainerRepository;
 import pl.pa3c.agileman.repository.TaskRepository;
 import pl.pa3c.agileman.repository.TeamInProjectRepository;
 import pl.pa3c.agileman.repository.usertask.UserTaskRepository;
@@ -124,13 +127,9 @@ public class TaskContainerService extends CommonService<Long, TaskContainerSO, T
 	@Transactional
 	public TaskContainerSO changeStatus(Long id, String status) {
 		final TaskContainer container = findById(id);
-
 		if (status.equalsIgnoreCase(TaskContainerStatus.OPEN.name())) {
 			container.setClosed(false);
-		} else if (status.equalsIgnoreCase(TaskContainerStatus.CLOSE.name())) {
-			container.setClosed(true);
 		}
-
 		return mapper.map(container, TaskContainerSO.class);
 	}
 
@@ -151,8 +150,21 @@ public class TaskContainerService extends CommonService<Long, TaskContainerSO, T
 		return mapper.map(closedTaskContainer, TaskContainerSO.class);
 	}
 
+	@Scheduled(cron="0 0 0 * * *")
+	@Transactional
+	public void closeContainersCron() {
+		final List<TaskContainer> containers = ((TaskContainerRepository)repository).findByCloseDateAfterAndClosedIsFalse(LocalDateTime.now());
+		containers.forEach(x->{
+			final Long tipId = x.getTeamInProject().getId();
+			final TaskContainer backlogContainer = ((TaskContainerRepository)repository).findFirstByTeamInProjectIdAndType(tipId,pl.pa3c.agileman.model.taskcontainer.Type.BACKLOG);
+			final IdSO<Long> idSo = new IdSO<>();
+					idSo.setId(backlogContainer.getId());
+			changeStatus(x.getId(), TaskContainerStatus.CLOSE.name(),idSo);
+		});
+	}
+
 	public Map<String, List<TaskSO>> filterContainer(Long id, FilterSO filter) {
-		final Set<Task> tasks = createFilteredTasksList(filter,taskRepository.findByTaskContainerId(id));
+		final Set<Task> tasks = createFilteredTasksList(filter, taskRepository.findByTaskContainerId(id));
 		final List<UserTask> userTask = userTaskRepository.findByTaskTaskContainerIdAndTypeIn(id,
 				Arrays.asList(Type.EXECUTOR, Type.OBSERVER));
 
@@ -183,16 +195,16 @@ public class TaskContainerService extends CommonService<Long, TaskContainerSO, T
 		fieldset.addAll(filter.getPropNumberRange().keySet());
 		fieldset.addAll(filter.getPropUserList().keySet());
 		fieldset.addAll(filter.getPropValueList().keySet());
-		
 
-		final List<Field> fieldsToCheck = Arrays.asList(fields).stream().filter(x->fieldset.contains(x.getName())).collect(Collectors.toList());
+		final List<Field> fieldsToCheck = Arrays.asList(fields).stream().filter(x -> fieldset.contains(x.getName()))
+				.collect(Collectors.toList());
 		final Set<Task> tasks = new HashSet<>();
-		
-		if(fieldset.isEmpty()) {
+
+		if (fieldset.isEmpty()) {
 			tasks.addAll(containerTasks);
 			return tasks;
 		}
-		
+
 		containerTasks.forEach(x -> {
 			if (checkIfTaskMeetsFilterReqs(x, filter, fieldsToCheck)) {
 				tasks.add(x);
@@ -207,7 +219,6 @@ public class TaskContainerService extends CommonService<Long, TaskContainerSO, T
 		return containerStates.stream().map(x -> mapper.map(x, StateSO.class))
 				.collect(Collectors.toCollection(orderStates));
 	}
-	
 
 	private Map<String, List<TaskSO>> getTaskBySortedState(Collection<Task> containerTasks, List<State> containerStates,
 			Set<StateSO> sortedstates) {
@@ -257,7 +268,7 @@ public class TaskContainerService extends CommonService<Long, TaskContainerSO, T
 			return true;
 		}
 		final LocalDateTime tempProp = getFieldValue(f, task);
-		if(tempProp==null) {
+		if (tempProp == null) {
 			return false;
 		}
 		final LocalDateTime day = values.get(fieldName);
@@ -278,7 +289,7 @@ public class TaskContainerService extends CommonService<Long, TaskContainerSO, T
 	private boolean checkStringPropContains(Field f, Task task, Map<String, List<String>> values) {
 		final String fieldName = f.getName().toLowerCase();
 
-		if(!values.containsKey(fieldName)) {
+		if (!values.containsKey(fieldName)) {
 			return false;
 		}
 		if (values.get(fieldName).isEmpty()) {
@@ -294,7 +305,7 @@ public class TaskContainerService extends CommonService<Long, TaskContainerSO, T
 
 		boolean contains = false;
 		for (String s : tempProp) {
-			if(!s.isBlank()){
+			if (!s.isBlank()) {
 				contains = props.stream().anyMatch(x -> x.contains(s));
 			}
 			if (contains) {
