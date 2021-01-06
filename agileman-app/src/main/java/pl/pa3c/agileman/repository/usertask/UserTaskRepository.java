@@ -18,4 +18,6 @@ public interface UserTaskRepository extends JpaRepository<UserTask, Long> {
 	Optional<UserTask> findByTaskIdAndUserIdAndType(Long id, String id2, Type relationType);
 
 	void deleteByTaskIdAndUserIdAndType(Long id, String login, Type valueOf);
+
+	List<UserTask> findByTaskTaskContainerIdAndTypeIn(Long id,List<Type> types);
 }

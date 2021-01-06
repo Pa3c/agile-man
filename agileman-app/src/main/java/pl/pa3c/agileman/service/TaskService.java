@@ -83,7 +83,7 @@ public class TaskService extends CommonService<Long, TaskSO, Task> {
 			throw new ConflictException("You cannot create task in closed container ");
 		}
 
-		if (entitySO.getSteps() == null) {
+		if (entitySO.getSteps() == null || entitySO.getSteps().isEmpty()) {
 			return super.update(id, entitySO);
 		}
 		stepRepository.deleteAllByTaskId(id);

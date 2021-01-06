@@ -13,11 +13,13 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import lombok.extern.slf4j.Slf4j;
 import pl.pa3c.agileman.controller.exception.ResourceAlreadyExistsException;
 import pl.pa3c.agileman.controller.exception.ResourceIsInUseException;
 import pl.pa3c.agileman.controller.exception.ResourceNotFoundException;
 import pl.pa3c.agileman.security.SpringSecurityAuditorAware;
 
+@Slf4j
 public abstract class CommonService<ID, T, V> {
 
 	@Autowired

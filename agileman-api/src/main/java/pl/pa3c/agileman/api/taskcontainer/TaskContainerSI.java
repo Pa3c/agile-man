@@ -2,6 +2,9 @@ package pl.pa3c.agileman.api.taskcontainer;
 
 import static pl.pa3c.agileman.api.taskcontainer.TaskContainerSI.Constants.URL;
 
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +19,8 @@ import io.swagger.annotations.ApiOperation;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import pl.pa3c.agileman.api.IdSO;
+import pl.pa3c.agileman.api.task.FilterSO;
+import pl.pa3c.agileman.api.task.TaskSO;
 
 @Api("Task Container Management API")
 @RequestMapping(URL)
@@ -36,4 +41,10 @@ public interface TaskContainerSI {
 	@PostMapping(path = "/{id}/status",consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(code = HttpStatus.CREATED)
 	TaskContainerSO changeStatus(@PathVariable("id") Long id,@RequestParam("status") String status,@RequestBody(required = false) IdSO<Long> taskContainerId);
+
+	
+	@ApiOperation(value = "Copy task to the other container")
+	@PostMapping(path = "/{id}/filter", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseStatus(code = HttpStatus.CREATED)
+	 Map<String, List<TaskSO>> filterContainer(@PathVariable("id") Long id,@RequestBody FilterSO filter);	
 }
