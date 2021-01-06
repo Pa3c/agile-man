@@ -68,7 +68,7 @@ public class TaskContainerService extends CommonService<Long, TaskContainerSO, T
 	@Transactional
 	public TaskContainerSO get(Long id) {
 		final TaskContainerSO taskContainerSO = super.get(id);
-		final TeamInProject tip = tipRepository.getOne(id);
+		final TeamInProject tip = tipRepository.getOne(taskContainerSO.getTeamInProjectId());
 		final List<State> containerStates = stateRepository.findByTaskContainerId(id);
 		final List<Task> containerTasks = taskRepository.findByTaskContainerId(id);
 		final Set<StateSO> sortedstates = sortStates(containerStates);
@@ -271,7 +271,7 @@ public class TaskContainerService extends CommonService<Long, TaskContainerSO, T
 			return true;
 		}
 		final Integer tempProp = (Integer) getFieldValue(f, task);
-		return values.get(fieldName).getFrom() >= tempProp && values.get(fieldName).getTo() <= tempProp;
+		return values.get(fieldName).getFrom() <= tempProp && values.get(fieldName).getTo() >= tempProp;
 
 	}
 

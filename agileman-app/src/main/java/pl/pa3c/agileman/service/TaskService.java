@@ -108,6 +108,13 @@ public class TaskService extends CommonService<Long, TaskSO, Task> {
 		final Task task = repository.getOne(id);
 		final AppUser user = userRepository.getOne(taskUserSO.getId());
 		final Type relationType = Type.valueOf(taskUserSO.getType());
+		
+		if(relationType.equals(Type.LIKER)) {
+			task.setLikes(task.getLikes()+1);
+		}
+		if(relationType.equals(Type.DISLIKER)) {
+			task.setLikes(task.getLikes()-1);
+		}
 
 		final UserTask userTask = new UserTask();
 		userTask.setTask(task);

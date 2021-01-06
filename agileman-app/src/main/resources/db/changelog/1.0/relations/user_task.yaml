@@ -9,6 +9,7 @@ databaseChangeLog:
         constraintName: user_task_task
         referencedColumnNames: id
         referencedTableName: task
+        onDelete: "CASCADE"
         validate: true
     - addForeignKeyConstraint:
         baseColumnNames: user_id
