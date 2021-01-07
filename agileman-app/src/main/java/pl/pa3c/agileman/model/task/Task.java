@@ -45,6 +45,7 @@ public class Task extends BaseLongEntity {
 		this.technologies = task.technologies;
 		this.title = task.title;
 		this.type = task.type;
+		this.version = task.version;
 	}
 
 	private String title;

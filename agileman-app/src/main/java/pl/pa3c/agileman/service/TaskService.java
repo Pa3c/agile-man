@@ -1,12 +1,7 @@
 package pl.pa3c.agileman.service;
 
-import java.lang.reflect.Field;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
@@ -15,11 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.event.TransactionPhase;
-import org.springframework.transaction.event.TransactionalEventListener;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 import pl.pa3c.agileman.TaskUpdateEvent;
@@ -151,7 +141,7 @@ public class TaskService extends CommonService<Long, TaskSO, Task> {
 
 	@Transactional
 	public TaskSO setStatus(Long id, String status) {
-		Task task = findById(id);
+		final Task task = findById(id);
 		publishChange(task);
 		status = status.toUpperCase();
 
@@ -197,46 +187,6 @@ public class TaskService extends CommonService<Long, TaskSO, Task> {
 		publisher.publishEvent(new TaskUpdateEvent(task, new Task(task)));
 	}
 
-	@TransactionalEventListener(phase = TransactionPhase.AFTER_COMPLETION)
-	public void afterTransaction(TaskUpdateEvent event) throws JsonProcessingException, IllegalAccessException {
-		final Task oldTask = event.getOldState();
-		final Task newTask = event.getNewState();
-		final Map<String, List<String>> notMatchProperties = new HashMap<>();
-
-		List<Field> fields = this.getFields(oldTask);
-
-		for (Field f : fields) {
-			f.setAccessible(true);
-			final Object oldValue = f.get(oldTask);
-			final Object newValue = f.get(newTask);
-
-			if (oldValue == null) {
-				if (newValue != null) {
-					notMatchProperties.put(f.getName(), Arrays.asList(oldValue.toString(), newValue.toString()));
-				}
-				continue;
-			}
-
-			if (!oldValue.equals(newValue)) {
-				notMatchProperties.put(f.getName(), Arrays.asList(oldValue.toString(), newValue.toString()));
-			}
-			f.setAccessible(false);
-		}
-
-		final Map<String, List<String>> notMatchProperties2 = notMatchProperties;
-		log.debug("dupa");
-
-	}
-
-	private <T> List<Field> getFields(T t) {
-		List<Field> fields = new ArrayList<>();
-		Class clazz = t.getClass();
-		while (clazz != Object.class) {
-			fields.addAll(Arrays.asList(clazz.getDeclaredFields()));
-			clazz = clazz.getSuperclass();
-		}
-		return fields;
-	}
 
 	private TaskContainer getTaskContainer(Long id) {
 		return tkRepository.findById(id)
