@@ -2,7 +2,6 @@ package pl.pa3c.agileman;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
-import java.util.Base64;
 import java.util.Properties;
 
 import org.modelmapper.Conditions;
@@ -25,13 +24,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import pl.pa3c.agileman.api.IdSO;
 import pl.pa3c.agileman.api.project.ProjectLabelSO;
 import pl.pa3c.agileman.api.state.StateSO;
 import pl.pa3c.agileman.api.task.StepSO;
 import pl.pa3c.agileman.api.task.TaskSO;
 import pl.pa3c.agileman.api.taskcontainer.TaskContainerSO;
-import pl.pa3c.agileman.api.user.UserSO;
 import pl.pa3c.agileman.filter.TokenAuthorizationFilter;
 import pl.pa3c.agileman.model.base.LongIdEntity;
 import pl.pa3c.agileman.model.base.StringIdEntity;
@@ -40,7 +40,6 @@ import pl.pa3c.agileman.model.task.Step;
 import pl.pa3c.agileman.model.task.Task;
 import pl.pa3c.agileman.model.taskcontainer.State;
 import pl.pa3c.agileman.model.taskcontainer.TaskContainer;
-import pl.pa3c.agileman.model.user.AppUser;
 import pl.pa3c.agileman.security.SecurityConstants;
 import pl.pa3c.agileman.service.UserService;
 
@@ -102,6 +101,11 @@ public class BaseConfig extends WebSecurityConfigurerAdapter {
 //		mapper.typeMap(AppUser.class, UserSO.class).addMapping(UserSO::setPhoto, destinationSetter)
 //		
 		return mapper;
+	}
+	
+	@Bean
+	public ObjectMapper objectMapper() {
+		return new ObjectMapper();
 	}
 
 	@Override

@@ -1,15 +1,28 @@
 package pl.pa3c.agileman.service;
 
+import java.lang.reflect.Field;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lombok.extern.slf4j.Slf4j;
+import pl.pa3c.agileman.TaskUpdateEvent;
 import pl.pa3c.agileman.api.task.StepSO;
 import pl.pa3c.agileman.api.task.TaskSO;
 import pl.pa3c.agileman.api.task.TaskUserSO;
@@ -29,6 +42,7 @@ import pl.pa3c.agileman.repository.usertask.ITaskUserInfo;
 import pl.pa3c.agileman.repository.usertask.UserTaskRepository;
 
 @Service
+@Slf4j
 public class TaskService extends CommonService<Long, TaskSO, Task> {
 
 	@Autowired
@@ -42,6 +56,9 @@ public class TaskService extends CommonService<Long, TaskSO, Task> {
 
 	@Autowired
 	private TaskContainerRepository tkRepository;
+
+	@Autowired
+	private ApplicationEventPublisher publisher;
 
 	@Autowired
 	public TaskService(JpaRepository<Task, Long> taskRepository) {
@@ -78,7 +95,9 @@ public class TaskService extends CommonService<Long, TaskSO, Task> {
 	@Override
 	@Transactional
 	public TaskSO update(Long id, TaskSO entitySO) {
-		
+		final Task task = findById(id);
+		publishChange(task);
+
 		if (getTaskContainer(entitySO.getTaskContainerId()).getClosed().booleanValue()) {
 			throw new ConflictException("You cannot create task in closed container ");
 		}
@@ -105,15 +124,15 @@ public class TaskService extends CommonService<Long, TaskSO, Task> {
 
 	@Transactional
 	public void addTaskUser(Long id, TaskUserSO taskUserSO) {
-		final Task task = repository.getOne(id);
+		final Task task = findById(id);
 		final AppUser user = userRepository.getOne(taskUserSO.getId());
 		final Type relationType = Type.valueOf(taskUserSO.getType());
-		
-		if(relationType.equals(Type.LIKER)) {
-			task.setLikes(task.getLikes()+1);
+
+		if (relationType.equals(Type.LIKER)) {
+			task.setLikes(task.getLikes() + 1);
 		}
-		if(relationType.equals(Type.DISLIKER)) {
-			task.setLikes(task.getLikes()-1);
+		if (relationType.equals(Type.DISLIKER)) {
+			task.setLikes(task.getLikes() - 1);
 		}
 
 		final UserTask userTask = new UserTask();
@@ -132,9 +151,10 @@ public class TaskService extends CommonService<Long, TaskSO, Task> {
 
 	@Transactional
 	public TaskSO setStatus(Long id, String status) {
+		Task task = findById(id);
+		publishChange(task);
 		status = status.toUpperCase();
 
-		Task task = findById(id);
 		if (status.equals("REOPEN")) {
 			task.setClosed(null);
 			task.setReopened(LocalDateTime.now());
@@ -148,10 +168,11 @@ public class TaskService extends CommonService<Long, TaskSO, Task> {
 
 	@Transactional
 	public TaskSO move(Long id, Long containerId) {
+		final Task task = findById(id);
+		publishChange(task);
 
 		final TaskContainer tk = tkRepository.findById(containerId)
 				.orElseThrow(() -> new ResourceNotFoundException("Container with id " + id + " not found"));
-		final Task task = findById(id);
 		task.setTaskContainer(tk);
 
 		return mapper.map(task, TaskSO.class);
@@ -160,6 +181,8 @@ public class TaskService extends CommonService<Long, TaskSO, Task> {
 	@Transactional
 	public TaskSO copy(Long id, Long containerId) {
 		final TaskSO task = get(id);
+		publishChange(findById(containerId));
+
 		final TaskContainer tk = tkRepository.findById(containerId)
 				.orElseThrow(() -> new ResourceNotFoundException("Container with id " + id + " not found"));
 
@@ -170,9 +193,54 @@ public class TaskService extends CommonService<Long, TaskSO, Task> {
 		return create(task);
 	}
 
+	private void publishChange(Task task) {
+		publisher.publishEvent(new TaskUpdateEvent(task, new Task(task)));
+	}
+
+	@TransactionalEventListener(phase = TransactionPhase.AFTER_COMPLETION)
+	public void afterTransaction(TaskUpdateEvent event) throws JsonProcessingException, IllegalAccessException {
+		final Task oldTask = event.getOldState();
+		final Task newTask = event.getNewState();
+		final Map<String, List<String>> notMatchProperties = new HashMap<>();
+
+		List<Field> fields = this.getFields(oldTask);
+
+		for (Field f : fields) {
+			f.setAccessible(true);
+			final Object oldValue = f.get(oldTask);
+			final Object newValue = f.get(newTask);
+
+			if (oldValue == null) {
+				if (newValue != null) {
+					notMatchProperties.put(f.getName(), Arrays.asList(oldValue.toString(), newValue.toString()));
+				}
+				continue;
+			}
+
+			if (!oldValue.equals(newValue)) {
+				notMatchProperties.put(f.getName(), Arrays.asList(oldValue.toString(), newValue.toString()));
+			}
+			f.setAccessible(false);
+		}
+
+		final Map<String, List<String>> notMatchProperties2 = notMatchProperties;
+		log.debug("dupa");
+
+	}
+
+	private <T> List<Field> getFields(T t) {
+		List<Field> fields = new ArrayList<>();
+		Class clazz = t.getClass();
+		while (clazz != Object.class) {
+			fields.addAll(Arrays.asList(clazz.getDeclaredFields()));
+			clazz = clazz.getSuperclass();
+		}
+		return fields;
+	}
+
 	private TaskContainer getTaskContainer(Long id) {
-		return tkRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(
-				"There is no task container with id" + id));
+		return tkRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("There is no task container with id" + id));
 	}
 
 }
