@@ -21,6 +21,8 @@ public class AppUser extends BaseStringEntity {
 	private String password;
 	private String phoneNumber;
 	private String skype;
+	private String description;
+	private byte[] photo;
 	private LocalDateTime birthday;
 
 	public String getLogin() {
@@ -30,14 +32,5 @@ public class AppUser extends BaseStringEntity {
 	public void setLogin(String login) {
 		this.id = login;
 	}
-//
-//	@Override
-//	public void setId(String id) {
-//		super.setId(id);
-//	}
-//
-//	@Override
-//	public String getId() {
-//		return super.getId();
-//	}
+
 }

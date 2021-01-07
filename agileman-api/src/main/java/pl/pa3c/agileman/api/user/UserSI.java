@@ -52,7 +52,9 @@ public interface UserSI {
 	@GetMapping(path = "basic/filtered", produces = MediaType.APPLICATION_JSON_VALUE)
 	List<BaseUserSO> getFilteredBasicInfo(@RequestParam String login);
 		
-	
+	@ApiOperation(value = "Return specializations of user")
+	@GetMapping(path = "/{login}/specialization", produces = MediaType.APPLICATION_JSON_VALUE)
+	List<UserSpecializationSO> getUserSpecializations(@PathVariable String login);
 	
 	
 }

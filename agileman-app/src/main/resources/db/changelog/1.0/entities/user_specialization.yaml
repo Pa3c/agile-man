@@ -1,0 +1,31 @@
+databaseChangeLog:
+- changeSet:
+    id: user_specialization_entity_creation
+    author: patryk.klos
+    changes:
+    - createTable:
+        tableName: user_specialization
+        columns:
+        - column:
+            name: id
+            type: bigint
+            autoIncrement: true
+            constraints:
+              primaryKey: true
+              nullable: false
+        - column:
+            name: skill
+            type: number
+            value: 0
+            constraints:
+              nullable: false
+        - column:
+            name: specialization_id
+            type: varchar(50)
+            constraints:
+              nullable: false   
+        - column:
+            name: user_id
+            type: varchar(50)
+            constraints:
+              nullable: false              

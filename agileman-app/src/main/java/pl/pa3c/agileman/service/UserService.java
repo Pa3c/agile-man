@@ -26,15 +26,15 @@ import pl.pa3c.agileman.api.team.TeamSO;
 import pl.pa3c.agileman.api.user.BaseUserSO;
 import pl.pa3c.agileman.api.user.DetailedUserProjectSO;
 import pl.pa3c.agileman.api.user.UserSO;
+import pl.pa3c.agileman.api.user.UserSpecializationSO;
 import pl.pa3c.agileman.api.user.UserTeamProjectSO;
 import pl.pa3c.agileman.api.user.UserTeamSO;
 import pl.pa3c.agileman.controller.exception.ResourceNotFoundException;
-import pl.pa3c.agileman.model.base.LongIdEntity;
 import pl.pa3c.agileman.model.project.Project;
-import pl.pa3c.agileman.model.project.TeamProjectRole;
 import pl.pa3c.agileman.model.project.ProjectType;
 import pl.pa3c.agileman.model.project.RoleInProject;
 import pl.pa3c.agileman.model.project.TeamInProject;
+import pl.pa3c.agileman.model.project.TeamProjectRole;
 import pl.pa3c.agileman.model.project.UserInProject;
 import pl.pa3c.agileman.model.taskcontainer.TaskContainer;
 import pl.pa3c.agileman.model.team.Team;
@@ -47,6 +47,7 @@ import pl.pa3c.agileman.repository.TaskContainerRepository;
 import pl.pa3c.agileman.repository.TeamInProjectRepository;
 import pl.pa3c.agileman.repository.UserInProjectRepository;
 import pl.pa3c.agileman.repository.UserRoleRepository;
+import pl.pa3c.agileman.repository.UserSpecializationRepository;
 import pl.pa3c.agileman.repository.user.IBasicUserInfo;
 import pl.pa3c.agileman.repository.user.UserRepository;
 import pl.pa3c.agileman.security.UserCreds;
@@ -78,6 +79,9 @@ public class UserService extends CommonService<String, UserSO, AppUser> implemen
 
 	@Autowired
 	private ProjectRepository projectRepository;
+	
+	@Autowired
+	private UserSpecializationRepository userSpecializationRepository;
 
 	@Autowired
 	public UserService(JpaRepository<AppUser, String> userRepository) {
@@ -258,6 +262,16 @@ public class UserService extends CommonService<String, UserSO, AppUser> implemen
 		final List<IBasicUserInfo> usersInfo = ((UserRepository) repository).getFilteredBasicInfo(login);
 		return usersInfo.stream().map(x -> new BaseUserSO(x.getId(), x.getName(), x.getSurname()))
 				.collect(Collectors.toList());
+	}
+
+	public List<UserSpecializationSO> getUserSpecializations(String login) {
+		return userSpecializationRepository.findByUserId(login).stream()
+				.map(x->{
+					final UserSpecializationSO  spec = new UserSpecializationSO();
+					spec.setId(x.getSpecialization().getId());
+					spec.setSkill(x.getSkill());
+					return spec;
+				}).collect(Collectors.toList());
 	}
 
 }

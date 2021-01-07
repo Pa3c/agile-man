@@ -1,0 +1,21 @@
+databaseChangeLog:
+- changeSet:
+    id: user_specialization
+    author: patryk.klos
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: user_id
+        baseTableName: user_specialization
+        constraintName: user_user_specialization_login
+        referencedColumnNames: id
+        referencedTableName: app_user
+        onDelete: "CASCADE"
+        validate: true
+    - addForeignKeyConstraint:
+        baseColumnNames: specialization_id
+        baseTableName: user_specialization
+        constraintName: user_specialization_specialization
+        referencedColumnNames: id
+        referencedTableName: specialization
+        onDelete: "CASCADE"
+        validate: true

@@ -1,0 +1,10 @@
+databaseChangeLog:
+- changeSet:
+    id: user_specialization_unique
+    author: patryk.klos
+    changes:
+    - addUniqueConstraint:
+        columnNames: specialization_id, user_id
+        constraintName: user_specialization_unique
+        tableName: user_specialization
+        validate: true

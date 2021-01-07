@@ -69,7 +69,8 @@ public abstract class CommonService<ID, T, V> {
 	public T update(ID id, T entitySO) {
 		V entity = findById(id);
 		mapper.map(entitySO, entity);
-		return mapper.map(entity, classSo);
+		final T returnedEntity = mapper.map(entity, classSo);
+		return returnedEntity;
 	}
 
 	public V findById(ID id) {

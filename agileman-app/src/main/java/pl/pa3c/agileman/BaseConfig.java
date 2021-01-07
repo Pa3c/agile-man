@@ -2,6 +2,7 @@ package pl.pa3c.agileman;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
+import java.util.Base64;
 import java.util.Properties;
 
 import org.modelmapper.Conditions;
@@ -30,6 +31,7 @@ import pl.pa3c.agileman.api.state.StateSO;
 import pl.pa3c.agileman.api.task.StepSO;
 import pl.pa3c.agileman.api.task.TaskSO;
 import pl.pa3c.agileman.api.taskcontainer.TaskContainerSO;
+import pl.pa3c.agileman.api.user.UserSO;
 import pl.pa3c.agileman.filter.TokenAuthorizationFilter;
 import pl.pa3c.agileman.model.base.LongIdEntity;
 import pl.pa3c.agileman.model.base.StringIdEntity;
@@ -38,6 +40,7 @@ import pl.pa3c.agileman.model.task.Step;
 import pl.pa3c.agileman.model.task.Task;
 import pl.pa3c.agileman.model.taskcontainer.State;
 import pl.pa3c.agileman.model.taskcontainer.TaskContainer;
+import pl.pa3c.agileman.model.user.AppUser;
 import pl.pa3c.agileman.security.SecurityConstants;
 import pl.pa3c.agileman.service.UserService;
 
@@ -94,7 +97,10 @@ public class BaseConfig extends WebSecurityConfigurerAdapter {
 				(dst, value) -> dst.getTask().setId((Long) value));
 		mapper.typeMap(ProjectLabelSO.class, ProjectLabel.class).addMapping(ProjectLabelSO::getProjectId,
 				(dst, value) -> dst.getProject().setId((Long) value));
-
+		
+		
+//		mapper.typeMap(AppUser.class, UserSO.class).addMapping(UserSO::setPhoto, destinationSetter)
+//		
 		return mapper;
 	}
 

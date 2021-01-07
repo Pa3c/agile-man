@@ -14,6 +14,7 @@ import pl.pa3c.agileman.api.user.BaseUserSO;
 import pl.pa3c.agileman.api.user.DetailedUserProjectSO;
 import pl.pa3c.agileman.api.user.UserSI;
 import pl.pa3c.agileman.api.user.UserSO;
+import pl.pa3c.agileman.api.user.UserSpecializationSO;
 import pl.pa3c.agileman.api.user.UserTeamSO;
 import pl.pa3c.agileman.model.user.AppUser;
 import pl.pa3c.agileman.service.CommonService;
@@ -57,6 +58,12 @@ public class UserController extends CommonController<String, UserSO, AppUser> im
 	@Override
 	public List<BaseUserSO> getFilteredBasicInfo(String login) {
 		return ((UserService) commonService).getFilteredBasicInfo(login);
+	}
+
+	@Override
+	public List<UserSpecializationSO> getUserSpecializations(String login) {
+		
+		return ((UserService) commonService).getUserSpecializations(login);
 	}
 
 }

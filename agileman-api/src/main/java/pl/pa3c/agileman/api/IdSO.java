@@ -9,6 +9,10 @@ public class IdSO<T> {
 	public IdSO(IdSO<T> idSO) {
 		this.id = idSO.id;
 	}
+	
+	public IdSO(T id) {
+		this.id = id;
+	}
 
 	protected T id;
 }

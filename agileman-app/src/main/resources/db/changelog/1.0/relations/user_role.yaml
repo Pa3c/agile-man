@@ -9,6 +9,7 @@ databaseChangeLog:
         constraintName: user_role_login
         referencedColumnNames: id
         referencedTableName: app_user
+        onDelete: "CASCADE"
         validate: true
     - addForeignKeyConstraint:
         baseColumnNames: role
@@ -16,4 +17,5 @@ databaseChangeLog:
         constraintName: user_role_role
         referencedColumnNames: id
         referencedTableName: role
+        onDelete: "CASCADE"
         validate: true
