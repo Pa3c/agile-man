@@ -1,10 +1,10 @@
 databaseChangeLog:
 - changeSet:
-    id: project_commentary_entity_creation
+    id: task_file_entity_creation
     author: patryk.klos
     changes:
     - createTable:
-        tableName: project_commentary
+        tableName: task_file_info
         columns:
         - column:
             name: id
@@ -12,15 +12,18 @@ databaseChangeLog:
             autoIncrement: true
             constraints:
               primaryKey: true
-              nullable: false     
+              nullable: false
         - column:
-            name: project_id
+            name: task_id
             type: bigint
             constraints:
               nullable: false
         - column:
-            name: scope
-            type: varchar(10)
+            name: path
+            type: varchar(255)
+        - column:
+            name: type
+            type: varchar(10)            
         - column:
             name: version
             type: int
@@ -41,4 +44,3 @@ databaseChangeLog:
         - column:
             name: modified_by
             type: varchar(50)
-             

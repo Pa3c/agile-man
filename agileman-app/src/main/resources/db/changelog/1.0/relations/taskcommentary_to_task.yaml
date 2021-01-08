@@ -1,12 +1,12 @@
 databaseChangeLog:
 - changeSet:
-    id: projectcommentary_to_project
+    id: projectcommentary_to_task
     author: patryk.klos
     changes:
     - addForeignKeyConstraint:
-        baseColumnNames: project_id
-        baseTableName: project_commentary
-        constraintName: projectcommentary_to_project
+        baseColumnNames: task_id
+        baseTableName: task_commentary
+        constraintName: taskcommentary_to_task
         referencedColumnNames: id
-        referencedTableName: project
+        referencedTableName: task
         validate: true

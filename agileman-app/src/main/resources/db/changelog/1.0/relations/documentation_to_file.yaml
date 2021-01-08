@@ -1,0 +1,12 @@
+databaseChangeLog:
+- changeSet:
+    id: documentation_to_file
+    author: patryk.klos
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: documentation_id
+        baseTableName: documentation_file_info
+        constraintName: documentation_to_file
+        referencedColumnNames: id
+        referencedTableName: documentation
+        validate: true

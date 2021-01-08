@@ -1,4 +1,4 @@
-package pl.pa3c.agileman.model.commentary;
+package pl.pa3c.agileman.model.commentary.file;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -10,12 +10,10 @@ import pl.pa3c.agileman.model.base.BaseLongEntity;
 
 @MappedSuperclass
 @EqualsAndHashCode(callSuper = false)
-public abstract class BaseCommentary extends BaseLongEntity{
-	
-	protected String content;
-	
+public class FileInfo extends BaseLongEntity {
+	protected String path;
+	protected String fileName;
 	@NotNull
 	@Enumerated(EnumType.STRING)
-	protected Scope scope;
-
+	protected Type type;
 }

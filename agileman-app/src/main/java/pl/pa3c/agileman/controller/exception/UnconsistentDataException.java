@@ -11,5 +11,9 @@ public class UnconsistentDataException extends AgilemanException {
 	public UnconsistentDataException(String msg) {
 		super(msg);
 	}
+	
+	public UnconsistentDataException(String msg,Throwable ex) {
+		super(ex,msg);
+	}
 
 }

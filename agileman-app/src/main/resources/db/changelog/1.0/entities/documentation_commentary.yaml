@@ -22,6 +22,9 @@ databaseChangeLog:
             name: scope
             type: varchar(10)
         - column:
+            name: content
+            type: TEXT
+        - column:
             name: version
             type: int
             constraints:
