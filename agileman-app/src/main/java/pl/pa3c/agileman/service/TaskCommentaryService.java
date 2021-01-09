@@ -29,7 +29,7 @@ public class TaskCommentaryService extends CommonService<Long, CommentarySO, Tas
 	
 	@Override
 	public CommentarySO create(CommentarySO entitySO) {
-		TaskIdCommentary com = (TaskIdCommentary)entitySO;
+		final TaskIdCommentary com = new TaskIdCommentary(entitySO);
 		
 		if(com.getResourceId()==null) {
 			throw new BadRequestException("Cannot add not reference comment");

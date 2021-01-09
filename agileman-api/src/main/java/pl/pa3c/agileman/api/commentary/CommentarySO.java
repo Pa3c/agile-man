@@ -12,4 +12,5 @@ public class CommentarySO extends BaseSO<Long>{
 	protected String content;
 	protected String scope;
 	protected String login;
+	protected Long resourceId;
 }

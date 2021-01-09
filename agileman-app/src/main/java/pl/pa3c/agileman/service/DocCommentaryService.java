@@ -28,7 +28,7 @@ public class DocCommentaryService extends CommonService<Long, CommentarySO, Docu
 	
 	@Override
 	public CommentarySO create(CommentarySO entitySO) {
-		DocIdCommentary com = (DocIdCommentary)entitySO;
+		DocIdCommentary com = new DocIdCommentary(entitySO);
 		
 		if(com.getResourceId()==null) {
 			throw new BadRequestException("Cannot add not reference comment");
