@@ -25,6 +25,7 @@ import lombok.NoArgsConstructor;
 import pl.pa3c.agileman.api.file.FileInfoSO;
 import pl.pa3c.agileman.api.file.FileUploadSO;
 import pl.pa3c.agileman.controller.exception.FileStorageException;
+import pl.pa3c.agileman.controller.exception.ResourceNotFoundException;
 import pl.pa3c.agileman.controller.exception.UnconsistentDataException;
 import pl.pa3c.agileman.events.FailedSaveFile;
 import pl.pa3c.agileman.model.commentary.file.DocumentationFileInfo;
@@ -78,13 +79,15 @@ public class FileService {
 				throw new FileStorageException("Sorry! Filename contains invalid path sequence " + fileName);
 			}
 
-			final String uniqueFileName = createUniqueName(fileName, info);
-			final Path tempDir = createDirectory(fileNameToPath(uniqueFileName));
-			final Path targetLocation = tempDir.resolve(uniqueFileName);
+			final String uniqueFileName = createUniqueName(fileName);
+			final Path tempDir = createDirectory(fileNameToPath(info.getType()+"/"+info.getResourceId()+"/"));
+			final Path targetLocation = tempDir.resolve(tempDir.toString()+"/"+uniqueFileName);
 			Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 
+			
+			final String uriLocation = targetLocation.toString().substring(Constants.BASIC_DIRECTORY.length()+3, targetLocation.toString().length());
 			final String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/static_file/")
-					.path(uniqueFileName).toUriString();
+					.path(uriLocation).toUriString();
 
 			createFileInfo(targetLocation.toString(), info);
 
@@ -95,12 +98,9 @@ public class FileService {
 		}
 	}
 
-	private String createUniqueName(String fileName, FileInfoSO info) {
-		final String typeValue = info.getType().getValue();
-		final String resourceId = String.valueOf(info.getResourceId());
+	private String createUniqueName(String fileName) {
 		final String currentTIme = String.valueOf(System.currentTimeMillis());
-
-		return typeValue + "_" + resourceId + "_" + fileName + "_" + currentTIme;
+		return currentTIme+fileName;
 	}
 
 	@Transactional
@@ -146,7 +146,7 @@ public class FileService {
 
 	private <T> T findById(Long resourceId, JpaRepository<T, Long> repository) {
 		return repository.findById(resourceId)
-				.orElseThrow(() -> new ResolutionException("Resource of id" + resourceId + " not found"));
+				.orElseThrow(() -> new ResourceNotFoundException("Resource of id" + resourceId + " not found"));
 	}
 
 	public Resource loadFileAsResource(String fileName) {
@@ -165,7 +165,7 @@ public class FileService {
 	}
 
 	private String fileNameToPath(String fileName) {
-		return Constants.BASIC_DIRECTORY + fileName.replace("_", "/");
+		return Constants.BASIC_DIRECTORY + "/"+ fileName.replace("_", "/");
 	}
 
 }

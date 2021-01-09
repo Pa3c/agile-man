@@ -12,5 +12,5 @@ public final class SecurityConstants {
 	public static final String[] PUBLIC_URLS = {"/auth/signin",
 			"/auth/signup","/swagger*/**",
 			"/webjars/**","/docs/**",
-			"/v2/api-docs*","/file/**"};
+			"/v2/api-docs*","/static_file/**"};
 }

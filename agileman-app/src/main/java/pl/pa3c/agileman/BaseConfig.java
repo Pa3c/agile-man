@@ -28,6 +28,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import pl.pa3c.agileman.api.IdSO;
 import pl.pa3c.agileman.api.commentary.CommentarySO;
+import pl.pa3c.agileman.api.commentary.DocIdCommentary;
+import pl.pa3c.agileman.api.commentary.TaskIdCommentary;
 import pl.pa3c.agileman.api.project.ProjectLabelSO;
 import pl.pa3c.agileman.api.state.StateSO;
 import pl.pa3c.agileman.api.task.StepSO;
@@ -39,6 +41,7 @@ import pl.pa3c.agileman.model.base.StringIdEntity;
 import pl.pa3c.agileman.model.commentary.BaseCommentary;
 import pl.pa3c.agileman.model.commentary.DocumentationCommentary;
 import pl.pa3c.agileman.model.commentary.Scope;
+import pl.pa3c.agileman.model.commentary.TaskCommentary;
 import pl.pa3c.agileman.model.label.ProjectLabel;
 import pl.pa3c.agileman.model.task.Step;
 import pl.pa3c.agileman.model.task.Task;
@@ -104,6 +107,11 @@ public class BaseConfig extends WebSecurityConfigurerAdapter {
 		mapper.typeMap(BaseCommentary.class, CommentarySO.class)
 				.addMapping(BaseCommentary::getContent, CommentarySO::setContent)
 				.addMapping(BaseCommentary::getScope, CommentarySO::setScope);
+
+		mapper.typeMap(TaskIdCommentary.class, TaskCommentary.class).addMapping(TaskIdCommentary::getResourceId,
+				(dst, value) -> dst.getTask().setId((Long) value));
+		mapper.typeMap(DocIdCommentary.class, DocumentationCommentary.class).addMapping(DocIdCommentary::getResourceId,
+				(dst, value) -> dst.getDocumentation().setId((Long) value));
 
 //		mapper.typeMap(AppUser.class, UserSO.class).addMapping(UserSO::setPhoto, destinationSetter)
 //		

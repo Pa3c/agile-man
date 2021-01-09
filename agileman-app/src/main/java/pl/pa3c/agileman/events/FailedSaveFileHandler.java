@@ -12,7 +12,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @Component
 public class FailedSaveFileHandler {
 
-	@TransactionalEventListener(phase = TransactionPhase.AFTER_COMPLETION)
+	@TransactionalEventListener(phase = TransactionPhase.AFTER_ROLLBACK)
 	@Async
 	public void deleteSavedFileInStorage(FailedSaveFile failedSaveFile) throws IOException {
 		Files.deleteIfExists(Paths.get(failedSaveFile.getFileLocation()));

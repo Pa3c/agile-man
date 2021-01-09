@@ -2,8 +2,6 @@ package pl.pa3c.agileman.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,8 +16,10 @@ public class FileController implements FileSI {
 
 	@Autowired
 	private FileService fileService;
-	@PostMapping
-	public FileUploadSO save(MultipartFile file,@RequestBody FileInfoSO info) {
-		return fileService.save(file,info);
+
+	@Override
+	public FileUploadSO save(MultipartFile file, String resourceId, String type) {
+		return fileService.save(file,
+				new FileInfoSO(Long.valueOf(resourceId), FileInfoSO.Type.valueOf(type.toUpperCase())));
 	}
 }
