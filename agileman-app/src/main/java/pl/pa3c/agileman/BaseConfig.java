@@ -30,6 +30,8 @@ import pl.pa3c.agileman.api.IdSO;
 import pl.pa3c.agileman.api.commentary.CommentarySO;
 import pl.pa3c.agileman.api.commentary.DocIdCommentary;
 import pl.pa3c.agileman.api.commentary.TaskIdCommentary;
+import pl.pa3c.agileman.api.documentation.DocumentationSO;
+import pl.pa3c.agileman.api.documentation.DocumentationVersionSO;
 import pl.pa3c.agileman.api.project.ProjectLabelSO;
 import pl.pa3c.agileman.api.state.StateSO;
 import pl.pa3c.agileman.api.task.StepSO;
@@ -41,6 +43,8 @@ import pl.pa3c.agileman.model.base.StringIdEntity;
 import pl.pa3c.agileman.model.commentary.BaseCommentary;
 import pl.pa3c.agileman.model.commentary.DocumentationCommentary;
 import pl.pa3c.agileman.model.commentary.TaskCommentary;
+import pl.pa3c.agileman.model.documentation.Documentation;
+import pl.pa3c.agileman.model.documentation.DocumentationVersion;
 import pl.pa3c.agileman.model.label.ProjectLabel;
 import pl.pa3c.agileman.model.task.Step;
 import pl.pa3c.agileman.model.task.Task;
@@ -111,6 +115,12 @@ public class BaseConfig extends WebSecurityConfigurerAdapter {
 				(dst, value) -> dst.getTask().setId((Long) value));
 		mapper.typeMap(DocIdCommentary.class, DocumentationCommentary.class).addMapping(DocIdCommentary::getResourceId,
 				(dst, value) -> dst.getDocumentation().setId((Long) value));
+		
+		mapper.typeMap(Documentation.class, DocumentationSO.class)
+		.addMapping(src->src.getProject().getId(), (dst,value)->dst.setResourceId((Long) value));
+		
+		mapper.typeMap(DocumentationVersion.class, DocumentationVersionSO.class)
+		.addMapping(src->src.getDocumentation().getId(), (dst,value)->dst.setResourceId((Long) value));
 
 //		mapper.typeMap(AppUser.class, UserSO.class).addMapping(UserSO::setPhoto, destinationSetter)
 //		

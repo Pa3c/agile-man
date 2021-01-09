@@ -6,15 +6,15 @@ import javax.persistence.Table;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import pl.pa3c.agileman.model.documentation.Documentation;
+import pl.pa3c.agileman.model.documentation.DocumentationVersion;
 
 @Entity
 @Table
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class DocumentationFileInfo extends FileInfo {
+public class DocumentationVersionFileInfo extends FileInfo {
 
 	@ManyToOne
-	private Documentation documentation;
+	private DocumentationVersion documentationVersion;
 
 }

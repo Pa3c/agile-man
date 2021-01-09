@@ -4,10 +4,10 @@ databaseChangeLog:
     author: patryk.klos
     changes:
     - addForeignKeyConstraint:
-        baseColumnNames: documentation_id
-        baseTableName: documentation_file_info
-        constraintName: documentation_to_file
+        baseColumnNames: documentation_version_id
+        baseTableName: documentation_version_file_info
+        constraintName: documentation_version_to_file
         referencedColumnNames: id
-        referencedTableName: documentation
+        referencedTableName: documentation_version
         onDelete: "CASCADE"
         validate: true

@@ -12,19 +12,32 @@ databaseChangeLog:
             autoIncrement: true
             constraints:
               primaryKey: true
-              nullable: false
+              nullable: false           
+        - column:
+            name: documentation_id
+            type: bigint
+        - column:
+            name: content
+            type: text
+            constraints:
+              nullable: false        
         - column:
             name: version
             type: int
             constraints:
-              nullable: false              
+              nullable: false
         - column:
-            name: documentation_id
-            type: bigint
+            name: creation_date
+            type: timestamp
+            defaultValueComputed: CURRENT_TIMESTAMP
             constraints:
               nullable: false
         - column:
-            name: project_id
-            type: bigint
-            constraints:
-              nullable: false
+            name: modification_date
+            type: timestamp
+        - column:
+            name: created_by
+            type: varchar(50)            
+        - column:
+            name: modified_by
+            type: varchar(50)      

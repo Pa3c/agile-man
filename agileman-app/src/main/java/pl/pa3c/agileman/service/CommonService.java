@@ -25,12 +25,12 @@ public abstract class CommonService<ID, T, V> {
 	@Autowired
 	protected ModelMapper mapper;
 	protected JpaRepository<V, ID> repository;
-	
+
 	@Autowired
 	protected SpringSecurityAuditorAware securityAutditor;
 
-	private Class<T> classSo;
-	private Class<V> classEntity;
+	protected Class<T> classSo;
+	protected Class<V> classEntity;
 
 	@SuppressWarnings("unchecked")
 	public CommonService(JpaRepository<V, ID> commonRepository) {
@@ -55,11 +55,16 @@ public abstract class CommonService<ID, T, V> {
 		return mapper.map(byId, classSo);
 	}
 
+	@Transactional
 	public T create(T entitySO) {
+		final V en = mapper.map(entitySO, classEntity);
+		final V entity = save(en);
+		return mapper.map(entity, classSo);
+	}
+
+	protected V save(V entity) {
 		try {
-			final V en = mapper.map(entitySO, classEntity);
-			final V entity = repository.save(en);
-			return mapper.map(entity, classSo);
+			return repository.save(entity);
 		} catch (DataIntegrityViolationException ex) {
 			throw new ResourceAlreadyExistsException();
 		}

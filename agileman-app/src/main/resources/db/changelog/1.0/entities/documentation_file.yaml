@@ -4,7 +4,7 @@ databaseChangeLog:
     author: patryk.klos
     changes:
     - createTable:
-        tableName: documentation_file_info
+        tableName: documentation_version_file_info
         columns:
         - column:
             name: id
@@ -14,7 +14,7 @@ databaseChangeLog:
               primaryKey: true
               nullable: false
         - column:
-            name: documentation_id
+            name: documentation_version_id
             type: bigint
             constraints:
               nullable: false

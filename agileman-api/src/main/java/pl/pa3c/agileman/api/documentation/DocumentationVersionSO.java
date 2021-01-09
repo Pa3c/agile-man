@@ -6,7 +6,7 @@ import pl.pa3c.agileman.api.BaseSO;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class DocumentationSO extends BaseSO<Long>{
-	private String title;
+public class DocumentationVersionSO extends BaseSO<Long>{
+	private String content;
 	private Long resourceId;
 }

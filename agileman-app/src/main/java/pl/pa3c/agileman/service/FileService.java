@@ -28,13 +28,13 @@ import pl.pa3c.agileman.controller.exception.FileStorageException;
 import pl.pa3c.agileman.controller.exception.ResourceNotFoundException;
 import pl.pa3c.agileman.controller.exception.UnconsistentDataException;
 import pl.pa3c.agileman.events.FailedSaveFile;
-import pl.pa3c.agileman.model.commentary.file.DocumentationFileInfo;
+import pl.pa3c.agileman.model.commentary.file.DocumentationVersionFileInfo;
 import pl.pa3c.agileman.model.commentary.file.FileInfo;
 import pl.pa3c.agileman.model.commentary.file.TaskFileInfo;
-import pl.pa3c.agileman.model.documentation.Documentation;
+import pl.pa3c.agileman.model.documentation.DocumentationVersion;
 import pl.pa3c.agileman.model.task.Task;
 import pl.pa3c.agileman.repository.DocumentationFileRepository;
-import pl.pa3c.agileman.repository.DocumentationRepository;
+import pl.pa3c.agileman.repository.DocumentationVersionRepository;
 import pl.pa3c.agileman.repository.TaskFileRepository;
 import pl.pa3c.agileman.repository.TaskRepository;
 
@@ -48,7 +48,7 @@ public class FileService {
 	@Autowired
 	private TaskRepository taskRepository;
 	@Autowired
-	private DocumentationRepository docRepository;
+	private DocumentationVersionRepository docRepository;
 
 	@Autowired
 	private ApplicationEventPublisher publisher;
@@ -125,20 +125,20 @@ public class FileService {
 			createTaskFileInfo(t2, FileInfo.Type.CONTENT, targetLocation);
 			break;
 		case DOC_COMMENT:
-			final Documentation d = findById(info.getResourceId(), this.docRepository);
+			final DocumentationVersion d = findById(info.getResourceId(), this.docRepository);
 			createDocFileInfo(d, FileInfo.Type.COMMENT, targetLocation);
 			break;
 		case DOC:
-			final Documentation d2 = findById(info.getResourceId(), this.docRepository);
+			final DocumentationVersion d2 = findById(info.getResourceId(), this.docRepository);
 			createDocFileInfo(d2, FileInfo.Type.CONTENT, targetLocation);
 			break;
 		}
 	}
 
 	@Transactional
-	private DocumentationFileInfo createDocFileInfo(Documentation doc, FileInfo.Type content, String ultimateFileName) {
-		final DocumentationFileInfo entity = new DocumentationFileInfo();
-		entity.setDocumentation(doc);
+	private DocumentationVersionFileInfo createDocFileInfo(DocumentationVersion doc, FileInfo.Type content, String ultimateFileName) {
+		final DocumentationVersionFileInfo entity = new DocumentationVersionFileInfo();
+		entity.setDocumentationVersion(doc);
 		entity.setType(FileInfo.Type.CONTENT);
 		entity.setFileName(ultimateFileName);
 		return docFileRepository.save(entity);

@@ -1,0 +1,13 @@
+databaseChangeLog:
+- changeSet:
+    id: documentation_to_project
+    author: patryk.klos
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: project_id
+        baseTableName: documentation
+        constraintName: documentation_project
+        referencedColumnNames: id
+        referencedTableName: project
+        onDelete: "CASCADE"
+        validate: true

@@ -14,15 +14,13 @@ databaseChangeLog:
               primaryKey: true
               nullable: false
         - column:
+            name: project_id
+            type: bigint           
+        - column:
             name: title
             type: varchar(100)
             constraints:
-              nullable: false                                   
-        - column:
-            name: content
-            type: varchar(2000)
-            constraints:
-              nullable: false    
+              nullable: false                                       
         - column:
             name: version
             type: int
