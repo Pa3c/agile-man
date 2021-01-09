@@ -80,14 +80,23 @@ public class FileService {
 			}
 
 			final String uniqueFileName = createUniqueName(fileName);
-			final Path tempDir = createDirectory(fileNameToPath(info.getType()+"/"+info.getResourceId()+"/"));
-			final Path targetLocation = tempDir.resolve(tempDir.toString()+"/"+uniqueFileName);
-			Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+			final String pathDirectory = Constants.BASIC_DIRECTORY + "/" + info.getType() + "/" + info.getResourceId()
+					+ "/";
+			final String fileUrl = pathDirectory + uniqueFileName;
 
+			final Path tempDir = createDirectory(pathDirectory);
+			final Path targetLocation = tempDir.resolve(fileUrl);
 			
-			final String uriLocation = targetLocation.toString().substring(Constants.BASIC_DIRECTORY.length()+3, targetLocation.toString().length());
+			Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+			
+			final String uriLocation = pathDirectory.substring(Constants.BASIC_DIRECTORY.length() + 1,
+					pathDirectory.length());
+			
+			final String changedUriLocation = uriLocation.replaceAll("/", "&");
+			
+			
 			final String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/static_file/")
-					.path(uriLocation).toUriString();
+					.path(changedUriLocation+uniqueFileName).toUriString();
 
 			createFileInfo(targetLocation.toString(), info);
 
@@ -100,7 +109,7 @@ public class FileService {
 
 	private String createUniqueName(String fileName) {
 		final String currentTIme = String.valueOf(System.currentTimeMillis());
-		return currentTIme+fileName;
+		return currentTIme + fileName;
 	}
 
 	@Transactional
@@ -149,23 +158,21 @@ public class FileService {
 				.orElseThrow(() -> new ResourceNotFoundException("Resource of id" + resourceId + " not found"));
 	}
 
-	public Resource loadFileAsResource(String fileName) {
+	public Resource loadFileAsResource(String targetUri) {
 		try {
+			
+			final String changedUriLocation = targetUri.replaceAll("&", "/");
 
-			final Path tempDir = createDirectory(fileNameToPath(fileName));
+			
+			final Path tempDir = Paths.get(Constants.BASIC_DIRECTORY+"/"+changedUriLocation);
 			Resource resource = new UrlResource(tempDir.toUri());
 			if (resource.exists()) {
 				return resource;
 			} else {
-				throw new ResolutionException("File not found " + fileName);
+				throw new ResolutionException("File not found " + targetUri);
 			}
 		} catch (MalformedURLException ex) {
-			throw new ResolutionException("File not found " + fileName, ex);
+			throw new ResolutionException("File not found " + targetUri, ex);
 		}
 	}
-
-	private String fileNameToPath(String fileName) {
-		return Constants.BASIC_DIRECTORY + "/"+ fileName.replace("_", "/");
-	}
-
 }
