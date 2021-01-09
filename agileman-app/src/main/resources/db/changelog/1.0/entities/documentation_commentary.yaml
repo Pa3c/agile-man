@@ -19,8 +19,11 @@ databaseChangeLog:
             constraints:
               nullable: false
         - column:
-            name: scope
-            type: varchar(10)
+            name: isPublic
+            type: boolean
+            value: true
+            constraints:
+              nullable: false           
         - column:
             name: content
             type: TEXT

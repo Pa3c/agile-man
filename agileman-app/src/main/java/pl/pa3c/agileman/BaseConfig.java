@@ -40,7 +40,6 @@ import pl.pa3c.agileman.model.base.LongIdEntity;
 import pl.pa3c.agileman.model.base.StringIdEntity;
 import pl.pa3c.agileman.model.commentary.BaseCommentary;
 import pl.pa3c.agileman.model.commentary.DocumentationCommentary;
-import pl.pa3c.agileman.model.commentary.Scope;
 import pl.pa3c.agileman.model.commentary.TaskCommentary;
 import pl.pa3c.agileman.model.label.ProjectLabel;
 import pl.pa3c.agileman.model.task.Step;
@@ -106,7 +105,7 @@ public class BaseConfig extends WebSecurityConfigurerAdapter {
 
 		mapper.typeMap(BaseCommentary.class, CommentarySO.class)
 				.addMapping(BaseCommentary::getContent, CommentarySO::setContent)
-				.addMapping(BaseCommentary::getScope, CommentarySO::setScope);
+				.addMapping(BaseCommentary::getIsPublic, CommentarySO::setIsPublic);
 
 		mapper.typeMap(TaskIdCommentary.class, TaskCommentary.class).addMapping(TaskIdCommentary::getResourceId,
 				(dst, value) -> dst.getTask().setId((Long) value));

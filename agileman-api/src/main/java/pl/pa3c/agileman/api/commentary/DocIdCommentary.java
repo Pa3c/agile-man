@@ -12,7 +12,7 @@ public class DocIdCommentary extends CommentarySO {
 		this.content = so.content;
 		this.login = so.login;
 		this.resourceId = so.resourceId;
-		this.scope = so.scope;
+		this.isPublic = so.isPublic;
 		this.id = so.getId();
 		this.createdBy = so.getCreatedBy();
 		this.version = so.getVersion();

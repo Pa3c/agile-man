@@ -10,7 +10,7 @@ import pl.pa3c.agileman.api.BaseSO;
 @NoArgsConstructor
 public class CommentarySO extends BaseSO<Long>{
 	protected String content;
-	protected String scope;
+	protected Boolean isPublic;
 	protected String login;
 	protected Long resourceId;
 }
