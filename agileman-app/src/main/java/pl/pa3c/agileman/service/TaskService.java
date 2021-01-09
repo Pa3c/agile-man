@@ -12,13 +12,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
-import pl.pa3c.agileman.TaskUpdateEvent;
 import pl.pa3c.agileman.api.task.StepSO;
 import pl.pa3c.agileman.api.task.TaskSO;
 import pl.pa3c.agileman.api.task.TaskUserSO;
 import pl.pa3c.agileman.controller.exception.BadRequestException;
 import pl.pa3c.agileman.controller.exception.ConflictException;
 import pl.pa3c.agileman.controller.exception.ResourceNotFoundException;
+import pl.pa3c.agileman.events.TaskUpdateEvent;
 import pl.pa3c.agileman.model.task.Step;
 import pl.pa3c.agileman.model.task.Task;
 import pl.pa3c.agileman.model.task.Type;

@@ -12,8 +12,8 @@ public class DocumentationService extends CommonService<Long, DocumentationSO, D
 
 
 	@Autowired
-	public DocumentationService(JpaRepository<Documentation, Long> documentationRepository) {
-		super(documentationRepository);
+	public DocumentationService(JpaRepository<Documentation, Long> repository) {
+		super(repository);
 	}
 
 }

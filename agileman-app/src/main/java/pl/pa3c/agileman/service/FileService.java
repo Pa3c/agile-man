@@ -8,8 +8,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
+import javax.transaction.Transactional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,28 +22,39 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import pl.pa3c.agileman.api.file.FileInfoSO;
 import pl.pa3c.agileman.api.file.FileUploadSO;
 import pl.pa3c.agileman.controller.exception.FileStorageException;
 import pl.pa3c.agileman.controller.exception.UnconsistentDataException;
-import static pl.pa3c.agileman.service.FileService.Constants.*;
+import pl.pa3c.agileman.events.FailedSaveFile;
+import pl.pa3c.agileman.model.commentary.file.DocumentationFileInfo;
+import pl.pa3c.agileman.model.commentary.file.FileInfo;
+import pl.pa3c.agileman.model.commentary.file.TaskFileInfo;
+import pl.pa3c.agileman.model.documentation.Documentation;
+import pl.pa3c.agileman.model.task.Task;
+import pl.pa3c.agileman.repository.DocumentationFileRepository;
+import pl.pa3c.agileman.repository.DocumentationRepository;
+import pl.pa3c.agileman.repository.TaskFileRepository;
+import pl.pa3c.agileman.repository.TaskRepository;
 
 @Service
 public class FileService {
 
+	@Autowired
+	private TaskFileRepository taskFileRepository;
+	@Autowired
+	private DocumentationFileRepository docFileRepository;
+	@Autowired
+	private TaskRepository taskRepository;
+	@Autowired
+	private DocumentationRepository docRepository;
+
+	@Autowired
+	private ApplicationEventPublisher publisher;
+
 	@NoArgsConstructor(access = AccessLevel.PRIVATE)
 	static final class Constants {
 		private static final String BASIC_DIRECTORY = "/uczelnia/INZ/Aplikacja/Backend/agile-man/images";
-		private static final String DOC_BASIC_DIRECTORY = BASIC_DIRECTORY + "/documentation";
-		private static final String COMMENT_BASIC_DIRECTORY = BASIC_DIRECTORY + "/comment";
-		private static final String TASK_COMMENT_DIRECTORY = BASIC_DIRECTORY + "/task";
-		private static final String PROJECT_COMMENT_DIRECTORY = BASIC_DIRECTORY + "/project";
-		private static final String DOC_COMMENT_DIRECTORY = BASIC_DIRECTORY + "/project";
-	}
-
-	private Path basicDirectory;
-
-	public FileService() {
-		basicDirectory = createDirectory(BASIC_DIRECTORY);
 	}
 
 	private Path createDirectory(String directory) {
@@ -52,8 +68,8 @@ public class FileService {
 
 	}
 
-	public FileUploadSO save(MultipartFile file) {
-
+	@Transactional
+	public FileUploadSO save(MultipartFile file, FileInfoSO info) {
 		final String fileName = StringUtils.cleanPath(file.getOriginalFilename());
 
 		try {
@@ -61,11 +77,16 @@ public class FileService {
 			if (fileName.contains("..")) {
 				throw new FileStorageException("Sorry! Filename contains invalid path sequence " + fileName);
 			}
-			Path targetLocation = this.basicDirectory.resolve(fileName);
+
+			final String uniqueFileName = createUniqueName(fileName, info);
+			final Path tempDir = createDirectory(fileNameToPath(uniqueFileName));
+			final Path targetLocation = tempDir.resolve(uniqueFileName);
 			Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 
 			final String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/static_file/")
-					.path(fileName).toUriString();
+					.path(uniqueFileName).toUriString();
+
+			createFileInfo(targetLocation.toString(), info);
 
 			return new FileUploadSO(fileName, fileDownloadUri, file.getContentType(), targetLocation.toString(),
 					file.getSize());
@@ -74,10 +95,65 @@ public class FileService {
 		}
 	}
 
+	private String createUniqueName(String fileName, FileInfoSO info) {
+		final String typeValue = info.getType().getValue();
+		final String resourceId = String.valueOf(info.getResourceId());
+		final String currentTIme = String.valueOf(System.currentTimeMillis());
+
+		return typeValue + "_" + resourceId + "_" + fileName + "_" + currentTIme;
+	}
+
+	@Transactional
+	private void createFileInfo(String targetLocation, FileInfoSO info) {
+		publisher.publishEvent(new FailedSaveFile(targetLocation, info.getResourceId()));
+		switch (info.getType()) {
+		case TASK_COMMENT:
+			final Task t = findById(info.getResourceId(), this.taskRepository);
+			createTaskFileInfo(t, FileInfo.Type.COMMENT, targetLocation);
+			break;
+		case TASK:
+			final Task t2 = findById(info.getResourceId(), this.taskRepository);
+			createTaskFileInfo(t2, FileInfo.Type.CONTENT, targetLocation);
+			break;
+		case DOC_COMMENT:
+			final Documentation d = findById(info.getResourceId(), this.docRepository);
+			createDocFileInfo(d, FileInfo.Type.COMMENT, targetLocation);
+			break;
+		case DOC:
+			final Documentation d2 = findById(info.getResourceId(), this.docRepository);
+			createDocFileInfo(d2, FileInfo.Type.CONTENT, targetLocation);
+			break;
+		}
+	}
+
+	@Transactional
+	private DocumentationFileInfo createDocFileInfo(Documentation doc, FileInfo.Type content, String ultimateFileName) {
+		final DocumentationFileInfo entity = new DocumentationFileInfo();
+		entity.setDocumentation(doc);
+		entity.setType(FileInfo.Type.CONTENT);
+		entity.setFileName(ultimateFileName);
+		return docFileRepository.save(entity);
+	}
+
+	@Transactional
+	private TaskFileInfo createTaskFileInfo(Task t, FileInfo.Type content, String ultimateFileName) {
+		final TaskFileInfo entity = new TaskFileInfo();
+		entity.setTask(t);
+		entity.setType(FileInfo.Type.CONTENT);
+		entity.setFileName(ultimateFileName);
+		return taskFileRepository.save(entity);
+	}
+
+	private <T> T findById(Long resourceId, JpaRepository<T, Long> repository) {
+		return repository.findById(resourceId)
+				.orElseThrow(() -> new ResolutionException("Resource of id" + resourceId + " not found"));
+	}
+
 	public Resource loadFileAsResource(String fileName) {
 		try {
-			Path filePath = this.basicDirectory.resolve(fileName).normalize();
-			Resource resource = new UrlResource(filePath.toUri());
+
+			final Path tempDir = createDirectory(fileNameToPath(fileName));
+			Resource resource = new UrlResource(tempDir.toUri());
 			if (resource.exists()) {
 				return resource;
 			} else {
@@ -86,6 +162,10 @@ public class FileService {
 		} catch (MalformedURLException ex) {
 			throw new ResolutionException("File not found " + fileName, ex);
 		}
+	}
+
+	private String fileNameToPath(String fileName) {
+		return Constants.BASIC_DIRECTORY + fileName.replace("_", "/");
 	}
 
 }

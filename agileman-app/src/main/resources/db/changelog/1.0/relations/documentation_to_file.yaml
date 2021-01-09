@@ -9,4 +9,5 @@ databaseChangeLog:
         constraintName: documentation_to_file
         referencedColumnNames: id
         referencedTableName: documentation
+        onDelete: "CASCADE"
         validate: true

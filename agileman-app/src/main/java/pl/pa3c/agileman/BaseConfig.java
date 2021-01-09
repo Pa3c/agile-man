@@ -27,6 +27,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import pl.pa3c.agileman.api.IdSO;
+import pl.pa3c.agileman.api.commentary.CommentarySO;
 import pl.pa3c.agileman.api.project.ProjectLabelSO;
 import pl.pa3c.agileman.api.state.StateSO;
 import pl.pa3c.agileman.api.task.StepSO;
@@ -35,6 +36,9 @@ import pl.pa3c.agileman.api.taskcontainer.TaskContainerSO;
 import pl.pa3c.agileman.filter.TokenAuthorizationFilter;
 import pl.pa3c.agileman.model.base.LongIdEntity;
 import pl.pa3c.agileman.model.base.StringIdEntity;
+import pl.pa3c.agileman.model.commentary.BaseCommentary;
+import pl.pa3c.agileman.model.commentary.DocumentationCommentary;
+import pl.pa3c.agileman.model.commentary.Scope;
 import pl.pa3c.agileman.model.label.ProjectLabel;
 import pl.pa3c.agileman.model.task.Step;
 import pl.pa3c.agileman.model.task.Task;
@@ -80,7 +84,7 @@ public class BaseConfig extends WebSecurityConfigurerAdapter {
 	public ModelMapper modelMapper() {
 		ModelMapper mapper = new ModelMapper();
 		mapper.getConfiguration().setPropertyCondition(Conditions.isNotNull());
-		
+
 		mapper.typeMap(LongIdEntity.class, IdSO.class).addMapping(LongIdEntity::getId, IdSO::setId);
 		mapper.typeMap(StringIdEntity.class, IdSO.class).addMapping(StringIdEntity::getId, IdSO::setId);
 		mapper.typeMap(TaskContainer.class, TaskContainerSO.class).addMapping(TaskContainer::getStringType,
@@ -96,13 +100,16 @@ public class BaseConfig extends WebSecurityConfigurerAdapter {
 				(dst, value) -> dst.getTask().setId((Long) value));
 		mapper.typeMap(ProjectLabelSO.class, ProjectLabel.class).addMapping(ProjectLabelSO::getProjectId,
 				(dst, value) -> dst.getProject().setId((Long) value));
-		
-		
+
+		mapper.typeMap(BaseCommentary.class, CommentarySO.class)
+				.addMapping(BaseCommentary::getContent, CommentarySO::setContent)
+				.addMapping(BaseCommentary::getScope, CommentarySO::setScope);
+
 //		mapper.typeMap(AppUser.class, UserSO.class).addMapping(UserSO::setPhoto, destinationSetter)
 //		
 		return mapper;
 	}
-	
+
 	@Bean
 	public ObjectMapper objectMapper() {
 		return new ObjectMapper();

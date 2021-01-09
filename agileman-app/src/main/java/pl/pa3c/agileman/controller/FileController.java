@@ -20,6 +20,6 @@ public class FileController implements FileSI {
 	private FileService fileService;
 	@PostMapping
 	public FileUploadSO save(MultipartFile file,@RequestBody FileInfoSO info) {
-		return fileService.save(file);
+		return fileService.save(file,info);
 	}
 }

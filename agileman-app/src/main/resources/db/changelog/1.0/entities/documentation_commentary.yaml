@@ -25,6 +25,9 @@ databaseChangeLog:
             name: content
             type: TEXT
         - column:
+            name: login
+            type: varchar(50)           
+        - column:
             name: version
             type: int
             constraints:

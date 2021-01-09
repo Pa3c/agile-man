@@ -1,4 +1,4 @@
-package pl.pa3c.agileman;
+package pl.pa3c.agileman.events;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
