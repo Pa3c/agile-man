@@ -74,27 +74,21 @@ public class FileService {
 		final String fileName = StringUtils.cleanPath(file.getOriginalFilename());
 
 		try {
-			// Check if the file's name contains invalid characters
 			if (fileName.contains("..")) {
 				throw new FileStorageException("Sorry! Filename contains invalid path sequence " + fileName);
 			}
-
 			final String uniqueFileName = createUniqueName(fileName);
 			final String pathDirectory = Constants.BASIC_DIRECTORY + "/" + info.getType() + "/" + info.getResourceId()
 					+ "/";
 			final String fileUrl = pathDirectory + uniqueFileName;
-
 			final Path tempDir = createDirectory(pathDirectory);
 			final Path targetLocation = tempDir.resolve(fileUrl);
 			
 			Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
-			
 			final String uriLocation = pathDirectory.substring(Constants.BASIC_DIRECTORY.length() + 1,
 					pathDirectory.length());
 			
 			final String changedUriLocation = uriLocation.replaceAll("/", "&");
-			
-			
 			final String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/static_file/")
 					.path(changedUriLocation+uniqueFileName).toUriString();
 
