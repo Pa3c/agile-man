@@ -50,4 +50,29 @@ public class DocumentationService extends CommonService<Long, DocumentationSO, D
 		return documentationVersionRepository.findByDocumentationId(id).stream()
 				.map(x -> mapper.map(x, DocumentationVersionSO.class)).collect(Collectors.toList());
 	}
+
+	public DocumentationVersionSO getNewestVersion(Long docId) {
+
+		final List<DocumentationVersionSO> sorted = getAllVersions(docId);
+
+		if (sorted.isEmpty()) {
+			final DocumentationVersionSO so = new DocumentationVersionSO();
+			so.setContent("");
+			so.setResourceId(docId);
+			return so;
+		}
+		if (sorted.size() == 1) {
+			return sorted.get(0);
+		}
+
+		sorted.sort((docOlder, docNewer) -> {
+			if (docOlder.getId()>=docNewer.getId()) {
+				return -1;
+			}
+			return 1;
+		});
+
+		return sorted.get(0);
+	}
+
 }

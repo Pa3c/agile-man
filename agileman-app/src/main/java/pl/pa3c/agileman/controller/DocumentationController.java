@@ -15,7 +15,8 @@ import pl.pa3c.agileman.service.DocumentationService;
 
 @RestController
 @CrossOrigin
-public class DocumentationController extends CommonController<Long, DocumentationSO, Documentation> implements DocumentationSI{
+public class DocumentationController extends CommonController<Long, DocumentationSO, Documentation>
+		implements DocumentationSI {
 
 	@Autowired
 	public DocumentationController(CommonService<Long, DocumentationSO, Documentation> commonService) {
@@ -24,12 +25,17 @@ public class DocumentationController extends CommonController<Long, Documentatio
 
 	@Override
 	public List<DocumentationSO> getAllByResource(Long projectId) {
-		
-		return ((DocumentationService)commonService).getAllByResource(projectId);
+
+		return ((DocumentationService) commonService).getAllByResource(projectId);
 	}
 
 	@Override
 	public List<DocumentationVersionSO> getAllVersions(Long documentationId) {
-		return ((DocumentationService)commonService).getAllVersions(documentationId);
+		return ((DocumentationService) commonService).getAllVersions(documentationId);
+	}
+
+	@Override
+	public DocumentationVersionSO getNewestVersion(Long docId) {
+		return ((DocumentationService) commonService).getNewestVersion(docId);
 	}
 }

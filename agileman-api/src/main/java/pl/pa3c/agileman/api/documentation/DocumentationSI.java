@@ -28,7 +28,11 @@ public interface DocumentationSI {
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	List<DocumentationSO> getAllByResource(@RequestParam Long projectId);
 
-	@ApiOperation(value = "Return documentatiion versions")
+	@ApiOperation(value = "Return documentation versions")
 	@GetMapping(path = "{docId}/version", produces = MediaType.APPLICATION_JSON_VALUE)
 	List<DocumentationVersionSO> getAllVersions(@PathVariable(name = "docId") Long docId);
+	
+	@ApiOperation(value = "Return newest documentation version")
+	@GetMapping(path = "{docId}/version/newest", produces = MediaType.APPLICATION_JSON_VALUE)
+	DocumentationVersionSO getNewestVersion(@PathVariable(name = "docId") Long docId);
 }
