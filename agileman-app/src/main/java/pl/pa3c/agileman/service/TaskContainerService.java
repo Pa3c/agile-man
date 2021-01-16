@@ -65,6 +65,21 @@ public class TaskContainerService extends CommonService<Long, TaskContainerSO, T
 	public TaskContainerService(JpaRepository<TaskContainer, Long> taskContainerRepository) {
 		super(taskContainerRepository);
 	}
+	
+	
+	@Override
+	@Transactional
+	public TaskContainerSO create(TaskContainerSO entitySO) {
+		if(entitySO.getOvercontainer()==null) {
+			return super.create(entitySO);
+		}
+		final Long overContainerId = entitySO.getOvercontainer().getId();
+		entitySO.setOvercontainer(null);
+		final TaskContainerSO createdSO = super.create(entitySO);
+		findById(createdSO.getId()).setOvercontainer(findById(overContainerId));
+		createdSO.setOvercontainer(get(overContainerId));
+		return createdSO;
+	}
 
 	@Override
 	@Transactional

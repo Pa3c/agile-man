@@ -9,4 +9,5 @@ databaseChangeLog:
         constraintName: taskcommentary_to_task
         referencedColumnNames: id
         referencedTableName: task
+        onDelete: "CASCADE"
         validate: true
