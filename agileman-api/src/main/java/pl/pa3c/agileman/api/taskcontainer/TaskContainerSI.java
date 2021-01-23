@@ -46,5 +46,5 @@ public interface TaskContainerSI {
 	@ApiOperation(value = "Copy task to the other container")
 	@PostMapping(path = "/{id}/filter", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(code = HttpStatus.CREATED)
-	 Map<String, List<TaskSO>> filterContainer(@PathVariable("id") Long id,@RequestBody FilterSO filter);	
+	Map<String, List<TaskSO>> filterContainer(@PathVariable("id") Long id,@RequestBody FilterSO filter);	
 }

@@ -35,7 +35,7 @@ public class TaskContainer extends BaseLongEntity{
 	@Enumerated(EnumType.STRING)
 	private Type type;
 
-	@ManyToOne(cascade = { CascadeType.ALL })
+	@ManyToOne
 	@JoinColumn(name = "overcontainer_id")
 	private TaskContainer overcontainer;
 	

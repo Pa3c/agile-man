@@ -30,6 +30,7 @@ import pl.pa3c.agileman.api.task.TaskSO;
 import pl.pa3c.agileman.api.taskcontainer.DetailedTaskContainerSO;
 import pl.pa3c.agileman.api.taskcontainer.TaskContainerSO;
 import pl.pa3c.agileman.controller.exception.BadRequestException;
+import pl.pa3c.agileman.controller.exception.ConflictException;
 import pl.pa3c.agileman.controller.exception.UnconsistentDataException;
 import pl.pa3c.agileman.model.project.ProjectType;
 import pl.pa3c.agileman.model.project.TeamInProject;
@@ -65,18 +66,22 @@ public class TaskContainerService extends CommonService<Long, TaskContainerSO, T
 	public TaskContainerService(JpaRepository<TaskContainer, Long> taskContainerRepository) {
 		super(taskContainerRepository);
 	}
-	
-	
+
 	@Override
 	@Transactional
 	public TaskContainerSO create(TaskContainerSO entitySO) {
-		if(entitySO.getOvercontainer()==null) {
+		if (entitySO.getOvercontainer() == null) {
 			return super.create(entitySO);
 		}
 		final Long overContainerId = entitySO.getOvercontainer().getId();
 		entitySO.setOvercontainer(null);
 		final TaskContainerSO createdSO = super.create(entitySO);
-		findById(createdSO.getId()).setOvercontainer(findById(overContainerId));
+		final TaskContainer overContainer = findById(overContainerId);
+		if (overContainer.getAbandoned()) {
+			throw new ConflictException("Cannot add abandoned overcontainer !");
+		}
+
+		findById(createdSO.getId()).setOvercontainer(overContainer);
 		createdSO.setOvercontainer(get(overContainerId));
 		return createdSO;
 	}
@@ -109,8 +114,10 @@ public class TaskContainerService extends CommonService<Long, TaskContainerSO, T
 		final TaskContainer newInstance = new TaskContainer();
 		newInstance.setTeamInProject(taskContainerToCopy.getTeamInProject());
 		newInstance.setTitle(taskContainerSO.getTitle());
-		newInstance.setOvercontainer(taskContainerToCopy.getOvercontainer());
-		newInstance.setType(taskContainerToCopy.getType());
+		if(taskContainerSO.getOvercontainer()!=null) {
+			newInstance.setOvercontainer(findById(taskContainerSO.getOvercontainer().getId()));			
+		}
+		newInstance.setType("COMMON");
 
 		if (taskContainerToCopy.getTeamInProject().getType() != ProjectType.XP) {
 			newInstance.setOvercontainer(null);
@@ -149,11 +156,54 @@ public class TaskContainerService extends CommonService<Long, TaskContainerSO, T
 
 	@Transactional
 	public TaskContainerSO changeStatus(Long id, String status, IdSO<Long> taskContainerId) {
-		if (status.equalsIgnoreCase(TaskContainerStatus.OPEN.name())) {
-			return changeStatus(id, status);
-		} else if (!status.equalsIgnoreCase(TaskContainerStatus.CLOSE.name())) {
+		TaskContainerStatus enumStatus;
+		try {
+			enumStatus = TaskContainerStatus.valueOf(status.toUpperCase());
+		} catch (Exception e) {
 			throw new BadRequestException("Invalid status");
-		} else if (taskContainerId == null || taskContainerId.getId() == null) {
+		}
+
+		switch (enumStatus) {
+
+		case OPEN:
+			return changeStatus(id, status);
+		case CLOSE:
+			return closeTaskContainer(id, taskContainerId);
+		case ABANDON:
+			return setAbandonTaskContainer(id, true);
+		case UNABANDON:
+			return setAbandonTaskContainer(id, false);
+		}
+		throw new BadRequestException("Invalid status");
+
+	}
+
+	private TaskContainerSO setAbandonTaskContainer(Long id, boolean abandoned) {
+		final TaskContainer container = findById(id);
+		container.setAbandoned(abandoned);
+		abandonChildren(container, abandoned);
+		return get(id);
+	}
+
+	@Transactional
+	private void abandonChildren(TaskContainer container, boolean abandoned) {
+
+		List<TaskContainer> containers = findByOvercontainerId(container.getId());
+
+		for (TaskContainer tempContainer : containers) {
+			tempContainer.setAbandoned(abandoned);
+			abandonChildren(tempContainer, abandoned);
+		}
+	}
+
+	@Transactional
+	private List<TaskContainer> findByOvercontainerId(Long id) {
+		return ((TaskContainerRepository) repository).findByOvercontainerId(id);
+	}
+
+	@Transactional
+	private TaskContainerSO closeTaskContainer(Long id, IdSO<Long> taskContainerId) {
+		if (taskContainerId == null || taskContainerId.getId() == null) {
 			throw new BadRequestException("Provide task container body to which move not closed tasks");
 		}
 		final TaskContainer closedTaskContainer = findById(id);
@@ -164,16 +214,18 @@ public class TaskContainerService extends CommonService<Long, TaskContainerSO, T
 		return mapper.map(closedTaskContainer, TaskContainerSO.class);
 	}
 
-	@Scheduled(cron="0 0 0 * * *")
+	@Scheduled(cron = "0 0 0 * * *")
 	@Transactional
 	public void closeContainersCron() {
-		final List<TaskContainer> containers = ((TaskContainerRepository)repository).findByCloseDateAfterAndClosedIsFalse(LocalDateTime.now());
-		containers.forEach(x->{
+		final List<TaskContainer> containers = ((TaskContainerRepository) repository)
+				.findByCloseDateAfterAndClosedIsFalse(LocalDateTime.now());
+		containers.forEach(x -> {
 			final Long tipId = x.getTeamInProject().getId();
-			final TaskContainer backlogContainer = ((TaskContainerRepository)repository).findFirstByTeamInProjectIdAndType(tipId,pl.pa3c.agileman.model.taskcontainer.Type.BACKLOG);
+			final TaskContainer backlogContainer = ((TaskContainerRepository) repository)
+					.findFirstByTeamInProjectIdAndType(tipId, pl.pa3c.agileman.model.taskcontainer.Type.BACKLOG);
 			final IdSO<Long> idSo = new IdSO<>();
-					idSo.setId(backlogContainer.getId());
-			changeStatus(x.getId(), TaskContainerStatus.CLOSE.name(),idSo);
+			idSo.setId(backlogContainer.getId());
+			changeStatus(x.getId(), TaskContainerStatus.CLOSE.name(), idSo);
 		});
 	}
 

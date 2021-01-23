@@ -58,11 +58,7 @@ public class TaskService extends CommonService<Long, TaskSO, Task> {
 	@Override
 	@Transactional
 	public TaskSO create(TaskSO entitySO) {
-
-		if (getTaskContainer(entitySO.getTaskContainerId()).getClosed().booleanValue()) {
-			throw new ConflictException("You cannot create task in closed container ");
-		}
-
+		checkCloseOrAbandon(entitySO.getTaskContainerId());
 		final TaskSO so = super.create(entitySO);
 
 		entitySO.getSteps().forEach(x -> {
@@ -86,12 +82,8 @@ public class TaskService extends CommonService<Long, TaskSO, Task> {
 	@Transactional
 	public TaskSO update(Long id, TaskSO entitySO) {
 		final Task task = findById(id);
+		checkCloseOrAbandon(entitySO.getTaskContainerId());
 		publishChange(task);
-
-		if (getTaskContainer(entitySO.getTaskContainerId()).getClosed().booleanValue()) {
-			throw new ConflictException("You cannot create task in closed container ");
-		}
-
 		if (entitySO.getSteps() == null || entitySO.getSteps().isEmpty()) {
 			return super.update(id, entitySO);
 		}
@@ -183,10 +175,19 @@ public class TaskService extends CommonService<Long, TaskSO, Task> {
 		return create(task);
 	}
 
+	private void checkCloseOrAbandon(Long taskContainerId) {
+		final TaskContainer container = getTaskContainer(taskContainerId);
+		if (container.getOpenDate() != null && container.getOpenDate().isBefore(LocalDateTime.now())) {
+			throw new ConflictException("Cannot change tasks of not yet opened container");
+		}
+		if (container.getClosed().booleanValue() || container.getAbandoned().booleanValue()) {
+			throw new ConflictException("Cannot change tasks of closed or abandoned container ");
+		}
+	}
+
 	private void publishChange(Task task) {
 		publisher.publishEvent(new TaskUpdateEvent(task, new Task(task)));
 	}
-
 
 	private TaskContainer getTaskContainer(Long id) {
 		return tkRepository.findById(id)
