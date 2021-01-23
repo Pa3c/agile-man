@@ -9,7 +9,7 @@ public final class SecurityConstants {
 	public static final String AUTHORITIES = "Authorities";
 	public static final String JWT_TOKEN_HEADER = "Jwt-Token";	
 	public static final int EXPIRATION_TIME = 86400000; // one day in millis
-	public static final String[] PUBLIC_URLS = {"/auth/signin",
+	public static final String[] PUBLIC_URLS = {"/auth/signin","/info",
 			"/auth/signup","/swagger*/**",
 			"/webjars/**","/docs/**",
 			"/v2/api-docs*","/static_file/**"};

@@ -15,7 +15,7 @@ databaseChangeLog:
               nullable: false
         - column:
             name: skill
-            type: number
+            type: smallint
             value: 0
             constraints:
               nullable: false

@@ -22,11 +22,11 @@ databaseChangeLog:
             value: Klos
         -  column:  
             name:  phone_number  
-            value: 725922079
+            value: 123456789
         -  column:  
             name:  version  
             value: 0    
         -  column:  
             name:  birthday  
-            value: 1997-04-26'T'06:04:12                                                         
+            value: now()                                       
         tableName:  app_user
